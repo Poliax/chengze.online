@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="承泽教育 — 专注专升本在线教育，AI 智能助教 + 名师课程，助力每一位学子圆梦本科。">
-  <meta name="keywords" content="专升本, 在线教育, AI助教, 承泽教育, 本科, 升学">
-  <meta property="og:title" content="承泽教育 · 专注专升本在线教育">
-  <meta property="og:description" content="名师精讲课程 + AI 智能助教，让专升本备考更高效、更轻松。">
+  <meta name="description" content="承泽教育 — 专注专升本在线教育，课程、答疑、社区一站式学习平台。">
+  <meta property="og:title" content="承泽教育 · 专升本在线学习平台">
+  <meta property="og:description" content="课程学习 · 助教答疑 · AI 智能答疑 · 学习社区">
   <meta property="og:url" content="https://www.chengze.online">
   <meta property="og:type" content="website">
-  <title>承泽教育 · 专注专升本在线教育</title>
+  <title>承泽教育 · 专升本在线学习平台</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,11 +22,10 @@
       <a href="index.html" class="logo"><span class="logo__icon">&#9650;</span>承泽教育</a>
       <nav class="nav" id="nav">
         <ul class="nav__list">
-          <li><a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="nav__link">在线看课</a></li>
-          <li><a href="#" class="nav__link js-open-subjects">AI 助教</a></li>
-          <li><a href="https://chengze.online/live/teacher" target="_blank" rel="noopener" class="nav__link">老师直播</a></li>
-          <li><a href="#features" class="nav__link">平台优势</a></li>
-          <li><a href="#about" class="nav__link">关于我们</a></li>
+          <li><a href="#courses" class="nav__link">课程</a></li>
+          <li><a href="#qa" class="nav__link">答疑</a></li>
+          <li><a href="#community" class="nav__link">社区</a></li>
+          <li><a href="#profile" class="nav__link">我的</a></li>
         </ul>
       </nav>
       <button class="menu-toggle" id="menuToggle" aria-label="菜单">
@@ -36,200 +34,132 @@
     </div>
   </header>
 
-  <!-- Hero -->
+  <!-- Hero / Student Dashboard -->
   <section class="hero" id="hero">
     <div class="hero__bg"></div>
     <div class="container hero__inner">
-      <div class="hero__content">
-        <span class="hero__label">专升本 · 一站式在线学习平台</span>
-        <h1 class="hero__title">你的本科梦<br>从这里开始</h1>
-        <p class="hero__desc">名师精讲课程 + AI 智能助教，让专升本备考更高效、更轻松</p>
-        <div class="hero__actions">
-          <a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="btn btn--primary">开始看课</a>
-          <a href="#" class="btn btn--outline js-open-subjects">AI 智能答疑</a>
+      <div class="hero__top">
+        <div class="hero__greeting">
+          <span class="hero__label">专升本 · 一站式学习平台</span>
+          <h1 class="hero__title">欢迎回来</h1>
+          <p class="hero__desc">继续你的升本之旅</p>
         </div>
-      </div>
-      <div class="hero__stats">
-        <div class="hero__stat">
-          <strong data-count="10000">0</strong>
-          <span>在学学员</span>
-        </div>
-        <div class="hero__stat">
-          <strong data-count="96">0</strong>
-          <span>上岸率</span>
-        </div>
-        <div class="hero__stat">
-          <strong data-count="500">0</strong>
-          <span>精品课程</span>
+        <div class="hero__stats">
+          <div class="hero__stat">
+            <strong>12</strong>
+            <span>已学课程</span>
+          </div>
+          <div class="hero__stat">
+            <strong>86%</strong>
+            <span>学习完成度</span>
+          </div>
+          <div class="hero__stat">
+            <strong>3</strong>
+            <span>今日待学</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Portal Cards -->
-  <section class="section portals" id="portals">
+  <!-- Service Terminal: 4 Main Sections -->
+  <section class="terminal">
     <div class="container">
-      <div class="section__header">
-        <span class="section__tag">核心功能</span>
-        <h2 class="section__title">一站式升本备考平台</h2>
-        <p class="section__desc">在线看课 + AI 智能答疑，两大核心工具助你高效备考</p>
-      </div>
-      <div class="portals__grid">
-        <a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="portal__card">
-          <div class="portal__icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="terminal__grid">
+
+        <!-- 课程 -->
+        <a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="terminal__card terminal__card--courses">
+          <div class="terminal__card-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
             </svg>
           </div>
-          <h3>在线看课</h3>
-          <p>名师精讲课程，支持 PC 端和移动端，随时随地学习。包含大学英语、高等数学、大学语文等专升本全科目系统课程。</p>
-          <span class="portal__action">进入学习 →</span>
+          <h2>课程</h2>
+          <p>名师精讲 · 系统化课程体系</p>
+          <span class="terminal__meta">大学英语 · 高等数学 · 大学语文 · 计算机</span>
+          <span class="terminal__action">进入学习 →</span>
         </a>
-        <a href="#" class="portal__card js-open-subjects">
-          <div class="portal__icon portal__icon--accent">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+
+        <!-- 答疑 -->
+        <div class="terminal__card terminal__card--qa" id="qaCard">
+          <div class="terminal__card-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
           </div>
-          <h3>AI 智能答疑</h3>
-          <p>基于大语言模型的 AI 学习助教，7×24 小时在线。知识点讲解、真题解析、错题分析，随问随答。</p>
-          <span class="portal__action portal__action--accent">开始提问 →</span>
+          <h2>答疑</h2>
+          <p>随时提问，快速解决学习难题</p>
+          <div class="terminal__subcards">
+            <a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="terminal__subcard">
+              <span class="terminal__subcard-dot" style="background:var(--color-primary);"></span>
+              <span class="terminal__subcard-label">AI 答疑</span>
+              <span class="terminal__subcard-desc">智能即时解答</span>
+            </a>
+            <a href="https://chengze.online/live/teacher" target="_blank" rel="noopener" class="terminal__subcard">
+              <span class="terminal__subcard-dot" style="background:var(--color-accent);"></span>
+              <span class="terminal__subcard-label">助教答疑</span>
+              <span class="terminal__subcard-desc">老师在线解答</span>
+            </a>
+          </div>
+          <span class="terminal__action">进入答疑 →</span>
+        </div>
+
+        <!-- 社区 -->
+        <a href="#" class="terminal__card terminal__card--community" id="communityCard">
+          <div class="terminal__card-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h2>社区</h2>
+          <p>与同学交流，互相督促共同进步</p>
+          <span class="terminal__meta">学习打卡 · 经验分享 · 上岸故事</span>
+          <span class="terminal__action">进入社区 →</span>
         </a>
+
+        <!-- 我的 -->
+        <a href="#" class="terminal__card terminal__card--profile" id="profileCard">
+          <div class="terminal__card-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h2>我的</h2>
+          <p>学习记录 · 课程进度 · 个人中心</p>
+          <span class="terminal__meta">查看学习数据与个人资料</span>
+          <span class="terminal__action">查看详情 →</span>
+        </a>
+
       </div>
     </div>
   </section>
 
-  <!-- Subject Selection Modal -->
-  <div class="subject-modal" id="subjectModal">
-    <div class="subject-modal__overlay" id="subjectModalOverlay"></div>
-    <div class="subject-modal__panel">
-      <button class="subject-modal__close" id="subjectModalClose" aria-label="关闭">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-      <div class="subject-modal__header">
-        <div class="subject-modal__icon">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-          </svg>
-        </div>
-        <h2>选择科目</h2>
-        <p>AI 助教将根据所选科目提供针对性辅导</p>
-      </div>
-      <div class="subject-modal__grid">
-        <a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="subject-card">
-          <div class="subject-card__icon" style="background:rgba(37,99,235,0.1);color:#2563eb;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-            </svg>
-          </div>
-          <h3>大学英语</h3>
-          <p>词汇、语法、阅读、写作、翻译全覆盖</p>
-        </a>
-        <a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="subject-card">
-          <div class="subject-card__icon" style="background:rgba(124,58,237,0.1);color:#7c3aed;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-            </svg>
-          </div>
-          <h3>高等数学</h3>
-          <p>极限、导数、积分、微分方程系统讲解</p>
-        </a>
-        <a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="subject-card">
-          <div class="subject-card__icon" style="background:rgba(5,150,105,0.1);color:#059669;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-            </svg>
-          </div>
-          <h3>大学语文</h3>
-          <p>文学常识、阅读理解、写作技巧提升</p>
-        </a>
-        <a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="subject-card">
-          <div class="subject-card__icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-          </div>
-          <h3>计算机基础</h3>
-          <p>Office 操作、网络基础、数据结构</p>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Features -->
-  <section class="section features" id="features">
+  <!-- Quick Stats -->
+  <section class="stats-bar">
     <div class="container">
-      <div class="section__header">
-        <span class="section__tag">平台优势</span>
-        <h2 class="section__title">为什么选择承泽</h2>
-        <p class="section__desc">用科技赋能教育，让每一份努力都不被辜负</p>
-      </div>
-      <div class="features__grid">
-        <div class="feature__card">
-          <div class="feature__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-          <h3>系统化课程体系</h3>
-          <p>从基础到冲刺，科学分阶，适配不同基础的学员</p>
+      <div class="stats-bar__grid">
+        <div class="stats-bar__item">
+          <strong>10000+</strong>
+          <span>在学学员</span>
         </div>
-        <div class="feature__card">
-          <div class="feature__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-          <h3>AI 智能伴学</h3>
-          <p>大模型驱动的 AI 助教，7×24 小时答疑解惑</p>
+        <div class="stats-bar__item">
+          <strong>96%</strong>
+          <span>上岸率</span>
         </div>
-        <div class="feature__card">
-          <div class="feature__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-          <h3>随时随地学习</h3>
-          <p>PC、手机、平板多端同步，碎片时间也能高效备考</p>
+        <div class="stats-bar__item">
+          <strong>500+</strong>
+          <span>精品课程</span>
         </div>
-        <div class="feature__card">
-          <div class="feature__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <h3>名师直播授课</h3>
-          <p>资深专升本名师在线直播，实时互动答疑</p>
-        </div>
-        <div class="feature__card">
-          <div class="feature__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-          <h3>智能学习分析</h3>
-          <p>学习数据可视化追踪，薄弱环节精准定位</p>
-        </div>
-        <div class="feature__card">
-          <div class="feature__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <h3>历年真题库</h3>
-          <p>海量真题 + 模拟题，AI 自动批改和解析</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Numbers -->
-  <section class="section numbers">
-    <div class="container">
-      <div class="numbers__grid">
-        <div class="numbers__item"><strong class="numbers__num" data-target="10000">0</strong><span class="numbers__label">累计学员</span></div>
-        <div class="numbers__item"><strong class="numbers__num" data-target="50">0</strong><span class="numbers__label">名师团队</span></div>
-        <div class="numbers__item"><strong class="numbers__num" data-target="500">0</strong><span class="numbers__label">精品课程</span></div>
-        <div class="numbers__item"><strong class="numbers__num" data-target="96">0</strong><span class="numbers__label">上岸率</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section class="section about" id="about">
-    <div class="container">
-      <div class="section__header">
-        <span class="section__tag">关于我们</span>
-        <h2 class="section__title">让教育更有温度</h2>
-        <p class="section__desc">用技术打破壁垒，让每个专科生都有机会上本科</p>
-      </div>
-      <div class="about__body">
-        <div class="about__text">
-          <p>承泽教育成立于 2020 年，是一家专注于专升本领域的在线教育科技公司。我们汇聚了来自全国各地的优秀师资力量，结合人工智能技术，为千万专科学生提供高质量、高效率的升本备考服务。</p>
-          <p>我们的使命是让教育更公平、更高效。通过 AI 助教、在线课程、智能题库等核心产品，帮助学员突破地域和资源限制，真正实现"专科升本，改变人生"的梦想。</p>
+        <div class="stats-bar__item">
+          <strong>50+</strong>
+          <span>名师团队</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section class="section testimonials">
+  <section class="section testimonials" id="community">
     <div class="container">
       <div class="section__header">
         <span class="section__tag">学员心声</span>
@@ -238,7 +168,7 @@
       <div class="testimonials__grid">
         <div class="testimonial__card">
           <div class="testimonial__stars">★★★★★</div>
-          <blockquote>"AI 助教真的帮了大忙！晚上做题遇到不会的，随时可以问，比等老师回复快太多了。"</blockquote>
+          <blockquote>"AI 答疑随问随答，晚上做题遇到不会的，比等老师回复快太多了。"</blockquote>
           <div class="testimonial__author">
             <div class="testimonial__avatar" style="background:#2563eb;">小</div>
             <div><strong>小陈同学</strong><span>已上岸 浙江理工大学</span></div>
@@ -246,7 +176,7 @@
         </div>
         <div class="testimonial__card">
           <div class="testimonial__stars">★★★★★</div>
-          <blockquote>"课程体系很系统，从零基础开始也能跟上。数学从 40 分到 120 分，感谢各位老师！"</blockquote>
+          <blockquote>"课程体系很系统，从零基础开始也能跟上，助教答疑也很有耐心。"</blockquote>
           <div class="testimonial__author">
             <div class="testimonial__avatar" style="background:#7c3aed;">小</div>
             <div><strong>小李同学</strong><span>已上岸 杭州电子科技大学</span></div>
@@ -254,25 +184,11 @@
         </div>
         <div class="testimonial__card">
           <div class="testimonial__stars">★★★★★</div>
-          <blockquote>"在线看课太方便了，实习下班后在地铁上也能刷一节课，充分利用了碎片时间。"</blockquote>
+          <blockquote>"社区里大家一起打卡学习，互相督促，备考路上不孤单。"</blockquote>
           <div class="testimonial__author">
             <div class="testimonial__avatar" style="background:#059669;">小</div>
             <div><strong>小王同学</strong><span>已上岸 浙江财经大学</span></div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="section cta-section">
-    <div class="container">
-      <div class="cta-box">
-        <h2 class="cta-box__title">开始你的本科之旅</h2>
-        <p class="cta-box__desc">免费试听课程 · 一对一升学规划 · AI 助教体验</p>
-        <div class="cta-box__actions">
-          <a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="btn btn--white">免费试听课程</a>
-          <a href="#" class="btn btn--ghost js-open-subjects">体验 AI 助教</a>
         </div>
       </div>
     </div>
@@ -287,18 +203,19 @@
           <p>专注专升本在线教育<br>用科技让升本更简单</p>
         </div>
         <div class="footer__col">
-          <h4>学习入口</h4>
+          <h4>服务导航</h4>
           <ul>
-            <li><a href="https://chengze.online/live/student" target="_blank" rel="noopener">在线看课</a></li>
-            <li><a href="#" class="js-open-subjects">AI 助教</a></li>
-            <li><a href="https://chengze.online/live/teacher" target="_blank" rel="noopener">老师直播</a></li>
+            <li><a href="https://chengze.online/live/student" target="_blank" rel="noopener">课程中心</a></li>
+            <li><a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener">AI 答疑</a></li>
+            <li><a href="https://chengze.online/live/teacher" target="_blank" rel="noopener">助教答疑</a></li>
+            <li><a href="#">学习社区</a></li>
           </ul>
         </div>
         <div class="footer__col">
-          <h4>公司</h4>
+          <h4>关于</h4>
           <ul>
-            <li><a href="#features">平台优势</a></li>
-            <li><a href="#about">关于我们</a></li>
+            <li><a href="#">关于我们</a></li>
+            <li><a href="#">联系我们</a></li>
           </ul>
         </div>
         <div class="footer__col">
@@ -315,11 +232,6 @@
       </div>
     </div>
   </footer>
-
-  <!-- Back to top -->
-  <button class="back-to-top" id="backToTop" aria-label="回到顶部">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-  </button>
 
   <script src="js/main.js"></script>
 </body>
