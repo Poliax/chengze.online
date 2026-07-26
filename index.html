@@ -34,7 +34,7 @@
     </div>
   </header>
 
-  <!-- Hero / Student Dashboard -->
+  <!-- Hero -->
   <section class="hero" id="hero">
     <div class="hero__bg"></div>
     <div class="container hero__inner">
@@ -42,50 +42,85 @@
         <div class="hero__greeting">
           <span class="hero__label">专升本 · 一站式学习平台</span>
           <h1 class="hero__title">欢迎回来</h1>
-          <p class="hero__desc">继续你的升本之旅</p>
+          <p class="hero__desc">选择你的报考信息，获取专属备考方案</p>
         </div>
         <div class="hero__stats">
-          <div class="hero__stat">
-            <strong>12</strong>
-            <span>已学课程</span>
-          </div>
-          <div class="hero__stat">
-            <strong>86%</strong>
-            <span>学习完成度</span>
-          </div>
-          <div class="hero__stat">
-            <strong>3</strong>
-            <span>今日待学</span>
+          <div class="hero__stat"><strong>10000+</strong><span>在学学员</span></div>
+          <div class="hero__stat"><strong>96%</strong><span>上岸率</span></div>
+          <div class="hero__stat"><strong>500+</strong><span>精品课程</span></div>
+        </div>
+      </div>
+
+      <!-- Province/Major Selector -->
+      <div class="selector" id="selector">
+        <div class="selector__group">
+          <label class="selector__label">报考年份</label>
+          <div class="selector__select-wrap">
+            <select class="selector__select" id="selYear">
+              <option value="2026">2026 年</option>
+              <option value="2025">2025 年</option>
+              <option value="2024">2024 年</option>
+            </select>
+            <svg class="selector__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
         </div>
+        <div class="selector__divider"></div>
+        <div class="selector__group">
+          <label class="selector__label">报考省份</label>
+          <div class="selector__select-wrap">
+            <select class="selector__select" id="selProvince">
+              <option value="zhejiang">浙江省</option>
+              <option value="shandong">山东省</option>
+              <option value="henan">河南省</option>
+              <option value="guangdong">广东省</option>
+              <option value="jiangsu">江苏省</option>
+              <option value="sichuan">四川省</option>
+              <option value="fujian">福建省</option>
+              <option value="hunan">湖南省</option>
+              <option value="anhui">安徽省</option>
+              <option value="shaanxi">陕西省</option>
+              <option value="hubei">湖北省</option>
+              <option value="jiangxi">江西省</option>
+            </select>
+            <svg class="selector__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="selector__divider"></div>
+        <div class="selector__group">
+          <label class="selector__label">报考类别</label>
+          <div class="selector__select-wrap">
+            <select class="selector__select" id="selCategory"></select>
+            <svg class="selector__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exam Subjects Display -->
+      <div class="subjects-bar" id="subjectsBar">
+        <div class="subjects-bar__label">考试科目</div>
+        <div class="subjects-bar__list" id="subjectsList"></div>
       </div>
     </div>
   </section>
 
-  <!-- Service Terminal: 4 Main Sections -->
+  <!-- Service Terminal -->
   <section class="terminal">
     <div class="container">
       <div class="terminal__grid">
-
         <!-- 课程 -->
         <a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="terminal__card terminal__card--courses">
           <div class="terminal__card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-            </svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           </div>
           <h2>课程</h2>
           <p>名师精讲 · 系统化课程体系</p>
-          <span class="terminal__meta">大学英语 · 高等数学 · 大学语文 · 计算机</span>
+          <span class="terminal__meta" id="coursesMeta">大学英语 · 高等数学 · 大学语文 · 计算机</span>
           <span class="terminal__action">进入学习 →</span>
         </a>
-
         <!-- 答疑 -->
-        <div class="terminal__card terminal__card--qa" id="qaCard">
+        <div class="terminal__card terminal__card--qa" id="qa">
           <div class="terminal__card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
           <h2>答疑</h2>
           <p>随时提问，快速解决学习难题</p>
@@ -103,57 +138,26 @@
           </div>
           <span class="terminal__action">进入答疑 →</span>
         </div>
-
         <!-- 社区 -->
         <a href="#" class="terminal__card terminal__card--community" id="communityCard">
           <div class="terminal__card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <h2>社区</h2>
           <p>与同学交流，互相督促共同进步</p>
           <span class="terminal__meta">学习打卡 · 经验分享 · 上岸故事</span>
           <span class="terminal__action">进入社区 →</span>
         </a>
-
         <!-- 我的 -->
         <a href="#" class="terminal__card terminal__card--profile" id="profileCard">
           <div class="terminal__card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
           <h2>我的</h2>
           <p>学习记录 · 课程进度 · 个人中心</p>
           <span class="terminal__meta">查看学习数据与个人资料</span>
           <span class="terminal__action">查看详情 →</span>
         </a>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Quick Stats -->
-  <section class="stats-bar">
-    <div class="container">
-      <div class="stats-bar__grid">
-        <div class="stats-bar__item">
-          <strong>10000+</strong>
-          <span>在学学员</span>
-        </div>
-        <div class="stats-bar__item">
-          <strong>96%</strong>
-          <span>上岸率</span>
-        </div>
-        <div class="stats-bar__item">
-          <strong>500+</strong>
-          <span>精品课程</span>
-        </div>
-        <div class="stats-bar__item">
-          <strong>50+</strong>
-          <span>名师团队</span>
-        </div>
       </div>
     </div>
   </section>
@@ -233,6 +237,7 @@
     </div>
   </footer>
 
+  <script src="js/province-data.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
