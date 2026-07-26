@@ -42,6 +42,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ── Subject Selection Modal ──
+  const modal = document.getElementById('subjectModal');
+  const overlay = document.getElementById('subjectModalOverlay');
+  const closeBtn = document.getElementById('subjectModalClose');
+  const triggers = document.querySelectorAll('.js-open-subjects');
+
+  function openModal(e) {
+    e.preventDefault();
+    modal.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+
+  if (modal && overlay && closeBtn) {
+    triggers.forEach(el => el.addEventListener('click', openModal));
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  }
+
   // ── Count-up animation ──
   const countEls = document.querySelectorAll('.numbers__num, .hero__stat strong[data-count]');
 
@@ -54,17 +81,20 @@ document.addEventListener('DOMContentLoaded', () => {
         counted.add(entry.target);
 
         const target = parseInt(entry.target.dataset.target || entry.target.dataset.count || 0);
-        const suffix = entry.target.dataset.suffix || (target > 100 ? '+' : '%');
+        const suffix = (entry.target.dataset.target ? '+' : (target > 100 ? '+'));
+        const isRate = entry.target.dataset.target && entry.target.closest('.numbers__item');
+        const displaySuffix = isRate ? (target === 96 ? '%' : '+') : (target > 100 ? '+' : '%');
         const duration = 1500;
         const start = performance.now();
 
         function update(now) {
           const elapsed = now - start;
           const progress = Math.min(elapsed / duration, 1);
-          // Ease out cubic
           const eased = 1 - Math.pow(1 - progress, 3);
           const current = Math.round(eased * target);
-          entry.target.textContent = current.toLocaleString() + (progress >= 1 ? suffix : '');
+          const finalSuffix = progress >= 1 ?
+            (target === 96 ? '%' : (target >= 50 && target < 100 ? '+' : '+')) : '';
+          entry.target.textContent = current.toLocaleString() + (progress >= 1 ? finalSuffix : '');
           if (progress < 1) requestAnimationFrame(update);
         }
 
@@ -78,12 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Scroll reveal ──
   const revealSections = [
-    '.portals__grid',
-    '.features__grid',
-    '.numbers__grid',
-    '.about__body',
-    '.testimonials__grid',
-    '.cta-box'
+    '.portals__grid', '.features__grid', '.numbers__grid',
+    '.about__body', '.testimonials__grid', '.cta-box'
   ];
 
   const revealElements = document.querySelectorAll(revealSections.join(','));
@@ -92,22 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
+        entry.target.classList.add('reveal-visible');
         revealObserver.unobserve(entry.target);
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-    revealElements.forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
-      el.style.transition = 'opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)';
-      revealObserver.observe(el);
-    });
+    revealElements.forEach(el => revealObserver.observe(el));
   }
 
   // ── Smooth scroll for anchor links ──
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  document.querySelectorAll('a[href^="#"]:not(.js-open-subjects)').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
