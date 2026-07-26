@@ -1,5 +1,5 @@
 /**
- * 辰泽教育 — AI Tutor Chat
+ * 承泽教育 — AI Tutor Chat
  * Intelligent Q&A assistant for 专升本 education.
  */
 
@@ -372,7 +372,7 @@ To conclude, ______.
 
     // Initial greeting
     setTimeout(() => {
-      addMessage('ai', '你好呀！👋 我是辰泽教育的 AI 学习助教。\n\n你可以问我任何专升本备考的问题，比如：\n- 💬 "虚拟语气有哪些用法？"\n- 💬 "高数极限怎么求？"\n- 💬 "帮我分析这道英语阅读题"\n\n告诉我你想学什么，我们开始吧！🚀');
+      addMessage('ai', '你好呀！👋 我是承泽教育的 AI 学习助教。\n\n你可以问我任何专升本备考的问题，比如：\n- 💬 "虚拟语气有哪些用法？"\n- 💬 "高数极限怎么求？"\n- 💬 "帮我分析这道英语阅读题"\n\n告诉我你想学什么，我们开始吧！🚀');
     }, 500);
   }
 

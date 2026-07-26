@@ -1,5 +1,5 @@
 /**
- * 辰泽教育 — Main JavaScript
+ * 承泽教育 — Main JavaScript
  */
 
 document.addEventListener('DOMContentLoaded', () => {

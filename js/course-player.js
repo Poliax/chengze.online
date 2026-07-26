@@ -1,5 +1,5 @@
 /**
- * 辰泽教育 — Course Video Player (Canvas Simulation)
+ * 承泽教育 — Course Video Player (Canvas Simulation)
  * Simulates a course lecture video with interactive playback controls.
  */
 
@@ -160,7 +160,7 @@
     ctx.fillStyle = 'rgba(255,255,255,0.06)';
     ctx.font = '600 14px "Noto Sans SC", sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText('辰泽教育', w - 80, h - 40);
+    ctx.fillText('承泽教育', w - 80, h - 40);
   }
 
   // ── Update controls ──
