@@ -1,0 +1,21 @@
+{
+  "shandong": {
+    "year": "2026",
+    "subjects": [
+      { "name": "大学英语", "score": 100, "duration": "120分钟", "types": "单选、多选、填空、阅读理解、翻译、写作" },
+      { "name": "高等数学Ⅰ", "score": 100, "duration": "120分钟", "types": "单选、填空、计算、解答、证明、应用" },
+      { "name": "高等数学Ⅱ", "score": 100, "duration": "120分钟", "types": "单选、填空、计算、解答、应用" },
+      { "name": "高等数学Ⅲ", "score": 100, "duration": "120分钟", "types": "单选、填空、计算、解答" },
+      { "name": "计算机", "score": 100, "duration": "120分钟", "types": "单选、多选、判断、填空、简答、分析" },
+      { "name": "大学语文", "score": 100, "duration": "120分钟", "types": "单选、多选、填空、阅读分析、写作" }
+    ]
+  },
+  "zhejiang": {
+    "year": "2026",
+    "subjects": [
+      { "name": "大学英语", "score": 150, "duration": "150分钟", "types": "阅读理解、完形填空、翻译、写作" },
+      { "name": "高等数学", "score": 150, "duration": "150分钟", "types": "单选、填空、计算、综合" },
+      { "name": "大学语文", "score": 150, "duration": "150分钟", "types": "单选、阅读分析、写作" }
+    ]
+  }
+}

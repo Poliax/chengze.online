@@ -1,0 +1,46 @@
+{
+  "shandong": {
+    "year": "2026",
+    "plan": [
+      { "university": "山东中医药大学", "major": "中医学", "code": "100501K", "planCount": null, "minScore": 297.15 },
+      { "university": "山东中医药大学", "major": "针灸推拿学", "code": "100502K", "planCount": null, "minScore": 303.14 },
+      { "university": "济宁医学院", "major": "临床医学", "code": "100201K", "planCount": null, "minScore": 299.15 },
+      { "university": "济宁医学院", "major": "口腔医学", "code": "100301K", "planCount": null, "minScore": 314.15 },
+      { "university": "济宁医学院", "major": "医学检验技术", "code": "101001", "planCount": null, "minScore": 313.15 },
+      { "university": "德州学院", "major": "小学教育", "code": "040107", "planCount": null, "minScore": 270.15 },
+      { "university": "德州学院", "major": "汉语言文学", "code": "050101", "planCount": null, "minScore": 301.15 },
+      { "university": "德州学院", "major": "英语", "code": "050201", "planCount": null, "minScore": 288.14 },
+      { "university": "德州学院", "major": "机械设计制造及其自动化", "code": "080202", "planCount": null, "minScore": 292.15 },
+      { "university": "德州学院", "major": "护理学", "code": "101101", "planCount": null, "minScore": 309.14 },
+      { "university": "德州学院", "major": "会计学", "code": "120203K", "planCount": null, "minScore": 298.15 },
+      { "university": "临沂大学", "major": "法学", "code": "030101K", "planCount": null, "minScore": 286.14 },
+      { "university": "临沂大学", "major": "学前教育", "code": "040106", "planCount": null, "minScore": 303.15 },
+      { "university": "临沂大学", "major": "汉语言文学", "code": "050101", "planCount": null, "minScore": 298.15 },
+      { "university": "临沂大学", "major": "电气工程及其自动化", "code": "080601", "planCount": null, "minScore": 305.14 },
+      { "university": "临沂大学", "major": "计算机科学与技术", "code": "080901", "planCount": null, "minScore": 307.14 },
+      { "university": "临沂大学", "major": "土木工程", "code": "081001", "planCount": null, "minScore": 290.14 },
+      { "university": "临沂大学", "major": "会计学", "code": "120203K", "planCount": null, "minScore": 303.16 },
+      { "university": "泰山学院", "major": "学前教育", "code": "040106", "planCount": null, "minScore": 289.13 },
+      { "university": "泰山学院", "major": "计算机科学与技术", "code": "080901", "planCount": null, "minScore": 301.15 },
+      { "university": "泰山学院", "major": "财务管理", "code": "120204", "planCount": null, "minScore": 292.14 },
+      { "university": "济宁学院", "major": "经济学", "code": "020101", "planCount": null, "minScore": 274.13 },
+      { "university": "济宁学院", "major": "学前教育", "code": "040106", "planCount": null, "minScore": 287.14 },
+      { "university": "济宁学院", "major": "汉语言文学", "code": "050101", "planCount": null, "minScore": 283.13 },
+      { "university": "济宁学院", "major": "计算机科学与技术", "code": "080901", "planCount": null, "minScore": 295.14 },
+      { "university": "济宁学院", "major": "电气工程及其自动化", "code": "080601", "planCount": null, "minScore": 294.15 },
+      { "university": "菏泽学院", "major": "经济学", "code": "020101", "planCount": 40, "minScore": null },
+      { "university": "济宁学院", "major": "经济学", "code": "020101", "planCount": 90, "minScore": null },
+      { "university": "齐鲁理工学院", "major": "金融学", "code": "020301K", "planCount": 110, "minScore": null },
+      { "university": "山东财经大学东方学院", "major": "金融学", "code": "020301K", "planCount": 100, "minScore": null },
+      { "university": "山东财经大学燕山学院", "major": "金融学", "code": "020301K", "planCount": 190, "minScore": null },
+      { "university": "泰山科技学院", "major": "金融学", "code": "020301K", "planCount": 140, "minScore": null },
+      { "university": "山东交通学院", "major": "金融学", "code": "020301K", "planCount": 90, "minScore": null },
+      { "university": "聊城大学东昌学院", "major": "经济学", "code": "020101", "planCount": 30, "minScore": null },
+      { "university": "烟台科技学院", "major": "经济学", "code": "020101", "planCount": 30, "minScore": null }
+    ]
+  },
+  "default": {
+    "year": "2026",
+    "plan": []
+  }
+}

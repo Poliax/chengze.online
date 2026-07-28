@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="承泽教育 — 专注专升本在线教育，课程、答疑、社区一站式学习平台。">
-  <meta property="og:title" content="承泽教育 · 专升本在线学习平台">
-  <meta property="og:description" content="课程学习 · 助教答疑 · AI 智能答疑 · 学习社区">
+  <meta property="og:title" content="承泽教育 · 专升本学习平台">
+  <meta property="og:description" content="课程学习 · 智能练习 · 助教答疑 · AI 答疑 · 学习社区">
   <meta property="og:url" content="https://www.chengze.online">
   <meta property="og:type" content="website">
-  <title>承泽教育 · 专升本在线学习平台</title>
+  <title>承泽教育 · 专升本学习平台</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,224 +16,110 @@
 </head>
 <body>
 
-  <!-- Navigation -->
   <header class="header" id="header">
     <div class="container header__inner">
       <a href="index.html" class="logo"><span class="logo__icon">&#9650;</span>承泽教育</a>
       <nav class="nav" id="nav">
         <ul class="nav__list">
-          <li><a href="#courses" class="nav__link">课程</a></li>
-          <li><a href="#qa" class="nav__link">答疑</a></li>
-          <li><a href="#community" class="nav__link">社区</a></li>
-          <li><a href="#profile" class="nav__link">我的</a></li>
+          <li><a href="#" class="nav__link active" data-view="home">主页</a></li>
+          <li><a href="#" class="nav__link" data-view="courses">课程</a></li>
+          <li><a href="#" class="nav__link" data-view="practice">练习</a></li>
+          <li><a href="#" class="nav__link" data-view="qa">答疑</a></li>
+          <li><a href="#" class="nav__link" data-view="community">社区</a></li>
         </ul>
       </nav>
-      <button class="menu-toggle" id="menuToggle" aria-label="菜单">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="header__right">
+        <button class="theme-btn" id="themeBtn" aria-label="切换主题">
+          <svg class="theme-btn__sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="theme-btn__moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="avatar-btn" id="avatarBtn" aria-label="个人信息"><div class="avatar-btn__inner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></button>
+        <button class="menu-toggle" id="menuToggle" aria-label="菜单"><span></span><span></span><span></span></button>
+      </div>
     </div>
   </header>
 
-  <!-- Hero -->
-  <section class="hero" id="hero">
-    <div class="hero__bg"></div>
-    <div class="container hero__inner">
-      <div class="hero__top">
-        <div class="hero__greeting">
-          <span class="hero__label">专升本 · 一站式学习平台</span>
-          <h1 class="hero__title">欢迎回来</h1>
-          <p class="hero__desc">选择你的报考信息，获取专属备考方案</p>
+  <div class="view active" id="viewHome">
+    <section class="brand-hero">
+      <div class="brand-hero__bg"></div>
+      <div class="container">
+        <div class="brand-hero__top">
+          <div class="brand-hero__text"><h1 class="brand-hero__title" style="display:inline-block;font-size:clamp(26px,4vw,36px);">专升本</h1><span class="brand-hero__subtitle" style="font-size:clamp(16px,2.5vw,22px);color:var(--color-text-muted);margin-left:6px;">一站式学习平台</span><p class="brand-hero__desc">名师在线授课 · 助教一对一辅导 · AI 智能答疑</p></div>
+          <div class="brand-hero__stats"><div class="brand-hero__stat"><strong>10000+</strong><span>在册学员</span></div><div class="brand-hero__stat"><strong>96%</strong><span>上岸率</span></div><div class="brand-hero__stat"><strong>500+</strong><span>精品课程</span></div></div>
         </div>
-        <div class="hero__stats">
-          <div class="hero__stat"><strong>10000+</strong><span>在学学员</span></div>
-          <div class="hero__stat"><strong>96%</strong><span>上岸率</span></div>
-          <div class="hero__stat"><strong>500+</strong><span>精品课程</span></div>
+        <div class="selector" id="selector">
+          <div class="selector__group"><label class="selector__label">考试年份</label><div class="selector__select-wrap"><select class="selector__select" id="selYear"></select><svg class="selector__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+          <div class="selector__divider"></div>
+          <div class="selector__group"><label class="selector__label">考试省份</label><div class="selector__select-wrap"><select class="selector__select" id="selProvince"><option value="zhejiang">浙江省</option><option value="shandong">山东省</option><option value="henan">河南省</option><option value="guangdong">广东省</option><option value="jiangsu">江苏省</option><option value="sichuan">四川省</option><option value="fujian">福建省</option><option value="hunan">湖南省</option><option value="anhui">安徽省</option><option value="shaanxi">陕西省</option><option value="hubei">湖北省</option><option value="jiangxi">江西省</option></select><svg class="selector__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div>
+          <div class="selector__chips" id="selectorChips"></div>
         </div>
       </div>
+    </section>
+    <div class="schedule-bar-section"><div class="container"><div class="home-timeline" id="scheduleBar"></div></div></div>
+    <section class="res-section"><div class="container">
+      <div class="res-tabs" id="resTabs">
+        <div class="res-tab active" data-tab="syllabus"><div class="res-tab__icon" style="background:rgba(124,58,237,0.1);color:#7c3aed;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><h3>考试大纲</h3></div>
+        <div class="res-tab" data-tab="papers"><div class="res-tab__icon" style="background:rgba(5,150,105,0.1);color:#059669;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h3>历年真题</h3></div>
+        <div class="res-tab" data-tab="major"><div class="res-tab__icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div><h3>专业对照目录</h3></div>
+        <div class="res-tab" data-tab="admission"><div class="res-tab__icon" style="background:rgba(220,38,38,0.1);color:#dc2626;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h3>招录数据</h3></div>
+      </div>
+      <div class="res-content" id="resContent">
+        <div class="res-pane active" id="resSyllabus"><div class="res-list"><a href="/data/2026-shandong-syllabus.pdf" target="_blank" class="res-file"><div class="res-file__icon">PDF</div><div class="res-file__info"><strong>山东省 2026 年专升本公共基础课考试要求</strong><span>山东省教育招生考试院 · 35 页 · 2027 年通用</span></div><span class="res-file__action">查看 →</span></a></div></div>
+        <div class="res-pane" id="resPapers"><div class="res-empty">历年真题持续更新中</div></div>
+        <div class="res-pane" id="resMajor"><div class="res-empty">专业对照目录持续更新中</div></div>
+        <div class="res-pane" id="resAdmission"><div class="res-empty" id="resAdmissionBtn" style="cursor:pointer;color:var(--color-primary);font-weight:600;">点击查看招录数据 →</div></div>
+      </div>
+    </div></section>    </div></div></section>
+  </div>
 
-      <!-- Province/Major Selector -->
-      <div class="selector" id="selector">
-        <div class="selector__group">
-          <label class="selector__label">报考年份</label>
-          <div class="selector__select-wrap">
-            <select class="selector__select" id="selYear">
-              <option value="2026">2026 年</option>
-              <option value="2025">2025 年</option>
-              <option value="2024">2024 年</option>
-            </select>
-            <svg class="selector__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-        </div>
-        <div class="selector__divider"></div>
-        <div class="selector__group">
-          <label class="selector__label">报考省份</label>
-          <div class="selector__select-wrap">
-            <select class="selector__select" id="selProvince">
-              <option value="zhejiang">浙江省</option>
-              <option value="shandong">山东省</option>
-              <option value="henan">河南省</option>
-              <option value="guangdong">广东省</option>
-              <option value="jiangsu">江苏省</option>
-              <option value="sichuan">四川省</option>
-              <option value="fujian">福建省</option>
-              <option value="hunan">湖南省</option>
-              <option value="anhui">安徽省</option>
-              <option value="shaanxi">陕西省</option>
-              <option value="hubei">湖北省</option>
-              <option value="jiangxi">江西省</option>
-            </select>
-            <svg class="selector__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-        </div>
-        <div class="selector__divider"></div>
-        <div class="selector__group">
-          <label class="selector__label">报考类别</label>
-          <div class="selector__select-wrap">
-            <select class="selector__select" id="selCategory"></select>
-            <svg class="selector__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-        </div>
-      </div>
+  <div class="view" id="viewCourses"><div class="page-section"><div class="container">
+    <div class="course-section"><div class="course-section__header"><h3>公开课</h3><span class="course-section__tag">免费试听</span></div><div class="public-grid" id="publicGrid"></div></div>
+    <div class="course-section"><div class="course-section__header"><h3>班课</h3><span class="course-section__tag">系统学习</span></div><div class="courses-grid" id="coursesGrid"></div></div>
+  </div></div></div>
 
-      <!-- Exam Subjects Display -->
-      <div class="subjects-bar" id="subjectsBar">
-        <div class="subjects-bar__label">考试科目</div>
-        <div class="subjects-bar__list" id="subjectsList"></div>
-      </div>
+  <div class="view" id="viewPractice"><div class="page-section"><div class="container">
+    <div class="practice-grid">
+      <a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="practice-card"><div class="practice-card__head" style="background:rgba(37,99,235,0.1);color:#2563eb;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h3>历年真题</h3><p>近 5 年专升本真题汇总</p><span class="practice-card__action">开始练习 →</span></a>
+      <a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="practice-card"><div class="practice-card__head" style="background:rgba(124,58,237,0.1);color:#7c3aed;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><h3>智能组卷</h3><p>AI 生成专属试卷</p><span class="practice-card__action">开始练习 →</span></a>
+      <a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="practice-card"><div class="practice-card__head" style="background:rgba(5,150,105,0.1);color:#059669;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><h3>错题本</h3><p>针对性反复练习</p><span class="practice-card__action">查看错题 →</span></a>
+      <a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="practice-card"><div class="practice-card__head" style="background:rgba(245,158,11,0.1);color:#f59e0b;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><h3>每日一练</h3><p>保持做题手感</p><span class="practice-card__action">开始练习 →</span></a>
     </div>
-  </section>
+  </div></div></div>
 
-  <!-- Service Terminal -->
-  <section class="terminal">
-    <div class="container">
-      <div class="terminal__grid">
-        <!-- 课程 -->
-        <a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="terminal__card terminal__card--courses">
-          <div class="terminal__card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-          </div>
-          <h2>课程</h2>
-          <p>名师精讲 · 系统化课程体系</p>
-          <span class="terminal__meta" id="coursesMeta">大学英语 · 高等数学 · 大学语文 · 计算机</span>
-          <span class="terminal__action">进入学习 →</span>
-        </a>
-        <!-- 答疑 -->
-        <div class="terminal__card terminal__card--qa" id="qa">
-          <div class="terminal__card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <h2>答疑</h2>
-          <p>随时提问，快速解决学习难题</p>
-          <div class="terminal__subcards">
-            <a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="terminal__subcard">
-              <span class="terminal__subcard-dot" style="background:var(--color-primary);"></span>
-              <span class="terminal__subcard-label">AI 答疑</span>
-              <span class="terminal__subcard-desc">智能即时解答</span>
-            </a>
-            <a href="https://chengze.online/live/teacher" target="_blank" rel="noopener" class="terminal__subcard">
-              <span class="terminal__subcard-dot" style="background:var(--color-accent);"></span>
-              <span class="terminal__subcard-label">助教答疑</span>
-              <span class="terminal__subcard-desc">老师在线解答</span>
-            </a>
-          </div>
-          <span class="terminal__action">进入答疑 →</span>
-        </div>
-        <!-- 社区 -->
-        <a href="#" class="terminal__card terminal__card--community" id="communityCard">
-          <div class="terminal__card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h2>社区</h2>
-          <p>与同学交流，互相督促共同进步</p>
-          <span class="terminal__meta">学习打卡 · 经验分享 · 上岸故事</span>
-          <span class="terminal__action">进入社区 →</span>
-        </a>
-        <!-- 我的 -->
-        <a href="#" class="terminal__card terminal__card--profile" id="profileCard">
-          <div class="terminal__card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <h2>我的</h2>
-          <p>学习记录 · 课程进度 · 个人中心</p>
-          <span class="terminal__meta">查看学习数据与个人资料</span>
-          <span class="terminal__action">查看详情 →</span>
-        </a>
-      </div>
+  <div class="view" id="viewQa"><div class="page-section"><div class="container">
+    <div class="qa-section"><div class="qa-section__header"><h3>AI 答疑</h3><span class="qa-section__tag">7×24 小时在线</span></div><div class="ai-tutor-grid" id="aiTutorGrid"></div></div>
+    <div class="qa-section"><div class="qa-section__header"><h3>助教答疑</h3><span class="qa-section__tag">老师在线解答</span></div><div class="assistant-grid" id="assistantGrid"></div></div>
+  </div></div></div>
+
+  <div class="view" id="viewCommunity"><div class="page-section"><div class="container">
+    <div class="soul-feed" id="soulFeed"></div>
+  </div></div></div>
+
+  <div class="profile-overlay" id="profileOverlay"></div>
+  <aside class="profile-panel" id="profilePanel">
+    <div class="profile-panel__header"><h3>个人信息</h3><button class="profile-panel__close" id="profileClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="profile-panel__body">
+      <div class="profile-avatar"><div class="profile-avatar__circle"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="profile-avatar__name">学员</div><div class="profile-avatar__meta">UID: CZ2026001</div></div>
+      <div class="profile-section"><h4>报考信息</h4><div class="profile-row"><span class="profile-row__label">考试年份</span><span class="profile-row__value" id="profileYear">2027 年</span></div><div class="profile-row"><span class="profile-row__label">考试省份</span><span class="profile-row__value" id="profileProvince">浙江省</span></div></div>
+      <div class="profile-section"><h4>快速入口</h4><a href="https://chengze.online/live/student" target="_blank" rel="noopener" class="profile-link">进入课程中心</a><a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener" class="profile-link">AI 智能答疑</a><a href="https://chengze.online/live/teacher" target="_blank" rel="noopener" class="profile-link">联系助教老师</a></div>
     </div>
-  </section>
+  </aside>
 
-  <!-- Testimonials -->
-  <section class="section testimonials" id="community">
-    <div class="container">
-      <div class="section__header">
-        <span class="section__tag">学员心声</span>
-        <h2 class="section__title">他们在这里实现了本科梦</h2>
-      </div>
-      <div class="testimonials__grid">
-        <div class="testimonial__card">
-          <div class="testimonial__stars">★★★★★</div>
-          <blockquote>"AI 答疑随问随答，晚上做题遇到不会的，比等老师回复快太多了。"</blockquote>
-          <div class="testimonial__author">
-            <div class="testimonial__avatar" style="background:#2563eb;">小</div>
-            <div><strong>小陈同学</strong><span>已上岸 浙江理工大学</span></div>
-          </div>
-        </div>
-        <div class="testimonial__card">
-          <div class="testimonial__stars">★★★★★</div>
-          <blockquote>"课程体系很系统，从零基础开始也能跟上，助教答疑也很有耐心。"</blockquote>
-          <div class="testimonial__author">
-            <div class="testimonial__avatar" style="background:#7c3aed;">小</div>
-            <div><strong>小李同学</strong><span>已上岸 杭州电子科技大学</span></div>
-          </div>
-        </div>
-        <div class="testimonial__card">
-          <div class="testimonial__stars">★★★★★</div>
-          <blockquote>"社区里大家一起打卡学习，互相督促，备考路上不孤单。"</blockquote>
-          <div class="testimonial__author">
-            <div class="testimonial__avatar" style="background:#059669;">小</div>
-            <div><strong>小王同学</strong><span>已上岸 浙江财经大学</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <div class="modal-overlay" id="admissionOverlay"></div>
+  <div class="admission-modal" id="admissionModal">
+    <div class="admission-modal__header"><div><h3 class="admission-modal__title">招录数据</h3><p class="admission-modal__sub" id="admissionProvince">山东省 · 2026 年</p></div><div style="display:flex;gap:8px;align-items:center;"><span style="font-size:12px;color:#999490;" id="admissionCount"></span><button class="admission-modal__close" id="admissionClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div></div>
+    <div class="admission-modal__body"><div class="admission-search"><input type="text" id="admissionSearch" placeholder="搜索院校或专业..." class="admission-search__input"></div><div class="admission-table-wrap"><table class="admission-table"><thead><tr><th>院校</th><th>专业</th><th>计划数</th><th>最低投档线</th></tr></thead><tbody id="admissionBody"></tbody></table></div></div>
+  </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer__grid">
-        <div class="footer__col">
-          <h4><span class="logo__icon">&#9650;</span>承泽教育</h4>
-          <p>专注专升本在线教育<br>用科技让升本更简单</p>
-        </div>
-        <div class="footer__col">
-          <h4>服务导航</h4>
-          <ul>
-            <li><a href="https://chengze.online/live/student" target="_blank" rel="noopener">课程中心</a></li>
-            <li><a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener">AI 答疑</a></li>
-            <li><a href="https://chengze.online/live/teacher" target="_blank" rel="noopener">助教答疑</a></li>
-            <li><a href="#">学习社区</a></li>
-          </ul>
-        </div>
-        <div class="footer__col">
-          <h4>关于</h4>
-          <ul>
-            <li><a href="#">关于我们</a></li>
-            <li><a href="#">联系我们</a></li>
-          </ul>
-        </div>
-        <div class="footer__col">
-          <h4>联系我们</h4>
-          <ul>
-            <li>service@chengze.online</li>
-            <li>中国 · 杭州</li>
-            <li>工作日 9:00 - 21:00</li>
-          </ul>
-        </div>
+        <div class="footer__col"><h4><span class="logo__icon">&#9650;</span>承泽教育</h4><p>专注专升本在线教育<br>用科技让升本更简单</p></div>
+        <div class="footer__col"><h4>服务导航</h4><ul><li><a href="https://chengze.online/live/student" target="_blank" rel="noopener">课程中心</a></li><li><a href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener">AI 答疑</a></li><li><a href="https://chengze.online/live/teacher" target="_blank" rel="noopener">助教答疑</a></li></ul></div>
+        <div class="footer__col"><h4>关于</h4><ul><li><a href="#">关于我们</a></li><li><a href="#">联系我们</a></li></ul></div>
+        <div class="footer__col"><h4>联系我们</h4><ul><li>service@chengze.online</li><li>中国 · 杭州</li><li>工作日 9:00 - 21:00</li></ul></div>
       </div>
-      <div class="footer__bottom">
-        <p>&copy; 2026 承泽教育. All rights reserved.</p>
-      </div>
+      <div class="footer__bottom"><p>&copy; 2026 承泽教育. All rights reserved.</p></div>
     </div>
   </footer>
 

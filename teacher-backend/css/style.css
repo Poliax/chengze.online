@@ -3,7 +3,7 @@
   --bg: #f1f5f9; --surface: #fff; --text: #0f172a; --muted: #64748b;
   --light: #94a3b8; --primary: #2563eb; --primary-hover: #1d4ed8;
   --border: #e2e8f0; --border-light: #f1f5f9; --radius: 10px; --radius-sm: 6px;
-  --font: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Inter', system-ui, sans-serif;
+  --font: 'Noto Serif SC', '宋体', 'SimSun', 'Songti SC', Georgia, 'Times New Roman', serif;
 }
 body {
   font-family: var(--font); background: var(--bg); color: var(--text);
