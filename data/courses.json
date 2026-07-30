@@ -8,7 +8,7 @@
         "duration": "2小时",
         "teacher": "张老师",
         "desc": "专升本英语基础入门，词汇记忆法+基础语法精讲",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       },
       {
         "name": "高数入门精讲",
@@ -17,7 +17,7 @@
         "duration": "3小时",
         "teacher": "李老师",
         "desc": "函数极限基础概念精讲，零基础也能轻松跟上",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       },
       {
         "name": "升本政策解读",
@@ -26,10 +26,43 @@
         "duration": "1小时",
         "teacher": "王老师",
         "desc": "浙江专升本最新政策、报名流程全面解读",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
+      },
+      {
+        "name": "高等数学基础课",
+        "tag": "免费",
+        "lessons": 4,
+        "duration": "2小时",
+        "teacher": "李老师",
+        "desc": "函数、极限、导数基础精讲",
+        "tagColor": "#047857"
       }
     ],
     "formal": [
+      {
+        "name": "自强班",
+        "tag": "自强班",
+        "price": "¥1,280",
+        "duration": "4个月",
+        "sessions": 80,
+        "tagColor": "#2d5f6e",
+        "visible": true,
+        "teacher": "李老师",
+        "startDate": "2027年4月",
+        "catalog": [
+          "第一讲 英语基础入门",
+          "第二讲 语法核心概念",
+          "第三讲 词汇500词",
+          "第四讲 简单阅读训练"
+        ],
+        "calendar": [
+          "4月2日 开课",
+          "4月9日 第二课",
+          "4月16日 第三课",
+          "4月23日 阶段测试"
+        ],
+        "mode": "online"
+      },
       {
         "name": "卓越班",
         "tag": "卓越班",
@@ -53,30 +86,21 @@
           "3月19日 第二周课程",
           "3月26日 第一月测验",
           "4月2日 第三周课程"
-        ]
+        ],
+        "mode": "online"
       },
       {
-        "name": "自强班",
-        "tag": "自强班",
-        "price": "¥1,280",
-        "duration": "4个月",
-        "sessions": 80,
-        "tagColor": "#7c3aed",
+        "name": "飞跃班",
+        "tag": "飞跃班",
+        "price": "¥3,680",
+        "duration": "8个月",
+        "sessions": 150,
+        "mode": "offline",
         "visible": true,
-        "teacher": "李老师",
-        "startDate": "2027年4月",
-        "catalog": [
-          "第一讲 英语基础入门",
-          "第二讲 语法核心概念",
-          "第三讲 词汇500词",
-          "第四讲 简单阅读训练"
-        ],
-        "calendar": [
-          "4月2日 开课",
-          "4月9日 第二课",
-          "4月16日 第三课",
-          "4月23日 阶段测试"
-        ]
+        "tagColor": "#2d5f6e",
+        "teacher": "名师团队",
+        "startDate": "2027年3月",
+        "desc": "线下集训营，名师面对面辅导"
       }
     ]
   },
@@ -89,7 +113,7 @@
         "duration": "2小时",
         "teacher": "张老师",
         "desc": "专升本英语基础入门，词汇记忆法+基础语法精讲",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       },
       {
         "name": "高数入门精讲",
@@ -98,7 +122,7 @@
         "duration": "3小时",
         "teacher": "李老师",
         "desc": "函数极限基础概念精讲，零基础也能轻松跟上",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       },
       {
         "name": "升本政策解读",
@@ -107,10 +131,43 @@
         "duration": "1小时",
         "teacher": "王老师",
         "desc": "山东专升本最新政策、报名流程全面解读",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
+      },
+      {
+        "name": "高等数学基础课",
+        "tag": "免费",
+        "lessons": 4,
+        "duration": "2小时",
+        "teacher": "李老师",
+        "desc": "函数、极限、导数基础精讲",
+        "tagColor": "#047857"
       }
     ],
     "formal": [
+      {
+        "name": "自强班",
+        "tag": "自强班",
+        "price": "¥1,280",
+        "duration": "4个月",
+        "sessions": 90,
+        "tagColor": "#2d5f6e",
+        "visible": true,
+        "teacher": "李老师",
+        "startDate": "2027年4月",
+        "catalog": [
+          "第一讲 基础导学",
+          "第二讲 词汇500",
+          "第三讲 语法核心",
+          "第四讲 阅读基础"
+        ],
+        "calendar": [
+          "4月2日 开课",
+          "4月9日 第二课",
+          "4月16日 第三课",
+          "4月23日 测验"
+        ],
+        "mode": "online"
+      },
       {
         "name": "卓越班",
         "tag": "卓越班",
@@ -133,30 +190,21 @@
           "3月12日 词汇课",
           "3月19日 语法课",
           "3月26日 计算机课"
-        ]
+        ],
+        "mode": "online"
       },
       {
-        "name": "自强班",
-        "tag": "自强班",
-        "price": "¥1,280",
-        "duration": "4个月",
-        "sessions": 90,
-        "tagColor": "#7c3aed",
+        "name": "飞跃班",
+        "tag": "飞跃班",
+        "price": "¥3,680",
+        "duration": "8个月",
+        "sessions": 160,
+        "mode": "offline",
         "visible": true,
-        "teacher": "李老师",
-        "startDate": "2027年4月",
-        "catalog": [
-          "第一讲 基础导学",
-          "第二讲 词汇500",
-          "第三讲 语法核心",
-          "第四讲 阅读基础"
-        ],
-        "calendar": [
-          "4月2日 开课",
-          "4月9日 第二课",
-          "4月16日 第三课",
-          "4月23日 测验"
-        ]
+        "tagColor": "#2d5f6e",
+        "teacher": "名师团队",
+        "startDate": "2027年3月",
+        "desc": "线下集训营，名师面对面辅导"
       }
     ]
   },
@@ -169,7 +217,7 @@
         "duration": "2小时",
         "teacher": "张老师",
         "desc": "专升本英语基础入门",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       },
       {
         "name": "高数入门精讲",
@@ -178,7 +226,7 @@
         "duration": "3小时",
         "teacher": "李老师",
         "desc": "函数极限基础概念精讲",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       },
       {
         "name": "升本政策解读",
@@ -187,10 +235,43 @@
         "duration": "1小时",
         "teacher": "王老师",
         "desc": "河南专升本最新政策解读",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
+      },
+      {
+        "name": "高等数学基础课",
+        "tag": "免费",
+        "lessons": 4,
+        "duration": "2小时",
+        "teacher": "李老师",
+        "desc": "函数、极限、导数基础精讲",
+        "tagColor": "#047857"
       }
     ],
     "formal": [
+      {
+        "name": "自强班",
+        "tag": "自强班",
+        "price": "¥1,280",
+        "duration": "4个月",
+        "sessions": 75,
+        "tagColor": "#2d5f6e",
+        "visible": true,
+        "teacher": "名师团队",
+        "startDate": "2027年3月",
+        "catalog": [
+          "第一讲 课程导学",
+          "第二讲 基础知识",
+          "第三讲 核心考点",
+          "第四讲 综合训练"
+        ],
+        "calendar": [
+          "3月 第一周",
+          "3月 第二周",
+          "3月 第三周",
+          "4月 第四周"
+        ],
+        "mode": "online"
+      },
       {
         "name": "卓越班",
         "tag": "卓越班",
@@ -212,15 +293,71 @@
           "3月 第二周",
           "3月 第三周",
           "4月 第四周"
-        ]
+        ],
+        "mode": "online"
       },
+      {
+        "name": "飞跃班",
+        "tag": "飞跃班",
+        "price": "¥3,680",
+        "duration": "8个月",
+        "sessions": 140,
+        "mode": "offline",
+        "visible": true,
+        "tagColor": "#2d5f6e",
+        "teacher": "名师团队",
+        "startDate": "2027年3月",
+        "desc": "线下集训营，名师面对面辅导"
+      }
+    ]
+  },
+  "guangdong": {
+    "public": [
+      {
+        "name": "升本英语预备课",
+        "tag": "免费",
+        "lessons": 4,
+        "duration": "2小时",
+        "teacher": "张老师",
+        "desc": "专升本英语基础入门",
+        "tagColor": "#047857"
+      },
+      {
+        "name": "高数入门精讲",
+        "tag": "免费",
+        "lessons": 6,
+        "duration": "3小时",
+        "teacher": "李老师",
+        "desc": "函数极限基础概念精讲",
+        "tagColor": "#047857"
+      },
+      {
+        "name": "政治理论精讲",
+        "tag": "免费",
+        "lessons": 6,
+        "duration": "3小时",
+        "teacher": "陈老师",
+        "desc": "广东专升本政治理论核心考点",
+        "tagColor": "#047857"
+      },
+      {
+        "name": "高等数学基础课",
+        "tag": "免费",
+        "lessons": 4,
+        "duration": "2小时",
+        "teacher": "李老师",
+        "desc": "函数、极限、导数基础精讲",
+        "tagColor": "#047857"
+      }
+    ],
+    "formal": [
       {
         "name": "自强班",
         "tag": "自强班",
         "price": "¥1,280",
         "duration": "4个月",
-        "sessions": 75,
-        "tagColor": "#7c3aed",
+        "sessions": 90,
+        "tagColor": "#2d5f6e",
         "visible": true,
         "teacher": "名师团队",
         "startDate": "2027年3月",
@@ -235,41 +372,9 @@
           "3月 第二周",
           "3月 第三周",
           "4月 第四周"
-        ]
-      }
-    ]
-  },
-  "guangdong": {
-    "public": [
-      {
-        "name": "升本英语预备课",
-        "tag": "免费",
-        "lessons": 4,
-        "duration": "2小时",
-        "teacher": "张老师",
-        "desc": "专升本英语基础入门",
-        "tagColor": "#10b981"
+        ],
+        "mode": "online"
       },
-      {
-        "name": "高数入门精讲",
-        "tag": "免费",
-        "lessons": 6,
-        "duration": "3小时",
-        "teacher": "李老师",
-        "desc": "函数极限基础概念精讲",
-        "tagColor": "#10b981"
-      },
-      {
-        "name": "政治理论精讲",
-        "tag": "免费",
-        "lessons": 6,
-        "duration": "3小时",
-        "teacher": "陈老师",
-        "desc": "广东专升本政治理论核心考点",
-        "tagColor": "#10b981"
-      }
-    ],
-    "formal": [
       {
         "name": "卓越班",
         "tag": "卓越班",
@@ -291,30 +396,21 @@
           "3月 第二周",
           "3月 第三周",
           "4月 第四周"
-        ]
+        ],
+        "mode": "online"
       },
       {
-        "name": "自强班",
-        "tag": "自强班",
-        "price": "¥1,280",
-        "duration": "4个月",
-        "sessions": 90,
-        "tagColor": "#7c3aed",
+        "name": "飞跃班",
+        "tag": "飞跃班",
+        "price": "¥3,680",
+        "duration": "8个月",
+        "sessions": 155,
+        "mode": "offline",
         "visible": true,
+        "tagColor": "#2d5f6e",
         "teacher": "名师团队",
         "startDate": "2027年3月",
-        "catalog": [
-          "第一讲 课程导学",
-          "第二讲 基础知识",
-          "第三讲 核心考点",
-          "第四讲 综合训练"
-        ],
-        "calendar": [
-          "3月 第一周",
-          "3月 第二周",
-          "3月 第三周",
-          "4月 第四周"
-        ]
+        "desc": "线下集训营，名师面对面辅导"
       }
     ]
   },
@@ -327,7 +423,7 @@
         "duration": "2小时",
         "teacher": "张老师",
         "desc": "专升本英语基础入门",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       },
       {
         "name": "高数入门精讲",
@@ -336,7 +432,7 @@
         "duration": "3小时",
         "teacher": "李老师",
         "desc": "函数极限基础概念精讲",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       },
       {
         "name": "升本政策解读",
@@ -345,7 +441,7 @@
         "duration": "1小时",
         "teacher": "王老师",
         "desc": "本省专升本最新政策解读",
-        "tagColor": "#10b981"
+        "tagColor": "#047857"
       }
     ],
     "formal": [
@@ -364,7 +460,7 @@
         "price": "¥1,280",
         "duration": "4个月",
         "sessions": 80,
-        "tagColor": "#7c3aed",
+        "tagColor": "#2d5f6e",
         "visible": true
       }
     ]
