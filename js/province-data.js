@@ -5,6 +5,7 @@
 const PROVINCE_DATA = {
   zhejiang: {
     name: '浙江',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语'], total: 300 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语'], total: 300 },
@@ -16,6 +17,7 @@ const PROVINCE_DATA = {
   },
   shandong: {
     name: '山东',
+    'subjects': ['大学英语', '高等数学Ⅰ', '高等数学Ⅱ', '高等数学Ⅲ', '计算机', '大学语文'],
     categories: [
       { id: 'ligong1', name: '理工类', subjects: ['高等数学Ⅰ', '大学英语', '计算机'], total: 400 },
       { id: 'jingguan2', name: '经管类', subjects: ['高等数学Ⅱ', '大学英语', '计算机'], total: 400 },
@@ -26,6 +28,7 @@ const PROVINCE_DATA = {
   },
   henan: {
     name: '河南',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语'], total: 300 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语', '管理学'], total: 350 },
@@ -36,6 +39,7 @@ const PROVINCE_DATA = {
   },
   guangdong: {
     name: '广东',
+    'subjects': ['大学英语', '高等数学', '大学语文', '政治理论'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语', '政治理论'], total: 450 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语', '政治理论'], total: 450 },
@@ -46,6 +50,7 @@ const PROVINCE_DATA = {
   },
   jiangsu: {
     name: '江苏',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语', '计算机'], total: 400 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语', '计算机'], total: 400 },
@@ -55,6 +60,7 @@ const PROVINCE_DATA = {
   },
   sichuan: {
     name: '四川',
+    'subjects': ['大学英语', '高等数学', '大学语文', '计算机基础'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语', '计算机'], total: 450 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语', '计算机'], total: 450 },
@@ -65,6 +71,7 @@ const PROVINCE_DATA = {
   },
   fujian: {
     name: '福建',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语'], total: 300 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语'], total: 300 },
@@ -75,6 +82,7 @@ const PROVINCE_DATA = {
   },
   hunan: {
     name: '湖南',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语'], total: 300 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语'], total: 300 },
@@ -85,6 +93,7 @@ const PROVINCE_DATA = {
   },
   anhui: {
     name: '安徽',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语'], total: 300 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语'], total: 300 },
@@ -95,6 +104,7 @@ const PROVINCE_DATA = {
   },
   shaanxi: {
     name: '陕西',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语'], total: 300 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语'], total: 300 },
@@ -104,6 +114,7 @@ const PROVINCE_DATA = {
   },
   hubei: {
     name: '湖北',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语'], total: 300 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语'], total: 300 },
@@ -114,6 +125,7 @@ const PROVINCE_DATA = {
   },
   jiangxi: {
     name: '江西',
+    'subjects': ['大学英语', '高等数学', '大学语文'],
     categories: [
       { id: 'ligong', name: '理工类', subjects: ['高等数学', '大学英语'], total: 300 },
       { id: 'wenshi', name: '文史类', subjects: ['大学语文', '大学英语'], total: 300 },

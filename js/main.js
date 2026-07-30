@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var LS_KEY = 'cz_province_pref';
   function loadSaved() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) { return {}; } }
   function savePref() { localStorage.setItem(LS_KEY, JSON.stringify({ province: selProvince.value, year: selYear.value })); }
-  selProvince.addEventListener('change', function() { savePref(); loadScheduleBar(); updateAdmissionSummary(); buildCourseCards(); });
-  selYear.addEventListener('change', function() { savePref(); loadScheduleBar(); });
+  selProvince.addEventListener('change', function() { savePref(); loadScheduleBar(); updateAdmissionSummary(); buildCourseCards(); buildAssistants(); buildAITutors(); });
+  selYear.addEventListener('change', function() { savePref(); loadScheduleBar(); buildCourseCards(); });
 
   // Init year
   var now = new Date();
@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
           var card = document.createElement('a');
           card.href = 'https://chengze.online/live/student'; card.target = '_blank'; card.rel = 'noopener';
           card.className = 'public-card';
-          card.innerHTML = '<div class="public-card__head" style="background:' + (c.tagColor || '#047857') + ';"><h3 class="public-card__head-title">' + c.name + '</h3></div><div class="public-card__body"><div class="public-card__desc">' + c.desc + '</div><div class="public-card__meta"><span>' + c.teacher + '</span><span>' + c.lessons + '\u8BFE \u00B7 ' + c.duration + '</span></div><span class="public-card__btn">\u67E5\u770B\u8BE6\u60C5</span></div>';
+          card.style.setProperty('--card-color', c.tagColor || '#4a7c6f');
+          card.innerHTML = '<div class="public-card__head" style="background:' + (c.tagColor || '#4a7c6f') + ';"><h3 class="public-card__head-title">' + c.name + '</h3></div><div class="public-card__body"><div class="public-card__desc">' + c.desc + '</div><div class="public-card__meta"><span>' + c.teacher + '</span><span>' + c.lessons + '\u8BFE \u00B7 ' + c.duration + '</span></div><span class="public-card__btn">\u67E5\u770B\u8BE6\u60C5</span></div>';
           pubGrid.appendChild(card);
         });
       }
@@ -73,8 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
           var card = document.createElement('a');
           card.href = '#'; card.className = 'course-card';
           var badgeText = cls.mode === 'offline' ? '\u7EBF\u4E0B' : '\u7EBF\u4E0A';
-var badgeBg = cls.mode === 'offline' ? '#6d28d9' : '#334155';
-card.innerHTML = '<div class="course-card__head" style="background:' + (cls.tagColor || '#2d5f6e') + ';"><span class="course-card__head-badge" style="background:' + badgeBg + ';">' + badgeText + '</span><span class="course-card__head-tag">' + cls.tag + '</span></div><div class="course-card__body"><h3>' + year + '\u5E74 ' + provinceName + '\u4E13\u5347\u672C</h3><div class="course-card__meta">' + (cls.teacher || '\u540D\u5E08\u56E2\u961F') + ' \u00B7 ' + (cls.startDate || '\u5F00\u5B66') + '</div><div class="course-card__info"><span>' + cls.duration + ' \u00B7 ' + cls.sessions + '\u8BFE\u65F6</span><span>' + cls.price + '</span></div><span class="course-card__btn">\u67E5\u770B\u8BE6\u60C5</span></div>';
+var badgeBg = cls.mode === 'offline' ? '#6d28d9' : '#2563eb';
+var cardColor = cls.tagColor || 'var(--color-primary)';
+          card.style.setProperty('--card-color', cardColor);
+          card.innerHTML = '<div class="course-card__head" style="background:' + cardColor + ';"><span class="course-card__head-badge" style="background:' + badgeBg + ';">' + badgeText + '</span><span class="course-card__head-tag">' + cls.tag + '</span></div><div class="course-card__body"><h3>' + year + '\u5E74 ' + provinceName + '\u4E13\u5347\u672C</h3><div class="course-card__meta">' + (cls.teacher || '\u540D\u5E08\u56E2\u961F') + ' \u00B7 ' + (cls.startDate || '\u5F00\u5B66') + '</div><div class="course-card__info"><span>' + cls.duration + ' \u00B7 ' + cls.sessions + '\u8BFE\u65F6</span><span>' + cls.price + '</span></div><span class="course-card__btn">\u67E5\u770B\u8BE6\u60C5</span></div>';
           card.addEventListener('click', function(e) { e.preventDefault(); openCourseDetail(cls, year, provinceName); });
           grid.appendChild(card);
         });
@@ -161,17 +164,50 @@ card.innerHTML = '<div class="course-card__head" style="background:' + (cls.tagC
     setTimeout(function() { fixAdmissionTheme(html.getAttribute('data-theme') || 'light'); }, 300);
   })();
 
-  // ── QA: AI Tutors ──
-  var aiGrid = document.getElementById('aiTutorGrid');
-  if (aiGrid) {
-    var subjects = [
-      { n: '\u8BED\u6587 AI', c: '#059669', d: '\u6587\u5B66\u5E38\u8BC6\u3001\u53E4\u6587\u7FFB\u8BD1\u3001\u4F5C\u6587\u6307\u5BFC' },
-      { n: '\u6570\u5B66 AI', c: '#7c3aed', d: '\u9AD8\u7B49\u6570\u5B66\u3001\u7EDF\u8BA1\u95EE\u9898\u5373\u65F6\u89E3\u7B54' },
-      { n: '\u82F1\u8BED AI', c: '#2563eb', d: '\u8BCD\u6C47\u3001\u8BED\u6CD5\u3001\u9605\u8BFB\u3001\u5199\u4F5C\u5168\u65B9\u4F4D\u8F85\u5BFC' },
-      { n: '\u8BA1\u7B97\u673A AI', c: '#f59e0b', d: 'Office\u3001\u7F51\u7EDC\u3001\u6570\u636E\u7ED3\u6784\u7B49\u8BFE\u7A0B\u95EE\u9898' },
-    ];
+  // ── QA: Assistants ──
+  // ── QA: Province-aware Assistants ──
+  function buildAssistants() {
+    var astGrid = document.getElementById('assistantGrid');
+    if (!astGrid) return;
+    var pid = document.getElementById('selProvince').value;
+    var provData = typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[pid];
+    var subjects = provData && provData.subjects ? provData.subjects : ['\u5927\u5B66\u82F1\u8BED', '\u9AD8\u7B49\u6570\u5B66', '\u5927\u5B66\u8BED\u6587', '\u8BA1\u7B97\u673A\u57FA\u7840'];
+    var allAsts = {
+      '\u5927\u5B66\u82F1\u8BED': { n: '\u5468\u8001\u5E08', img: '/public/images/teachers/teacher-zhou.svg', c: '#4F6EF7' },
+      '\u9AD8\u7B49\u6570\u5B66': { n: '\u5218\u8001\u5E08', img: '/public/images/teachers/teacher-liu.svg', c: '#E0607A' },
+      '\u5927\u5B66\u8BED\u6587': { n: '\u9648\u8001\u5E08', img: '/public/images/teachers/teacher-chen-female.svg', c: '#20B2AA' },
+      '\u8BA1\u7B97\u673A\u57FA\u7840': { n: '\u674E\u8001\u5E08', img: '/public/images/teachers/teacher-chen.svg', c: '#E8A040' },
+    };
+    astGrid.innerHTML = '';
+    subjects.forEach(function(sub) {
+      var a = allAsts[sub];
+      if (!a) return;
+      var card = document.createElement('a');
+      card.href = 'https://chengze.online/live/teacher'; card.target = '_blank'; card.rel = 'noopener';
+      card.className = 'assistant-card';
+      card.innerHTML = '<div class="assistant-card__avatar" style="background:' + a.c + ';"><img src="' + a.img + '" alt="' + a.n + '" style="width:100%;height:100%;border-radius:12px;object-fit:cover;"></div><div class="assistant-card__body"><div class="assistant-card__top"><h3>' + a.n + '</h3><span class="assistant-card__label">' + sub + '</span></div><span class="assistant-card__action">\u54A8\u8BE2</span></div>';
+      astGrid.appendChild(card);
+    });
+  }
+  buildAssistants();
+
+  // ── QA: Province-aware AI Tutors ──
+  function buildAITutors() {
+    var aiGrid = document.getElementById('aiTutorGrid');
+    if (!aiGrid) return;
+    var pid = document.getElementById('selProvince').value;
+    var provData = typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[pid];
+    var subjects = provData && provData.subjects ? provData.subjects : ['\u5927\u5B66\u82F1\u8BED', '\u9AD8\u7B49\u6570\u5B66', '\u5927\u5B66\u8BED\u6587', '\u8BA1\u7B97\u673A\u57FA\u7840'];
+    var allAI = {
+      '\u5927\u5B66\u82F1\u8BED': { n: '\u82F1\u8BED AI', c: '#2563eb', d: '\u8BCD\u6C47\u3001\u8BED\u6CD5\u3001\u9605\u8BFB\u3001\u5199\u4F5C\u5168\u65B9\u4F4D\u8F85\u5BFC' },
+      '\u9AD8\u7B49\u6570\u5B66': { n: '\u6570\u5B66 AI', c: '#7c3aed', d: '\u9AD8\u7B49\u6570\u5B66\u3001\u7EDF\u8BA1\u95EE\u9898\u5373\u65F6\u89E3\u7B54' },
+      '\u5927\u5B66\u8BED\u6587': { n: '\u8BED\u6587 AI', c: '#059669', d: '\u6587\u5B66\u5E38\u8BC6\u3001\u53E4\u6587\u7FFB\u8BD1\u3001\u4F5C\u6587\u6307\u5BFC' },
+      '\u8BA1\u7B97\u673A\u57FA\u7840': { n: '\u8BA1\u7B97\u673A AI', c: '#f59e0b', d: 'Office\u3001\u7F51\u7EDC\u3001\u6570\u636E\u7ED3\u6784\u7B49\u8BFE\u7A0B\u95EE\u9898' },
+    };
     aiGrid.innerHTML = '';
-    subjects.forEach(function(s) {
+    subjects.forEach(function(sub) {
+      var s = allAI[sub];
+      if (!s) return;
       var card = document.createElement('a');
       card.href = 'https://chengze.online/AI-tutor/'; card.target = '_blank'; card.rel = 'noopener';
       card.className = 'ai-card';
@@ -179,25 +215,7 @@ card.innerHTML = '<div class="course-card__head" style="background:' + (cls.tagC
       aiGrid.appendChild(card);
     });
   }
-
-  // ── QA: Assistants ──
-  var astGrid = document.getElementById('assistantGrid');
-  if (astGrid) {
-    var asts = [
-      { n: '\u9648\u8001\u5E08', sub: '\u5927\u5B66\u8BED\u6587', img: '/public/images/teachers/teacher-chen-female.svg', c: '#20B2AA' },
-      { n: '\u5218\u8001\u5E08', sub: '\u9AD8\u7B49\u6570\u5B66', img: '/public/images/teachers/teacher-liu.svg', c: '#E0607A' },
-      { n: '\u5468\u8001\u5E08', sub: '\u5927\u5B66\u82F1\u8BED', img: '/public/images/teachers/teacher-zhou.svg', c: '#4F6EF7' },
-      { n: '\u674E\u8001\u5E08', sub: '\u8BA1\u7B97\u673A\u57FA\u7840', img: '/public/images/teachers/teacher-chen.svg', c: '#E8A040' },
-    ];
-    astGrid.innerHTML = '';
-    asts.forEach(function(a) {
-      var card = document.createElement('a');
-      card.href = 'https://chengze.online/live/teacher'; card.target = '_blank'; card.rel = 'noopener';
-      card.className = 'assistant-card';
-      card.innerHTML = '<div class="assistant-card__avatar" style="background:' + a.c + ';"><img src="' + a.img + '" alt="' + a.n + '" style="width:100%;height:100%;border-radius:12px;object-fit:cover;"></div><div class="assistant-card__body"><div class="assistant-card__top"><h3>' + a.n + '</h3><span class="assistant-card__label">' + a.sub + '</span></div><span class="assistant-card__action">\u54A8\u8BE2</span></div>';
-      astGrid.appendChild(card);
-    });
-  }
+  buildAITutors();
 
   // ── Soul Feed ──
   var feed = document.getElementById('soulFeed');
@@ -353,11 +371,13 @@ card.innerHTML = '<div class="course-card__head" style="background:' + (cls.tagC
 
       // Syllabus
       if (syllabus) {
-        var pdf = '/data/2026-' + pid + '-syllabus.pdf';
-        var html = '<div class="res-list">';
-        html += '<div class="res-file"><div class="res-file__icon">PDF</div><div class="res-file__info"><strong>' + pname + '省 2026 年专升本考试大纲</strong><span>官方原文件</span></div><div style="display:flex;gap:8px;flex-shrink:0;"><a href="' + pdf + '" target="_blank" class="res-action">查看</a><a href="' + pdf + '" download class="res-action res-action--dl">下载</a></div></div>';
-        html += '</div>';
-        syllabus.innerHTML = html;
+        fetch('/api/syllabus/' + pid).then(function(r){return r.json();}).then(function(syl){
+          var pdf = '/data/2026-' + pid + '-syllabus.pdf';
+          var html = '<div class="res-list">';
+          html += '<div class="res-file"><div class="res-file__icon">PDF</div><div class="res-file__info"><strong>' + pname + '省 2026 年专升本考试大纲</strong><span>' + (syl.authority || '官方文件') + ' ' + (syl.date || '') + '</span></div><div style="display:flex;gap:8px;flex-shrink:0;"><a href="' + pdf + '" target="_blank" class="res-action">查看</a><a href="' + pdf + '" download class="res-action res-action--dl">下载</a></div></div>';
+          html += '</div>';
+          syllabus.innerHTML = html;
+        });
       }      // Papers
       if (papers) {
         var html = '<div class="res-list">';
@@ -371,7 +391,7 @@ card.innerHTML = '<div class="course-card__head" style="background:' + (cls.tagC
             { file: '2024-shandong-math3.pdf', name: '高等数学Ⅲ 真题', year: '2024' },
           ];
           items.forEach(function(item) {
-            html += '<div class="res-file"><div class="res-file__icon" style="background:rgba(124,58,237,0.1);color:#7c3aed;font-size:10px;">真题</div><div class="res-file__info"><strong>' + pname + '省 ' + item.name + '</strong><span>' + item.year + ' 年 专升本考试 · 含答案</span></div><div style="display:flex;gap:8px;flex-shrink:0;"><a href="/data/' + item.file + '/" target="_blank" class="res-action">查看</a><a href="/data/' + item.file + '" download class="res-action res-action--dl">下载</a></div></div>';
+            html += '<div class="res-file"><div class="res-file__icon">PDF</div><div class="res-file__info"><strong>' + pname + '省 ' + item.name + '</strong><span>' + item.year + ' 年 专升本考试</span></div><div style="display:flex;gap:8px;flex-shrink:0;"><a href="/data/' + item.file + '/" target="_blank" class="res-action">查看</a><a href="/data/' + item.file + '" download class="res-action res-action--dl">下载</a></div></div>';
           });
         } else {
           html += '<div class="res-empty">' + pname + '省 历年真题持续更新中</div>';
