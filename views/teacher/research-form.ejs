@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<div class="course-detail-header">
+<h2><%= item ? '编辑' : '新建' %> <%= type==='plan'?'教学计划':type==='activity'?'教研活动':'教研资料' %></h2>
+</div>
+<% if (typeof error !== 'undefined' && error) { %><div style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:14px"><%= error %></div><% } %>
+<form method="POST" action="/admin/research-manage/<%= type %>/<%= item ? item.id : 'create' %>">
+<div class="form-card">
+<div class="form-grid">
+<div class="form-group full-width"><label>标题</label><input name="title" value="<%= item ? item.title : '' %>" required></div>
+<% if (type === 'plan') { %>
+<div class="form-group"><label>关联课程</label><select name="course_id"><option value="">不关联</option><% courses.forEach(c => { %><option value="<%= c.id %>" <%= item && item.course_id==c.id?'selected':'' %>><%= c.title %></option><% }) %></select></div>
+<div class="form-group"><label>计划日期</label><input name="plan_date" type="date" value="<%= item ? item.plan_date : '' %>"></div>
+<div class="form-group"><label>状态</label><select name="status"><option value="draft" <%= item&&item.status==='draft'?'selected':'' %>>草稿</option><option value="published" <%= item&&item.status==='published'?'selected':'' %>>已发布</option></select></div>
+<div class="form-group full-width"><label>教学目标</label><textarea name="objectives"><%= item ? item.objectives : '' %></textarea></div>
+<div class="form-group full-width"><label>内容</label><textarea name="content" style="min-height:120px"><%= item ? item.content : '' %></textarea></div>
+<% } else if (type === 'activity') { %>
+<div class="form-group"><label>活动类型</label><select name="activity_type"><option value="meeting" <%= item&&item.activity_type==='meeting'?'selected':'' %>>研讨会</option><option value="training" <%= item&&item.activity_type==='training'?'selected':'' %>>培训</option><option value="seminar" <%= item&&item.activity_type==='seminar'?'selected':'' %>>讲座</option><option value="other" <%= item&&item.activity_type==='other'?'selected':'' %>>其他</option></select></div>
+<div class="form-group"><label>活动日期</label><input name="activity_date" type="date" value="<%= item ? item.activity_date : '' %>"></div>
+<div class="form-group"><label>时长(分钟)</label><input name="duration" type="number" value="<%= item ? item.duration : 60 %>"></div>
+<div class="form-group"><label>状态</label><select name="status"><option value="scheduled" <%= item&&item.status==='scheduled'?'selected':'' %>>待进行</option><option value="completed" <%= item&&item.status==='completed'?'selected':'' %>>已完成</option><option value="cancelled" <%= item&&item.status==='cancelled'?'selected':'' %>>已取消</option></select></div>
+<div class="form-group full-width"><label>描述</label><textarea name="description"><%= item ? item.description : '' %></textarea></div>
+<div class="form-group full-width"><label>备注</label><textarea name="notes"><%= item ? item.notes : '' %></textarea></div>
+<% } else { %>
+<div class="form-group"><label>资料类型</label><select name="material_type"><option value="document" <%= item&&item.material_type==='document'?'selected':'' %>>文档</option><option value="video" <%= item&&item.material_type==='video'?'selected':'' %>>视频</option><option value="image" <%= item&&item.material_type==='image'?'selected':'' %>>图片</option><option value="other" <%= item&&item.material_type==='other'?'selected':'' %>>其他</option></select></div>
+<div class="form-group"><label>关联课程</label><select name="course_id"><option value="">通用</option><% courses.forEach(c => { %><option value="<%= c.id %>" <%= item&&item.course_id==c.id?'selected':'' %>><%= c.title %></option><% }) %></select></div>
+<div class="form-group full-width"><label>描述</label><textarea name="description"><%= item ? item.description : '' %></textarea></div>
+<div class="form-group full-width"><label>文件链接(URL)</label><input name="file_url" value="<%= item ? item.file_url : '' %>" placeholder="https://..."></div>
+<% } %>
+</div>
+<div class="form-actions">
+<a href="/admin/research-manage" class="btn btn-outline">取消</a>
+<button type="submit" class="btn btn-primary">保存</button>
+</div>
+</div>
+</form>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

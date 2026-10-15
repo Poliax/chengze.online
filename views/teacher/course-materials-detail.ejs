@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<div class="course-detail-header">
+<h2>讲义管理 · <%= course.title %></h2>
+<a href="/admin/course-materials" class="btn btn-outline btn-sm">返回</a>
+</div>
+<div class="form-card"><h3>上传讲义 / 课件</h3>
+<form method="POST" action="/admin/course-materials/<%= course.id %>/upload" enctype="multipart/form-data">
+<div class="form-grid">
+<div class="form-group"><label>绑定课时</label>
+<select name="lesson_id">
+<option value="0">仅绑定课程</option>
+<% lessons.forEach(l => { %><option value="<%= l.id %>"><%= l.title %></option><% }) %>
+</select>
+</div>
+<div class="form-group full-width"><label>选择文件（PDF / Word / PPT 等）</label><input type="file" name="file" required></div>
+</div>
+<div class="form-actions">
+<button type="submit" class="btn btn-primary">上传</button>
+</div>
+</form>
+</div>
+<div class="form-card" style="margin-top:18px"><h3>已上传讲义（<%= files.length %>）</h3>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse">
+<thead>
+<tr style="text-align:left;font-size:12px;color:#64748b;border-bottom:1px solid #e2e8f0">
+<th style="padding:8px">课时</th><th style="padding:8px">文件名</th><th style="padding:8px">大小</th><th style="padding:8px">上传时间</th><th style="padding:8px">操作</th>
+</tr>
+</thead>
+<tbody>
+<% if (files.length === 0) { %><tr><td colspan="5" style="padding:18px;text-align:center;color:#94a3b8">暂无讲义</td></tr><% } %>
+<% files.forEach(f => { %>
+<tr style="font-size:13px;color:#334155;border-bottom:1px solid #eef2f7">
+<td style="padding:8px"><%= f.lesson_id ? (f.lesson_title || ('课时 ' + f.lesson_id)) : '课程' %></td>
+<td style="padding:8px"><a href="/materials/courses/<%= course.id %>/<%= f.filename %>" target="_blank" style="color:#881538;text-decoration:none"><%= f.original_name %></a></td>
+<td style="padding:8px"><%= (f.size/1024).toFixed(0) %> KB</td>
+<td style="padding:8px"><%= f.created_at %></td>
+<td style="padding:8px">
+<form method="POST" action="/admin/course-materials/<%= f.id %>/delete" style="display:inline" onsubmit="return confirm('确定删除该讲义？')">
+<button type="submit" class="btn btn-sm btn-outline" style="color:#dc2626">删除</button>
+</form>
+</td>
+</tr>
+<% }) %>
+</tbody>
+</table>
+</div>
+</div>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>课程目录 · 授课后台</title>
+
+<link rel="stylesheet" href="/css/teacher-backend.css?v=20260812">
+<style>
+html { overflow-y: scroll; }
+.lesson-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:16px; overflow:hidden; }
+.lesson-card-hd { display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--border-light); }
+.lesson-card-title { font-size:15px; font-weight:700; }
+.lesson-card-meta { font-size:12px; color:var(--muted); margin-top:3px; }
+.btn-teach { margin-left:auto; padding:8px 16px; background:var(--primary); color:#fff; border-radius:7px; text-decoration:none; font-size:13px; font-weight:600; white-space:nowrap; }
+.btn-teach:hover { background:var(--primary-hover); }
+.lesson-table { width:100%; border-collapse:collapse; }
+.lesson-table th { background:#f8fafc; font-size:12px; color:var(--muted); text-align:left; padding:9px 18px; border-bottom:1px solid var(--border-light); font-weight:600; }
+.lesson-table td { font-size:13px; padding:10px 18px; border-bottom:1px solid var(--border-light); color:#334155; }
+.lesson-table tr:last-child td { border-bottom:none; }
+.lesson-table { border-collapse:separate; border-spacing:0; table-layout:fixed; }
+.lesson-table th, .lesson-table td { height:38px; padding:0 14px; box-sizing:border-box; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lesson-table th:nth-child(1){width:64px}
+.lesson-table th:nth-child(2){width:26%}
+.lesson-table th:nth-child(3){width:15%}
+.lesson-table th:nth-child(5){width:18%}
+.lesson-table th:nth-child(6){width:88px}
+.lesson-table thead th { position:sticky; top:0; z-index:2; background:#f8fafc; box-shadow:0 1px 0 rgba(148,163,184,.35); }
+.empty-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:40px; text-align:center; color:var(--light); font-size:14px; }
+.group-hd { display:flex; align-items:center; gap:10px; margin:18px 0 10px; }
+.lesson-card-hd { cursor:pointer; user-select:none; }
+.lesson-body { display:none; max-height:418px; overflow-y:auto; }
+.lesson-body::-webkit-scrollbar { width:6px; }
+.lesson-body::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:3px; }
+.lesson-body::-webkit-scrollbar-track { background:transparent; }
+.lesson-card.open .lesson-body { display:block; }
+.arrow { margin-left:auto; color:var(--muted); font-size:12px; transition:transform .2s; }
+.lesson-card.open .arrow { transform:rotate(180deg); }
+.btn-teach { margin-left:16px; }
+.group-name { font-size:15px; font-weight:700; color:#0f172a; }
+.group-count { font-size:12px; color:var(--muted); background:#eef2f7; padding:2px 10px; border-radius:12px; }
+.badge-done { background:#dcfce7; color:#15803d; }
+.badge-wait { background:#eff6ff; color:#2563eb; }
+.badge-none { background:#f1f5f9; color:#94a3b8; }
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head><body>
+<%- include('partials/sidebar') %>
+<div class="main"><%- include('partials/header') %>
+<div class="content">
+<div class="page-hd"><h2>课程目录</h2><p style="font-size:14px;color:var(--muted)">欢迎，<%= teacherName %> 老师</p></div>
+
+<div class="stats">
+<div class="stat"><div class="stat-icon stat-icon--blue">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+</div><div class="stat-info"><strong><%= courseCount %></strong><span>我的课程</span></div></div>
+<div class="stat"><div class="stat-icon stat-icon--green">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+</div><div class="stat-info"><strong><%= lessonCount %></strong><span>总课时</span></div></div>
+<div class="stat"><div class="stat-icon stat-icon--purple">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+</div><div class="stat-info"><strong><%= studentCount %></strong><span>在学学员</span></div></div>
+</div>
+
+<% if (!rows || rows.length === 0) { %>
+<div class="empty-box">暂无分配课程，请联系管理员在课程管理中分配给你</div>
+<% } %>
+<% (groups||[]).forEach(g => { %>
+<div class="group-hd"><span class="group-name"><%= g.province %><%= teacher.subject || "" %></span><span class="group-count"><%= g.courses.length %>门课</span></div>
+<% (g.courses||[]).forEach(r => { %>
+<div class="lesson-card" id="card-<%= r.course.id %>">
+<div class="lesson-card-hd" onclick="toggleLessons(<%= r.course.id %>)">
+<div>
+<div class="lesson-card-title"><%= r.course.title %></div>
+<div class="lesson-card-meta"><%= r.course.year||'--' %>年 · <%= r.course.province||'--' %> · <%= r.course.class_type||'--' %> · <%= r.lessons.length %>次课</div>
+</div>
+<span class="arrow">&#9660;</span>
+</div>
+<div class="lesson-body">
+<table class="lesson-table">
+<thead><tr><th>序号</th><th>年份/省份/考试</th><th>科目</th><th>课次名称</th><th>上课时间</th><th>状态</th></tr></thead>
+<tbody>
+<% (r.lessons||[]).forEach((l, i) => { %>
+<tr>
+<td><%= i + 1 %></td>
+<td><%= r.course.year||'--' %> / <%= r.course.province||'--' %> / <%= r.course.exam_type||'专升本' %></td>
+<td><%= r.course.category||'-' %></td>
+<td><%= l.title %></td>
+<td><%= l.schedule_time || '待排课' %></td>
+<%
+var st = l.schedule_time || '';
+var stText = '未排课';
+var stCls = 'badge-none';
+if (st) {
+  try {
+    if (new Date(st.replace(' ', 'T')) < new Date()) { stText = '已完成'; stCls = 'badge-done'; }
+    else { stText = '待上课'; stCls = 'badge-wait'; }
+  } catch(e) { stText = '待上课'; stCls = 'badge-wait'; }
+}
+%>
+<td><span class="badge <%= stCls %>"><%= stText %></span></td>
+</tr>
+<% }) %>
+</tbody>
+</table>
+</div>
+</div>
+<% }) %>
+<% }) %>
+</div></div>
+<script>
+function toggleLessons(id) {
+  var card = document.getElementById('card-' + id);
+  if (card) card.classList.toggle('open');
+}
+</script>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

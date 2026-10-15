@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+<link rel="shortcut icon" type="image/x-icon" href="/favicon-v18.ico?v=20260905"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192-v18.png?v=20260905"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16-v18.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-v18.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192-v18.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v18.png">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(148,163,184,.35) transparent; }
+    *::-webkit-scrollbar { width:8px; height:8px; }
+    *::-webkit-scrollbar-track { background:transparent; }
+    *::-webkit-scrollbar-thumb { background:rgba(148,163,184,.35); border-radius:8px; border:2px solid transparent; background-clip:padding-box; }
+    *::-webkit-scrollbar-thumb:hover { background:rgba(148,163,184,.6); border:2px solid transparent; background-clip:padding-box; }
+    *::-webkit-scrollbar-corner { background:transparent; }
+    html, body { height:100%; }
+    body { background:#2B2F36; color:#e5e7eb; font-family:'Noto Serif SC', '宋体', 'SimSun', 'Songti SC', Georgia, 'Times New Roman', serif; height:100%; overflow:hidden; }
+    .watch-header { display:flex; align-items:center; gap:14px; padding:0 20px; height:64px; background:#2B2F36; border-bottom:1px solid rgba(255,255,255,.28); position:sticky; top:0; z-index:40; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+    .watch-brand { display:inline-flex; align-items:center; gap:10px; font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; color:#fff; text-decoration:none; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; white-space:nowrap; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    .watch-brand img, .watch-brand svg { width:28px; height:28px; flex:none; }
+    .watch-brand .brand-tag { font-size:11px; font-weight:400; color:rgba(255,255,255,.55); letter-spacing:1px; margin-left:2px; }
+    .watch-course { margin-left:0; padding-left:14px; border-left:1px solid rgba(255,255,255,.16); color:rgba(255,255,255,.6); font-size:14px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:55%; }
+    .page { max-width:1360px; margin:0 auto; padding:22px 26px; height:calc(100vh - 56px); box-sizing:border-box; display:flex; gap:18px; align-items:stretch; }
+    .player-col { flex:1; min-width:0; min-height:0; height:100%; display:flex; flex-direction:column; justify-content:center; }
+    .player-main { position:relative; width:min(100%, calc((100vh - 56px - 44px - 42px) * 16 / 9)); aspect-ratio:16/9; margin:0 auto; background:#000; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.1); box-shadow:0 24px 60px rgba(0,0,0,.55); }
+    .player-main video { width:100%; height:100%; object-fit:contain; background:#000; }
+    .cap-main { position:absolute; top:10px; left:12px; font-size:11px; color:rgba(255,255,255,.7); background:rgba(0,0,0,.5); padding:2px 8px; border-radius:4px; }
+    .controls { display:flex; align-items:center; gap:10px; padding:7px 12px; background:#2B2F36; border:1px solid rgba(255,255,255,.12); border-top:none; border-radius:0 0 14px 14px; box-shadow:0 -8px 24px rgba(0,0,0,.25); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); flex-shrink:0; }
+    .ctrl-btn { width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; font-size:13px; cursor:pointer; border-radius:8px; line-height:1; transition:all .18s ease; }
+    .ctrl-btn:hover { background:rgba(37,99,235,.28); border-color:rgba(96,165,250,.45); color:#fff; transform:translateY(-1px) scale(1.06); box-shadow:0 8px 20px rgba(37,99,235,.25); }
+    .ctrl-btn svg { display:block; }
+    .ctrl-btn.active { background:rgba(37,99,235,.35); border-color:rgba(96,165,250,.55); }
+    .ctrl-btn.wide { width:auto; min-width:44px; padding:0 9px; font-size:12px; font-weight:600; font-family:inherit; }
+    .volume-box { display:flex; align-items:center; gap:8px; }
+    .vol-slider { width:70px; -webkit-appearance:none; appearance:none; height:3px; border-radius:2px; background:rgba(255,255,255,.2); outline:none; }
+    .vol-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:12px; height:12px; border-radius:50%; background:#e2e8f0; cursor:pointer; border:none; }
+    .vol-slider::-moz-range-thumb { width:12px; height:12px; border-radius:50%; background:#e2e8f0; cursor:pointer; border:none; }
+    .rate-wrap { position:relative; }
+    .rate-menu { position:absolute; bottom:calc(100% + 8px); right:0; min-width:72px; background:rgba(13,21,38,.96); border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:5px; display:none; z-index:80; box-shadow:0 16px 40px rgba(0,0,0,.45); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+    .rate-menu.open { display:block; }
+    .rate-menu button { display:block; width:100%; padding:6px 10px; border:none; background:transparent; color:rgba(255,255,255,.72); font-size:12px; text-align:left; border-radius:6px; cursor:pointer; font-family:inherit; }
+    .rate-menu button:hover { background:rgba(37,99,235,.3); color:#fff; }
+    .rate-menu button.on { color:#fff; font-weight:700; background:rgba(37,99,235,.24); }
+    .progress { flex:1; height:4px; background:rgba(255,255,255,.2); border-radius:2px; cursor:pointer; position:relative; }
+    .progress-fill { height:100%; width:0; background:#2563eb; border-radius:2px; }
+    .time { font-size:12px; color:rgba(255,255,255,.55); font-variant-numeric:tabular-nums; min-width:96px; text-align:center; }
+    .right-col { width:270px; display:flex; flex-direction:column; gap:14px; height:100%; max-height:100%; min-height:0; }
+    .right-col.hidden { display:none; }
+    .cam-box { background:#2B2F36; border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.35); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+    .cam-box video { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:#000; }
+    .cam-box, .chat-col { transition:opacity .15s ease, visibility .15s ease; }
+    .mode-hidden { opacity:0; visibility:hidden; }
+    .chat-col { flex:1; min-height:0; display:flex; flex-direction:column; background:#2B2F36; border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.32); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+    .chat-hd { padding:13px 16px; font-size:14px; font-weight:600; color:rgba(255,255,255,.85); border-bottom:1px solid rgba(255,255,255,.08); }
+    .chat-msgs { flex:1; overflow-y:auto; padding:14px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.2) transparent; }
+    .chat-msgs::-webkit-scrollbar { width:6px; }
+    .chat-msgs::-webkit-scrollbar-thumb { background:rgba(255,255,255,.18); border-radius:3px; }
+    .chat-msg { margin-bottom:12px; font-size:13px; line-height:1.55; color:rgba(255,255,255,.88); }
+    .chat-msg .head { display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
+    .chat-msg .who { color:#60a5fa; font-weight:600; font-size:12px; }
+    .chat-msg .time { color:rgba(255,255,255,.32); font-size:11px; }
+    .chat-msg .txt { display:block; color:rgba(255,255,255,.9); line-height:1.5; word-break:break-word; }
+    .empty { color:rgba(255,255,255,.35); font-size:12px; text-align:center; padding:26px 0; }
+    .exit { position:fixed; top:18px; right:20px; z-index:50; padding:7px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.18); background:rgba(2,6,23,.6); color:#fff; font-size:12px; text-decoration:none; backdrop-filter:blur(8px); }
+    .exit:hover { background:rgba(2,6,23,.85); border-color:rgba(255,255,255,.35); }
+    @media (max-width:900px) { body { overflow:auto; } .page { flex-direction:column; padding:14px; height:auto; min-height:calc(100vh - 56px); } .right-col { width:100%; height:auto; max-height:none; } .chat-col { min-height:240px; } .player-main { width:100%; } }
+  </style>
+</head>
+<body>
+  <div class="watch-header">
+    <span class="watch-brand"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#881538"/><path d="M32 16 47 22 32 28 17 22Z" fill="#C8A96A"/><path d="M22 28v8c0 3.3 4.7 6 10 6s10-2.7 10-6v-8l-10 5Z" fill="#C8A96A" opacity=".9"/><path d="M47 22v9" stroke="#C8A96A" stroke-width="2" stroke-linecap="round"/><circle cx="47" cy="33" r="2.2" fill="#C8A96A"/></svg>承泽在线<span class="brand-tag">课程回放端</span></span>
+    <span class="watch-course"><%= course.title %><% if (lessonTitle) { %> · <%= lessonTitle %><% } %></span>
+  </div>
+  <a class="exit" href="/live/student/courses/<%= course.id %>">返回课程</a>
+  <div class="page">
+    <div class="player-col">
+      <div class="player-main" id="mainBox">
+        <% if (main.video_url) { %><video id="mainVideo" playsinline></video><% } else { %><div style="height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4)">授课画面未配置</div><% } %>
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn" id="playBtn"><svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg></button>
+        <div class="volume-box">
+          <button class="ctrl-btn" id="muteBtn"><svg id="volOn" style="display:none" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/><path d="M14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg><svg id="volOff" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg></button>
+          <input type="range" id="volRange" class="vol-slider" min="0" max="100" value="100">
+        </div>
+        <div class="rate-wrap">
+          <button class="ctrl-btn wide" id="rateBtn" title="倍速">1.0x</button>
+          <div class="rate-menu" id="rateMenu">
+            <button data-rate="0.5">0.5x</button>
+            <button data-rate="0.75">0.75x</button>
+            <button data-rate="1" class="on">1.0x</button>
+            <button data-rate="1.25">1.25x</button>
+            <button data-rate="1.5">1.5x</button>
+            <button data-rate="2">2.0x</button>
+          </div>
+        </div>
+        <div class="progress" id="progress"><div class="progress-fill" id="progressFill"></div></div>
+        <span class="time" id="timeText">00:00 / 00:00</span>
+        <button class="ctrl-btn" id="modeBtn" title="侧边栏"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/></svg></button>
+        <button class="ctrl-btn" id="sideBtn" title="网页全屏"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="15" y1="4" x2="15" y2="20"/><polyline points="11,9 7,12 11,15"/></svg></button>
+        <button class="ctrl-btn" id="fullBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="cam-box">
+        <% if (cam && cam.video_url) { %><video id="camVideo" playsinline></video><% } else { %><div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4)">老师画面未配置</div><% } %>
+      </div>
+      <div class="chat-col">
+        <div class="chat-hd">课堂互动</div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/player/hls.min.js"></script>
+  <script>
+    var mainUrl = '<%= main.video_url %>';
+    var camUrl = '<%= cam && cam.video_url || '' %>';
+    var v1 = document.getElementById('mainVideo');
+    var v2 = document.getElementById('camVideo');
+    function setupVideo(video, url) {
+      if (!video || !url) return;
+      if (url.indexOf('.m3u8') > -1) {
+        if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; }
+        else if (window.Hls && Hls.isSupported()) { var hls = new Hls(); hls.loadSource(url); hls.attachMedia(video); }
+        else { video.src = url; }
+      } else { video.src = url; }
+    }
+    setupVideo(v1, mainUrl);
+    setupVideo(v2, camUrl);
+    var playBtn = document.getElementById('playBtn');
+    var playIcon = document.getElementById('playIcon');
+    var progress = document.getElementById('progress');
+    var progressFill = document.getElementById('progressFill');
+    var timeText = document.getElementById('timeText');
+    function fmt(sec) { sec = sec || 0; var m = Math.floor(sec / 60), s = Math.floor(sec % 60); return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); }
+    function sync() {
+      var dur = v1.duration || 0;
+      var pct = dur ? (v1.currentTime / dur) * 100 : 0;
+      progressFill.style.width = pct + '%';
+      timeText.textContent = fmt(v1.currentTime) + ' / ' + fmt(dur);
+    }
+    function togglePlay() {
+      if (!v1) return;
+      if (v1.paused) {
+        var ps = [];
+        if (v1.src) ps.push(v1.play());
+        if (v2 && v2.src) ps.push(v2.play());
+        Promise.all(ps).catch(function(){});
+        playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      } else {
+        v1.pause(); if (v2) v2.pause();
+        playIcon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+      }
+    }
+    playBtn.addEventListener('click', togglePlay);
+    v1.addEventListener('play', function(){ playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'; });
+    v1.addEventListener('pause', function(){ playIcon.innerHTML = '<polygon points="5,3 19,12 5,21"/>'; });
+    v1.addEventListener('timeupdate', sync);
+    v1.addEventListener('loadedmetadata', sync);
+    progress.addEventListener('click', function(e) {
+      var r = progress.getBoundingClientRect();
+      var pct = (e.clientX - r.left) / r.width;
+      var t = pct * (v1.duration || 0);
+      v1.currentTime = t; if (v2) v2.currentTime = t;
+      sync();
+    });
+    document.getElementById('fullBtn').addEventListener('click', function() {
+      var el = document.getElementById('mainBox');
+      if (!document.fullscreenElement) { el.requestFullscreen().catch(function(){}); } else { document.exitFullscreen().catch(function(){}); }
+    });
+    var muteBtn = document.getElementById('muteBtn');
+    var volRange = document.getElementById('volRange');
+    var audioMuted = false;
+    var lastVolume = 100;
+    function setVolume(muted, vol) {
+      [v1, v2].forEach(function(v) {
+        if (!v) return;
+        v.muted = muted;
+        v.volume = Math.max(0, Math.min(1, (vol || 0) / 100));
+      });
+      document.getElementById('volOn').style.display = muted ? 'none' : 'block';
+      document.getElementById('volOff').style.display = muted ? 'block' : 'none';
+    }
+    muteBtn.addEventListener('click', function() {
+      audioMuted = !audioMuted;
+      if (audioMuted) {
+        lastVolume = parseInt(volRange.value) || 100;
+        volRange.value = 0;
+        setVolume(true, 0);
+      } else {
+        volRange.value = lastVolume || 100;
+        setVolume(false, volRange.value);
+      }
+    });
+    volRange.addEventListener('input', function() {
+      audioMuted = false;
+      setVolume(false, volRange.value);
+    });
+    var rateBtn = document.getElementById('rateBtn');
+    var rateMenu = document.getElementById('rateMenu');
+    var rate = 1;
+    function setRate(r) {
+      rate = r;
+      [v1, v2].forEach(function(v) { if (v) v.playbackRate = r; });
+      rateBtn.textContent = (r % 1 === 0 ? r.toFixed(1) : String(r)) + 'x';
+      rateMenu.querySelectorAll('button').forEach(function(b) {
+        b.classList.toggle('on', parseFloat(b.getAttribute('data-rate')) === r);
+      });
+      rateMenu.classList.remove('open');
+    }
+    rateBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      rateMenu.classList.toggle('open');
+    });
+    rateMenu.querySelectorAll('button').forEach(function(b) {
+      b.addEventListener('click', function() { setRate(parseFloat(b.getAttribute('data-rate'))); });
+    });
+    document.addEventListener('click', function(e) {
+      if (!rateMenu.contains(e.target) && e.target !== rateBtn) rateMenu.classList.remove('open');
+    });
+    var modeBtn = document.getElementById('modeBtn');
+    var camBox = document.querySelector('.cam-box');
+    var chatCol = document.querySelector('.chat-col');
+    var modes = ['all', 'nochat', 'nocam', 'live'];
+    var modeIdx = 0;
+    var modeTitles = { all: '全部显示', nochat: '隐藏聊天', nocam: '隐藏教师', live: '仅授课画面' };
+    function applyMode(m) {
+      function hideEl(el) { if (el) el.classList.add('mode-hidden'); }
+      function showEl(el) { if (el) el.classList.remove('mode-hidden'); }
+      if (m === 'all') { showEl(camBox); showEl(chatCol); }
+      else if (m === 'nochat') { showEl(camBox); hideEl(chatCol); }
+      else if (m === 'nocam') { hideEl(camBox); showEl(chatCol); }
+      else { hideEl(camBox); hideEl(chatCol); }
+      modeBtn.title = '侧边栏';
+    }
+    modeBtn.addEventListener('click', function() {
+      modeIdx = (modeIdx + 1) % 4;
+      applyMode(modes[modeIdx]);
+    });
+    var sideBtn = document.getElementById('sideBtn');
+    var rightCol = document.querySelector('.right-col');
+    var sideHidden = false;
+    sideBtn.addEventListener('click', function() {
+      sideHidden = !sideHidden;
+      rightCol.classList.toggle('hidden', sideHidden);
+      sideBtn.title = '网页全屏';
+      sideBtn.classList.toggle('active', sideHidden);
+    });
+    var chatLog = <%- JSON.stringify((function(){ try { return JSON.parse(chatLog || '[]'); } catch(e){ return []; } })()) %>;
+    if (!Array.isArray(chatLog)) { try { chatLog = JSON.parse(chatLog); } catch(e) { chatLog = []; } }
+    (function(){
+      var box = document.getElementById('chatMsgs');
+      if (!box) return;
+      function tfmt(t) {
+        try { var d = new Date(String(t).replace(' ', 'T') + 'Z'); var p = function(n){ return (n<10?'0'+n:''+n); }; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); } catch(e){ return ''; }
+      }
+      chatLog = chatLog.filter(function(m) {
+        var c = String(m.content || '');
+        return !(String(m.sender || '') === '系统' && (c.indexOf('老师已开始直播') > -1 || c.indexOf('老师已结束直播') > -1));
+      });
+      if (!chatLog || chatLog.length === 0) { box.innerHTML = '<div class="empty">本次课堂暂无聊天记录</div>'; return; }
+      var chats = chatLog.map(function(m) {
+        var t = 0;
+        try { t = new Date(String(m.created_at).replace(' ', 'T') + 'Z').getTime(); } catch(e) {}
+        return { m: m, t: t };
+      });
+      var t0 = chats[0] ? chats[0].t : 0;
+      chats.forEach(function(c) { c.offset = (c.t - t0) / 1000; });
+      var shownCount = 0;
+      function addMsg(m) {
+        var div = document.createElement('div'); div.className = 'chat-msg';
+        var head = document.createElement('div'); head.className = 'head';
+        var who = document.createElement('span'); who.className = 'who'; who.textContent = m.sender || '学生';
+        var tm = document.createElement('span'); tm.className = 'time'; tm.textContent = tfmt(m.created_at);
+        var txt = document.createElement('span'); txt.className = 'txt'; txt.textContent = m.content || '';
+        head.appendChild(who); head.appendChild(tm);
+        div.appendChild(head); div.appendChild(txt);
+        box.appendChild(div); box.scrollTop = box.scrollHeight;
+      }
+      function appendVisible() {
+        if (!v1) return;
+        while (shownCount < chats.length && chats[shownCount].offset <= (v1.currentTime || 0)) {
+          addMsg(chats[shownCount].m); shownCount++;
+        }
+      }
+      if (v1) v1.addEventListener('timeupdate', appendVisible);
+      appendVisible();
+    })();
+  </script>
+</body>
+</html>

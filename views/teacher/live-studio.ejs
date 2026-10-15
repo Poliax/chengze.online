@@ -1,0 +1,2293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <style>
+    * { scrollbar-width: thin; scrollbar-color: rgba(148,163,184,.32) transparent; }
+    *::-webkit-scrollbar { width:8px; height:8px; }
+    *::-webkit-scrollbar-track { background:transparent; }
+    *::-webkit-scrollbar-thumb { background:rgba(148,163,184,.32); border-radius:8px; border:2px solid transparent; background-clip:padding-box; }
+    *::-webkit-scrollbar-thumb:hover { background:rgba(148,163,184,.55); border:2px solid transparent; background-clip:padding-box; }
+    *::-webkit-scrollbar-corner { background:transparent; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; overflow:hidden; }
+    body { background:#2B2F36; color:#fff; font-family:'Noto Serif SC', '宋体', 'SimSun', 'Songti SC', Georgia, 'Times New Roman', serif; font-size:15px; }
+    .topbar { position:relative; display:flex; align-items:center; gap:10px; height:64px; padding:0 20px; background:#2B2F36; border-bottom:1px solid rgba(255,255,255,.28); flex-wrap:nowrap; overflow:hidden; white-space:nowrap; }
+    .lesson-select { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:6px; color:#cbd5e1; font-size:12px; padding:5px 8px; outline:none; }
+    .live-clock { color:#60a5fa; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums; }
+    .lesson-select option { background:#0f172a; color:#e2e8f0; }
+    .topbar-right { margin-left:auto; display:flex; align-items:center; gap:8px; flex-wrap:nowrap; }
+    .course { font-size:14px; font-weight:500; color:rgba(255,255,255,.72); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .topbar-left .brand { padding-right:12px; border-right:1px solid rgba(255,255,255,.16); }
+    .topbar-left .brand .brand-tag { font-size:11px; font-weight:400; color:rgba(255,255,255,.55); letter-spacing:1px; margin-left:2px; }
+    .status { font-size:13px; color:rgba(255,255,255,.55); }
+    .back { color:rgba(255,255,255,.65); text-decoration:none; font-size:13px; padding:5px 8px; border-radius:6px; }
+    .back:hover { background:rgba(255,255,255,.08); color:#fff; }
+    .wrap { max-width:1500px; margin:0 auto; padding:6px 12px; display:flex; gap:12px; height:calc(100vh - 52px); align-items:stretch; }
+    .main-col { flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden; position:relative; }
+    .stage-main { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; }
+    .stage { position:relative; width:min(100%, calc((100vh - 85px) * 16 / 9), calc(100% - 24px)); aspect-ratio:16/9; max-height:100%; background:#000; border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.35); }
+    .pen-toolbar { position:absolute; left:8px; top:50%; transform:translateY(-50%); width:40px; height:calc(100% - 24px); max-height:500px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:8px 3px; background:rgba(15,23,42,.5); border:1px solid rgba(255,255,255,.08); border-radius:12px; box-shadow:0 8px 22px rgba(0,0,0,.25); z-index:10; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); opacity:.85; transition:opacity .2s ease, background .2s ease; pointer-events:none; }
+    .stage:hover .pen-toolbar { opacity:1; background:rgba(15,23,42,.94); }
+    .cat-wrap { position:relative; flex:none; display:flex; }
+    .pen-tool { position:relative; width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; border:1px solid transparent; border-radius:9px; background:transparent; color:#cbd5e1; cursor:pointer; transition:all .15s ease; pointer-events:auto; }
+    .pen-tool svg { display:block; }
+    .pen-tool:hover { background:rgba(255,255,255,.12); color:#fff; }
+    .pen-tool.active, .pen-tool.open { background:rgba(37,99,235,.32); border-color:#2563eb; color:#fff; box-shadow:0 0 0 1px rgba(59,130,246,.35); }
+    .pen-tool .ind { position:absolute; right:2px; bottom:2px; width:5px; height:5px; border-radius:50%; background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.5); }
+    .sep { width:22px; height:1px; background:rgba(255,255,255,.16); margin:2px 0; flex:none; }
+    .tool-pop { position:absolute; top:0; left:calc(100% + 10px); transform:none; z-index:30; display:none; flex-direction:column; gap:2px; min-width:128px; padding:6px; background:#0d1526; border:1px solid rgba(255,255,255,.14); border-radius:10px; box-shadow:0 14px 30px rgba(0,0,0,.5); pointer-events:auto; }
+    .tool-pop.show { display:flex; }
+    .tool-pop.colors { display:none; flex-direction:row; flex-wrap:wrap; gap:7px; width:150px; padding:10px; }
+    .tool-pop.colors.show { display:flex; }
+    .pop-item { display:flex; align-items:center; gap:9px; padding:7px 9px; border:none; border-radius:7px; background:transparent; color:#cbd5e1; font-size:12px; cursor:pointer; text-align:left; white-space:nowrap; }
+    .pop-item:hover { background:rgba(255,255,255,.1); color:#fff; }
+    .pop-item.active { background:rgba(37,99,235,.3); color:#fff; }
+    .menu-item { display:flex; align-items:center; gap:9px; padding:7px 9px; border:none; border-radius:7px; background:transparent; color:#cbd5e1; font-size:12px; cursor:pointer; text-align:left; white-space:nowrap; width:100%; }
+    .menu-item:hover { background:rgba(255,255,255,.1); color:#fff; }
+    .menu-item.active { background:rgba(37,99,235,.3); color:#fff; }
+    .menu-item:disabled { opacity:.4; cursor:not-allowed; }
+    #popCwDocs { max-height:260px; overflow-y:auto; }
+    .menu-row { display:flex; align-items:center; gap:4px; }
+    .menu-row .menu-item { flex:1; }
+    .doc-del { flex:none; width:28px; height:28px; border:none; border-radius:7px; background:transparent; color:#f87171; cursor:pointer; font-size:16px; line-height:1; }
+    .doc-del:hover { background:rgba(248,113,113,.15); color:#fff; }
+    .pen-color { width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,.28); cursor:pointer; transition:transform .15s ease; }
+    .pen-color:hover { transform:scale(1.15); }
+    .pen-color.active { border-color:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.35); }
+    #localPreview { position:relative; width:100%; height:100%; }
+    #localPreview video { width:100%; height:100%; object-fit:contain; transform:none !important; -webkit-transform:none !important; }
+    .right-col { width:200px; display:flex; flex-direction:column; gap:10px; }
+    .camera-box { position:relative; background:#0a0f1a; border:1px solid rgba(255,255,255,.12); border-radius:10px; overflow:hidden; }
+    .camera-box video { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:#000; }
+    .camera-box .cam-placeholder { position:absolute; top:0; left:0; right:0; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.42); font-size:12px; letter-spacing:1px; background:#0a0f1a; z-index:2; }
+    .audio-meter { position:absolute; right:8px; bottom:8px; display:none; flex-direction:column; align-items:center; gap:4px; background:rgba(2,6,23,.6); border:1px solid rgba(255,255,255,.14); border-radius:6px; padding:5px 4px; z-index:3; }
+    .audio-meter .meter-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.35); }
+    .audio-meter .meter-track { width:4px; height:18px; border-radius:2px; background:rgba(255,255,255,.16); overflow:hidden; display:flex; align-items:flex-end; }
+    .audio-meter .meter-bar { display:block; width:100%; height:4%; background:#22c55e; border-radius:2px; }
+    .cam-video-wrap { position:relative; background:#000; }
+    .dev-fields { display:flex; gap:8px; padding:8px 10px; border-top:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); }
+    .dev-field { flex:1; min-width:0; display:flex; align-items:center; gap:5px; }
+    .dev-field .dev-icon { flex:0 0 auto; display:inline-flex; color:rgba(255,255,255,.55); }
+    .dev-field select { flex:1; min-width:0; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:6px; color:#cbd5e1; font-size:11px; padding:6px; outline:none; }
+    .dev-field select:focus { border-color:#2563eb; }
+    .dev-field select option { background:#0f172a; color:#e2e8f0; }
+    .cam-ctrl { width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.15); border-radius:8px; background:rgba(255,255,255,.06); color:#cbd5e1; cursor:pointer; }
+    .cam-ctrl:hover { background:rgba(255,255,255,.14); }
+    .cam-ctrl.active { background:#2563eb; border-color:#2563eb; color:#fff; }
+    .chat-col { flex:1; min-height:0; display:flex; flex-direction:column; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:10px; overflow:hidden; }
+    .chat-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); }
+    .chat-tab { flex:1; padding:8px 0; background:transparent; border:none; color:rgba(255,255,255,.55); font-size:12px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; }
+    .chat-tab:hover { color:rgba(255,255,255,.8); }
+    .chat-tab.active { color:#fff; border-bottom-color:#2563eb; background:rgba(255,255,255,.05); }
+    .chat-panel { flex:1; min-height:0; display:flex; flex-direction:column; }
+    .online-hd { padding:8px 12px; font-size:12px; font-weight:600; color:rgba(255,255,255,.8); display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.06); }
+    .online-list { flex:1; overflow-y:auto; padding:6px 10px; font-size:12px; color:rgba(255,255,255,.6); }
+    .online-row { display:flex; align-items:center; gap:8px; padding:6px 2px; border-bottom:1px solid rgba(255,255,255,.05); }
+    .online-avatar { width:18px; height:18px; border-radius:50%; background:rgba(255,255,255,.12); color:rgba(255,255,255,.78); font-size:10px; font-weight:600; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; }
+    .online-row .online-name { flex:1; min-width:0; color:rgba(255,255,255,.9); font-size:11px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .online-row .online-uid { font-family:"SF Mono",Menlo,Consolas,monospace; color:rgba(255,255,255,.42); font-size:9px; flex:0 0 auto; }
+    .chat-msgs { flex:1; overflow-y:auto; padding:10px; }
+    .chat-msg { margin-bottom:9px; font-size:11px; line-height:1.55; }
+    .chat-msg .head { display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
+    .chat-msg .who { color:#7aa2ff; font-weight:600; font-size:11px; }
+    .chat-msg .time { color:rgba(255,255,255,.38); font-size:9px; }
+    .chat-msg .txt { display:block; color:rgba(255,255,255,.92); line-height:1.5; word-break:break-word; font-size:11px; }
+    .chat-input-row { display:flex; gap:6px; align-items:center; padding:8px 10px; border-top:1px solid rgba(255,255,255,.08); }
+    .chat-input-row input { flex:1; min-width:0; height:26px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:0 12px; color:#fff; font-size:12px; outline:none; }
+    .chat-input-row button { flex:0 0 auto; height:26px; padding:0 14px; border:none; border-radius:14px; background:#2563eb; color:#fff; font-size:12px; font-weight:600; cursor:pointer; }
+    .chat-input-row.online-footer { height:43px; min-height:43px; }
+    .btn { padding:7px 12px; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; height:32px; display:inline-flex; align-items:center; }
+    .btn-mode { background:rgba(255,255,255,.08); color:#cbd5e1; border:1px solid rgba(255,255,255,.15); }
+    .btn-mode:hover { background:rgba(255,255,255,.15); }
+    .btn-mode.active { background:#2563eb; color:#fff; border-color:#2563eb; }
+    .btn-main { background:rgba(37,99,235,.14); color:#93c5fd; border:1px solid rgba(96,165,250,.45); min-width:96px; justify-content:center; }
+    .btn-main:hover { background:rgba(37,99,235,.28); color:#fff; }
+    .btn-main.live { background:rgba(220,38,38,.14); color:#fca5a5; border-color:rgba(248,113,113,.45); }
+    .btn-main.live:hover { background:rgba(220,38,38,.3); color:#fff; }
+    .btn-upload { background:rgba(255,255,255,.08); color:#cbd5e1; border:1px solid rgba(255,255,255,.15); font-size:12px; }
+    .btn-upload:hover { background:rgba(255,255,255,.15); }
+    .btn-upload:disabled { opacity:.4; cursor:not-allowed; }
+    .page-label { font-size:12px; color:rgba(255,255,255,.5); }
+    .msgbar { flex:0 0 24px; display:flex; align-items:center; padding:0 12px; border-top:1px solid rgba(255,255,255,.05); background:rgba(15,23,42,.35); }
+    .msg { font-size:12px; color:rgba(255,255,255,.8); line-height:1; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .msg.err { color:#f87171; }
+    .err { color:#f87171; }
+    .ok { color:#4ade80; }
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+  <div class="topbar">
+    <div class="topbar-left" style="display:flex;align-items:center;gap:10px">
+      <span class="brand" style="display:inline-flex;align-items:center;gap:10px;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:22px;font-weight:400;line-height:1;letter-spacing:.5px;white-space:nowrap;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale">
+      <svg width="28" height="28" viewBox="0 0 340 300" role="img" aria-label="承泽教育"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
+<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
+<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg>承泽教育<span class="brand-tag">直播授课端</span>
+    </span>
+      <span class="course"><%= course.title %></span>
+    <select id="lessonSelect" class="lesson-select" title="选择本次课次">
+      <option value="">选择本次课次</option>
+      <% (lessons||[]).forEach(function(l){ %>
+      <option value="<%= l.id %>"><%= l.title %></option>
+      <% }); %>
+    </select>
+    </div>
+    
+    <div class="topbar-right">
+            <input type="file" id="coursewareInput" accept="image/*,.pdf,.ppt,.pptx,.doc,.docx" multiple style="display:none">
+      <span class="page-label" id="pageLabel" style="display:none"></span>
+      <span class="live-clock" id="liveClock"></span>
+      <button class="btn btn-main" id="mainBtn">开始上课</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="main-col">
+      <div class="stage-main">
+        <div class="stage">
+          <div id="localPreview"></div>
+          <span id="stagePageBadge" style="position:absolute;top:8px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:3px 8px;border-radius:5px;display:none;z-index:5"></span>
+          <div id="toolCursor" style="display:none;position:absolute;pointer-events:none;z-index:20;transform:translate(-50%,-50%);"></div>
+        <div class="pen-toolbar">
+          <div class="cat-wrap">
+            <button class="pen-tool cat mode-tool" id="modeWb" data-pop="popWb" title="白板"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="11" rx="2"/><path d="M7 15l-2 5"/><path d="M17 15l2 5"/></svg></button>
+            <div class="tool-pop" id="popWb">
+              <button class="menu-item" data-action="new">新建页面</button>
+              <button class="menu-item" data-action="prev" id="wbPrevItem">上一页</button>
+              <button class="menu-item" data-action="next" id="wbNextItem">下一页</button>
+            </div>
+          </div>
+          <div class="cat-wrap">
+            <button class="pen-tool cat mode-tool" id="modeCw" data-pop="popCw" title="课件"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></button>
+            <div class="tool-pop" id="popCw">
+              <button class="menu-item" id="cwUploadItem">上传课件</button>
+              <button class="menu-item" data-cw-action="prev" id="cwPrevItem">上一页</button>
+              <button class="menu-item" data-cw-action="next" id="cwNextItem">下一页</button>
+              <div id="popCwDocs"></div>
+            </div>
+          </div>
+          <button class="pen-tool mode-tool" id="modeShare" title="屏幕共享"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M12 19v2"/><path d="M8 21h8"/><path d="M12 13V7"/><path d="M8.5 10.5L12 7l3.5 3.5"/></svg></button>
+          <span class="sep"></span>
+
+<div class="cat-wrap">
+            <button class="pen-tool cat" id="catPen" data-pop="popPen" title="笔的类型"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span class="ind" style="display:none"></span></button>
+            <div class="tool-pop" id="popPen">
+              <button class="pop-item active" data-set="tool" data-value="laser"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l9-9"/><path d="M14 10l4-4"/><path d="M13 5l6 6-3 3-6-6 3-3z"/><circle cx="4" cy="20" r="1.5" fill="currentColor" stroke="none"/></svg>激光笔</button>
+              <button class="pop-item" data-set="tool" data-value="ballpoint"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>圆珠笔</button>
+                            <button class="pop-item" data-set="tool" data-value="eraser"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h8"/><path d="M17 8L9 16l-3-3 8-8 3 3z"/></svg>黑板擦</button>
+              <button class="pop-item" data-set="tool" data-value="text"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/></svg>文本</button>
+              <button class="pop-item" data-set="tool" data-value="selecttext"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>选择</button>
+            </div>
+          </div>
+          <div class="cat-wrap">
+            <button class="pen-tool cat" id="catSize" data-pop="popSize" title="线条粗细"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6" stroke-width="1"/><line x1="3" y1="12" x2="21" y2="12" stroke-width="3"/><line x1="3" y1="18" x2="21" y2="18" stroke-width="5"/></svg><span class="ind" style="display:none"></span></button>
+            <div class="tool-pop" id="popSize">
+              <button class="pop-item" data-set="size" data-value="1"><svg width="34" height="10" viewBox="0 0 34 10" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="1" y1="5" x2="33" y2="5" stroke-width="1"/></svg>超细</button>
+              <button class="pop-item" data-set="size" data-value="2"><svg width="34" height="10" viewBox="0 0 34 10" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="1" y1="5" x2="33" y2="5" stroke-width="1"/></svg>细</button>
+              <button class="pop-item" data-set="size" data-value="3"><svg width="34" height="10" viewBox="0 0 34 10" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="1" y1="5" x2="33" y2="5" stroke-width="2"/></svg>中细</button>
+              <button class="pop-item active" data-set="size" data-value="5"><svg width="34" height="10" viewBox="0 0 34 10" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="1" y1="5" x2="33" y2="5" stroke-width="3"/></svg>中</button>
+              <button class="pop-item" data-set="size" data-value="8"><svg width="34" height="10" viewBox="0 0 34 10" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="1" y1="5" x2="33" y2="5" stroke-width="5"/></svg>粗</button>
+              <button class="pop-item" data-set="size" data-value="12"><svg width="34" height="10" viewBox="0 0 34 10" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="1" y1="5" x2="33" y2="5" stroke-width="7"/></svg>特粗</button>
+            </div>
+          </div>
+          <div class="cat-wrap">
+            <button class="pen-tool cat" id="catColor" data-pop="popColor" title="颜色"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 1 10-10c0 2.2-1.8 4-4 4h-2.2a2 2 0 0 0-1.4 3.4 1.6 1.6 0 0 1-2.4 2.6z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/></svg><span class="ind" style="display:none"></span></button>
+            <div class="tool-pop colors" id="popColor">
+              <span class="pen-color active" data-color="#e11d48" style="background:#e11d48"></span>
+              <span class="pen-color" data-color="#1e293b" style="background:#1e293b"></span>
+              <span class="pen-color" data-color="#ffffff" style="background:#ffffff;border-color:#94a3b8"></span>
+              <span class="pen-color" data-color="#a4262c" style="background:#a4262c"></span>
+              <span class="pen-color" data-color="#c00000" style="background:#c00000"></span>
+              <span class="pen-color" data-color="#e36c09" style="background:#e36c09"></span>
+              <span class="pen-color" data-color="#f97316" style="background:#f97316"></span>
+              <span class="pen-color" data-color="#eab308" style="background:#eab308"></span>
+              <span class="pen-color" data-color="#f2c94c" style="background:#f2c94c"></span>
+              <span class="pen-color" data-color="#86c137" style="background:#86c137"></span>
+              <span class="pen-color" data-color="#16a34a" style="background:#16a34a"></span>
+              <span class="pen-color" data-color="#2f6f4f" style="background:#2f6f4f"></span>
+              <span class="pen-color" data-color="#0d9488" style="background:#0d9488"></span>
+              <span class="pen-color" data-color="#00b0f0" style="background:#00b0f0"></span>
+              <span class="pen-color" data-color="#2563eb" style="background:#2563eb"></span>
+              <span class="pen-color" data-color="#1f3864" style="background:#1f3864"></span>
+              <span class="pen-color" data-color="#7c3aed" style="background:#7c3aed"></span>
+              <span class="pen-color" data-color="#5b2c6f" style="background:#5b2c6f"></span>
+              <span class="pen-color" data-color="#ec4899" style="background:#ec4899"></span>
+              <span class="pen-color" data-color="#92400e" style="background:#92400e"></span>
+              <span class="pen-color" data-color="#64748b" style="background:#64748b"></span>
+            </div>
+          </div>
+          <div class="cat-wrap">
+            <button class="pen-tool cat" id="catLine" data-pop="popLine" title="线段类型"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><polyline points="6.5 12.5 5 19 11.5 17.5"/></svg><span class="ind" style="display:none"></span></button>
+            <div class="tool-pop" id="popLine">
+              <button class="pop-item active" data-set="tool" data-value="line"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="20" x2="20" y2="4"/></svg>直线</button>
+              <button class="pop-item" data-set="tool" data-value="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>箭头</button>
+              <button class="pop-item" data-set="tool" data-value="dash"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="20" x2="20" y2="4" stroke-dasharray="5 5"/></svg>虚线</button>
+            </div>
+          </div>
+          <div class="cat-wrap">
+            <button class="pen-tool cat" id="catShape" data-pop="popShape" title="作图工具"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16L12 5z"/></svg><span class="ind" style="display:none"></span></button>
+            <div class="tool-pop" id="popShape">
+              <button class="pop-item active" data-set="tool" data-value="rect"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="14" rx="1"/></svg>矩形</button>
+              <button class="pop-item" data-set="tool" data-value="ellipse"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="8" ry="5"/></svg>圆形</button>
+              <button class="pop-item" data-set="tool" data-value="triangle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16L12 5z"/></svg>三角形</button>
+              <button class="pop-item" data-set="tool" data-value="ruler"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M7 9v6M11 9v6M15 9v6M19 9v6"/></svg>直尺</button>
+              <button class="pop-item" data-set="tool" data-value="compass"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16.2 7.8l-2.1 6.3-6.3 2.1 2.1-6.3z"/></svg>圆规</button>
+              <button class="pop-item" data-set="tool" data-value="protractor"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17a9 9 0 0 1 18 0z"/><path d="M3 17h18"/><path d="M12 17v-6"/><path d="M8 17v-3"/><path d="M16 17v-3"/></svg>量角器</button>
+            </div>
+          </div>
+                    <span class="sep"></span>
+          <button class="pen-tool" id="toolUndo" title="撤销"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg></button>
+          <button class="pen-tool" id="toolRedo" title="重做"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg></button>
+          <button class="pen-tool" id="toolClear" title="清除本页"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+        </div>
+        </div>
+      </div>
+      <div class="msgbar"><div class="msg" id="msg"></div></div>
+    </div>
+    <div class="right-col">
+      <div class="camera-box">
+        <div class="cam-video-wrap">
+          <video id="cameraPreview" autoplay muted playsinline></video>
+          <div class="cam-placeholder" id="camPlaceholder">摄像头未开启</div>
+          <div class="audio-meter" id="audioMeter">
+            <span class="meter-dot" id="audioMeterDot"></span>
+            <span class="meter-track"><span class="meter-bar" id="audioMeterBar"></span></span>
+          </div>
+        </div>
+        <div class="dev-fields">
+          <div class="dev-field">
+            <span class="dev-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M15 10l6-3v10l-6-3v-4z"/></svg></span>
+            <select id="cameraSelect" title="选择摄像头"></select>
+          </div>
+          <div class="dev-field">
+            <span class="dev-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v4a4 4 0 0 0 4 4z"/><path d="M19 10a7 7 0 0 1-14 0H3a9 9 0 0 0 8 8.9V22h2v-3.1A9 9 0 0 0 21 10h-2z"/></svg></span>
+            <select id="audioSelect" title="选择麦克风"></select>
+          </div>
+        </div>
+      </div>
+      <div class="chat-col">
+        <div class="chat-tabs">
+          <button type="button" class="chat-tab active" id="tabChat">课堂互动</button>
+          <button type="button" class="chat-tab" id="tabOnline">在线学员</button>
+        </div>
+        <div class="chat-panel" id="panelChat">
+          <div class="chat-msgs" id="chatMsgs">
+            <div class="chat-msg"><div class="head"><span class="who">系统</span><span class="time" id="welcomeTime"></span></div><span class="txt">欢迎来到课堂</span></div>
+          </div>
+          <div class="chat-input-row">
+            <input id="chatInput" placeholder="回复学生..." maxlength="200">
+            <button id="chatSend">发送</button>
+          </div>
+        </div>
+        <div class="chat-panel" id="panelOnline" style="display:none">
+          <div class="online-list" id="onlineList">暂无学员在线</div>
+          <div class="chat-input-row online-footer"><span style="color:rgba(255,255,255,.45);font-size:11px">在线学员 <span id="onlineCount">0 人</span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="confirmModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;">
+    <div style="background:#111a2e;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:20px 24px;max-width:360px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,.5);">
+      <div id="confirmText" style="font-size:14px;color:#fff;margin-bottom:16px;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;">
+        <button id="confirmCancel" class="btn btn-upload">取消</button>
+        <button id="confirmOk" class="btn btn-main" style="background:#dc2626;">确认删除</button>
+      </div>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/player/trtc.js"></script>
+  <script>
+    var SDKAPPID = <%= sdkAppId %>;
+    var USERID = '<%= userId %>';
+    var USERSIG = '<%= userSig %>';
+    var PRIVATE_MAP_KEY = '<%= privateMapKey %>';
+    var CAM_PRIVATE_MAP_KEY = '<%= camPrivateMapKey %>';
+    var CAM_USERID = '<%= camUserId %>';
+    var CAM_USERSIG = '<%= camUserSig %>';
+    var ROOMID = <%= roomId %>;
+    var STREAM_ID = <%= stream.id %>;
+    var COURSE_ID = <%= course.id %>;
+    (function() {
+      var params = new URLSearchParams(location.search);
+      var lid = params.get('lesson');
+      var sel = document.getElementById('lessonSelect');
+      if (lid) {
+        if (sel) sel.value = lid;
+      } else if (sel && sel.options.length > 0) {
+        sel.selectedIndex = 0;
+      }
+    })();
+
+    var socket = io();
+    socket.emit('live:join', { courseId: COURSE_ID, role: 'teacher' });
+    (function(){ var wt = document.getElementById('welcomeTime'); if (wt) wt.textContent = fmtChatTime(new Date()); })();
+    socket.on('live:online', function(d) { var el = document.getElementById('onlineCount'); if (el) el.textContent = (d.count || 0) + ' 人'; });
+    socket.on('live:onlineList', function(d) {
+      var el = document.getElementById('onlineList');
+      if (!el) return;
+      var list = d.list || [];
+      el.innerHTML = '';
+      if (!list.length) { el.textContent = '暂无学员在线'; return; }
+      list.forEach(function(item) {
+        var row = document.createElement('div');
+        row.className = 'online-row';
+        var avatar = document.createElement('span');
+        avatar.className = 'online-avatar';
+        avatar.textContent = (item.name || '学').charAt(0);
+        var nameSpan = document.createElement('span');
+        nameSpan.className = 'online-name';
+        nameSpan.textContent = item.name || '学生';
+        var uidSpan = document.createElement('span');
+        uidSpan.className = 'online-uid';
+        uidSpan.textContent = item.uid || '';
+        row.appendChild(avatar);
+        row.appendChild(nameSpan);
+        row.appendChild(uidSpan);
+        el.appendChild(row);
+      });
+    });
+    var chatMsgs = document.getElementById('chatMsgs');
+    function fmtChatTime(t) {
+      try {
+        var d = t ? new Date(t) : new Date();
+        function p(n) { return (n < 10 ? '0' + n : '' + n); }
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+      } catch(e) { return ''; }
+    }
+    socket.on('live:chat', function(data) {
+      var div = document.createElement('div'); div.className = 'chat-msg';
+      var head = document.createElement('div'); head.className = 'head';
+      var who = document.createElement('span'); who.className = 'who'; who.textContent = data.sender || '学生';
+      var tm = document.createElement('span'); tm.className = 'time'; tm.textContent = fmtChatTime(data.time);
+      var txt = document.createElement('span'); txt.className = 'txt'; txt.textContent = data.content || '';
+      head.appendChild(who); head.appendChild(tm);
+      div.appendChild(head); div.appendChild(txt);
+      chatMsgs.appendChild(div); chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    });
+    document.getElementById('chatSend').addEventListener('click', function() {
+      var input = document.getElementById('chatInput');
+      if (!input.value.trim()) return;
+      socket.emit('live:chat', { courseId: COURSE_ID, sender: '老师', content: input.value.trim() });
+      input.value = '';
+    });
+    document.getElementById('chatInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('chatSend').click(); });
+
+    var CW = 1920, CH = 1080;
+    var canvas = document.createElement('canvas'); canvas.width = CW; canvas.height = CH;
+    var ctx = canvas.getContext('2d');
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    var publishCanvas = document.createElement('canvas'); publishCanvas.width = 1280; publishCanvas.height = 720;
+    var publishCtx = publishCanvas.getContext('2d');
+    publishCtx.lineCap = 'round'; publishCtx.lineJoin = 'round';
+    publishCtx.imageSmoothingEnabled = true; publishCtx.imageSmoothingQuality = 'high';
+    var mode = 'none';
+    var coursewarePages = [];
+    var coursewareDocs = [];
+    var docIndex = -1;
+    var pageIndex = 0;
+    var loadToken = 0;
+    var pageImages = [];
+    var coursewareImage = null;
+    var annCanvases = [];
+    var currentInteraction = 'flip';
+    var scrollY = 0;
+    var scrollLayout = null;
+    var activeAnnIndex = -1;
+    var activeAnnCanvas = null;
+    var activeAnnHeight = 0;
+    var wbPages = [];
+    var wbTexts = [];
+    var editingText = null;
+    var selectedText = null;
+    var textDrag = null;
+    var wbPageIndex = 0;
+    var drawing = false;
+    var currentTool = 'pen';
+    var currentColor = '#e11d48';
+    var penSize = 5;
+    var startPoint = null;
+    var undoStack = [], redoStack = [];
+    var cameraStream = null;
+    var cameraVideo = null;
+    var client = null;
+    var localStream = null;
+    var cameraLocal = null;
+    var camClient = null;
+    var publishing = false;
+    var rafId = null;
+    var msgEl = document.getElementById('msg');
+    var wbBtn = document.getElementById('modeWb');
+    var cwBtn = document.getElementById('modeCw');
+    var mainBtn = document.getElementById('mainBtn');
+    var pageLabel = document.getElementById('pageLabel');
+    var toolCursor = document.getElementById('toolCursor');
+    var previewBase = null;
+    var existingTextInput = null;
+    var existingTextWrap = null;
+    var laserCanvas = document.createElement('canvas'); laserCanvas.width = CW; laserCanvas.height = CH;
+    var laserCtx = laserCanvas.getContext('2d');
+    var laserSegments = [];
+    var laserFadeMs = 1400;
+    function addLaserSegment(a, b) {
+      laserSegments.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, t: Date.now() });
+      if (laserSegments.length > 400) laserSegments.splice(0, laserSegments.length - 400);
+    }
+    function drawLaserFrame() {
+      laserCtx.clearRect(0, 0, CW, CH);
+      var now = Date.now();
+      var kept = [];
+      for (var i = 0; i < laserSegments.length; i++) {
+        var seg = laserSegments[i];
+        var age = now - seg.t;
+        if (age >= laserFadeMs) continue;
+        kept.push(seg);
+        var alpha = 1 - age / laserFadeMs;
+        laserCtx.save();
+        laserCtx.globalCompositeOperation = 'source-over';
+        laserCtx.globalAlpha = alpha;
+        laserCtx.strokeStyle = currentColor;
+        laserCtx.lineWidth = Math.max(3, penSize);
+        laserCtx.lineCap = 'round';
+        laserCtx.shadowColor = currentColor;
+        laserCtx.shadowBlur = 4;
+        laserCtx.beginPath(); laserCtx.moveTo(seg.x1, seg.y1); laserCtx.lineTo(seg.x2, seg.y2); laserCtx.stroke();
+        laserCtx.restore();
+      }
+      laserSegments = kept;
+    }
+    var confirmModal = document.getElementById('confirmModal');
+    var confirmTextEl = document.getElementById('confirmText');
+    var confirmOkBtn = document.getElementById('confirmOk');
+    var confirmCancelBtn = document.getElementById('confirmCancel');
+    var confirmCb = null;
+    function askConfirm(text, cb) {
+      confirmTextEl.textContent = text;
+      confirmCb = cb;
+      confirmModal.style.display = 'flex';
+    }
+    confirmOkBtn.addEventListener('click', function() {
+      var cb = confirmCb; confirmCb = null;
+      confirmModal.style.display = 'none';
+      if (cb) cb();
+    });
+    confirmCancelBtn.addEventListener('click', function() {
+      confirmCb = null;
+      confirmModal.style.display = 'none';
+    });
+
+    function setMsg(text, type) { msgEl.textContent = text; msgEl.className = 'msg ' + (type || ''); }
+
+
+    function newWhiteboardPage() {
+      var c = document.createElement('canvas'); c.width = CW; c.height = CH;
+      var cx = c.getContext('2d'); cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, CW, CH);
+      wbPages.push(c); wbTexts.push([]); wbPageIndex = wbPages.length - 1; return c;
+    }
+    function currentWb() { return wbPages[wbPageIndex] || newWhiteboardPage(); }
+    function currentAnn() { if (!annCanvases[pageIndex]) { var c = document.createElement('canvas'); c.width = CW; c.height = CH; annCanvases[pageIndex] = c; } return annCanvases[pageIndex]; }
+
+    function setMode(m) {
+      mode = m;
+      wbBtn.classList.toggle('active', m === 'whiteboard');
+      cwBtn.classList.toggle('active', m === 'courseware');
+      updatePageUI();
+      drawFrame();
+      updateToolCursor(null);
+      saveStudioState();
+    }
+
+    var stageBadge = document.getElementById('stagePageBadge');
+    var wbPrevItem = document.getElementById('wbPrevItem');
+    var wbNextItem = document.getElementById('wbNextItem');
+    var cwPrevItem = document.getElementById('cwPrevItem');
+    var cwNextItem = document.getElementById('cwNextItem');
+    function updatePageUI() {
+      var wbMode = mode === 'whiteboard';
+      if (wbPrevItem) wbPrevItem.disabled = !wbMode || wbPageIndex <= 0;
+      if (wbNextItem) wbNextItem.disabled = !wbMode || wbPageIndex >= wbPages.length - 1;
+      var cwMode = mode === 'courseware' && coursewarePages.length;
+      if (cwPrevItem) cwPrevItem.disabled = !cwMode || (currentInteraction === 'scroll' ? scrollY <= 0 : pageIndex <= 0);
+      if (cwNextItem) cwNextItem.disabled = !cwMode || (currentInteraction === 'scroll' ? scrollY >= scrollMax() : pageIndex >= coursewarePages.length - 1);
+      if (wbMode) {
+        pageLabel.textContent = '白板 第 ' + (wbPageIndex + 1) + ' / ' + wbPages.length + ' 页';
+      } else if (mode === 'courseware' && coursewarePages.length && currentInteraction === 'scroll') {
+        pageLabel.textContent = '课件 · 滚动浏览';
+      } else if (mode === 'courseware' && coursewarePages.length) {
+        pageLabel.textContent = '课件 第 ' + (pageIndex + 1) + ' / ' + coursewarePages.length + ' 页';
+      } else {
+        pageLabel.textContent = '';
+        stageBadge.style.display = 'none';
+      }
+      if (wbMode) { stageBadge.textContent = (wbPageIndex + 1) + '/' + wbPages.length; stageBadge.style.display = 'block'; }
+      else if (mode === 'courseware' && coursewarePages.length && currentInteraction === 'scroll') {
+        var sm2 = scrollMax();
+        var pct = sm2 > 0 ? Math.min(100, Math.round(scrollY / sm2 * 100)) : 0;
+        stageBadge.textContent = pct + '%';
+        stageBadge.style.display = 'block';
+      }
+      else if (mode === 'courseware' && coursewarePages.length) { stageBadge.textContent = (pageIndex + 1) + '/' + coursewarePages.length; stageBadge.style.display = 'block'; }
+      saveStudioState();
+    }
+
+    function loadPage(i) {
+      if (!coursewarePages.length) return;
+      var token = ++loadToken;
+      var img = pageImages[i];
+      if (img && img.complete && img.naturalWidth) {
+        applyPage(i, img, token);
+        return;
+      }
+      if (!img) {
+        img = new Image();
+        pageImages[i] = img;
+        img.onload = function() { if (token === loadToken) applyPage(i, img, token); };
+        img.onerror = function() { setMsg('课件图片加载失败：' + coursewarePages[i], 'err'); };
+        img.src = coursewarePages[i];
+        var next = i + 1;
+        if (next < coursewarePages.length && !pageImages[next]) {
+          var pre = new Image();
+          pageImages[next] = pre;
+          pre.src = coursewarePages[next];
+        }
+      }
+    }
+    function applyPage(i, img, token) {
+      if (token !== loadToken) return;
+      coursewareImage = img;
+      pageIndex = i;
+      updatePageUI();
+      drawFrame();
+      saveStudioState();
+    }
+
+    function drawTexts(arr) {
+      if (!arr || !arr.length) return;
+      ctx.save();
+      ctx.textBaseline = 'top';
+      for (var i = 0; i < arr.length; i++) {
+        var t = arr[i];
+        ctx.fillStyle = t.color || currentColor;
+        ctx.font = 'bold ' + (t.size || 48) + 'px -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif';
+        ctx.fillText(t.text, t.x, t.y);
+        if (selectedText && t === selectedText) {
+          var w = String(t.text).length * (t.size || 48) * 0.62;
+          var h = (t.size || 48) * 1.3;
+          ctx.strokeStyle = '#2563eb';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([8, 6]);
+          ctx.strokeRect(t.x - 6, t.y - 6, w + 12, h + 12);
+          ctx.setLineDash([]);
+        }
+      }
+      ctx.restore();
+    }
+
+    function currentTextArr() {
+      if (mode === 'whiteboard') { if (!wbTexts[wbPageIndex]) wbTexts[wbPageIndex] = []; return wbTexts[wbPageIndex]; }
+      if (mode === 'courseware' && currentInteraction !== 'scroll' && coursewareDocs[docIndex]) {
+        var doc = coursewareDocs[docIndex];
+        if (!doc.texts) doc.texts = [];
+        if (!doc.texts[pageIndex]) doc.texts[pageIndex] = [];
+        return doc.texts[pageIndex];
+      }
+      return null;
+    }
+
+    function hitTextObject(p) {
+      var arr = currentTextArr();
+      if (!arr) return null;
+      for (var i = arr.length - 1; i >= 0; i--) {
+        var t = arr[i];
+        var w = String(t.text).length * (t.size || 48) * 0.62;
+        var h = (t.size || 48) * 1.3;
+        if (p.x >= t.x - 10 && p.x <= t.x + w + 10 && p.y >= t.y - 10 && p.y <= t.y + h + 10) return t;
+      }
+      return null;
+    }
+
+    function drawFrame() {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, CW, CH);
+      ctx.save();
+      ctx.translate(viewX, viewY);
+      ctx.scale(viewScale, viewScale);
+      ctx.fillStyle = '#22262f';
+      ctx.fillRect(0, 0, CW, CH);
+      if (mode === 'whiteboard') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, CW, CH);
+        ctx.drawImage(currentWb(), 0, 0, CW, CH);
+        if (wbTexts[wbPageIndex]) drawTexts(wbTexts[wbPageIndex]);
+      } else if (mode === 'courseware' && currentInteraction === 'scroll' && scrollLayout) {
+        for (var si = 0; si < scrollLayout.length; si++) {
+          var pg = scrollLayout[si];
+          if (!pg || !pg.img) continue;
+          var pTop = pg.top, pBot = pg.top + pg.height;
+          if (pBot < scrollY || pTop > scrollY + CH) continue;
+          var vTop = Math.max(pTop, scrollY), vBot = Math.min(pBot, scrollY + CH);
+          var srcY = (vTop - pTop) / pg.height * pg.img.height;
+          var srcH = (vBot - vTop) / pg.height * pg.img.height;
+          var dstY = vTop - scrollY, dstH = vBot - vTop;
+          ctx.drawImage(pg.img, 0, srcY, pg.img.width, srcH, 0, dstY, CW, dstH);
+          if (annCanvases[si]) {
+            var aSrcY = (vTop - pTop) / pg.height * CH;
+            var aSrcH = (vBot - vTop) / pg.height * CH;
+            ctx.drawImage(annCanvases[si], 0, aSrcY, CW, aSrcH, 0, dstY, CW, dstH);
+          }
+        }
+      } else if (mode === 'courseware' && coursewareImage) {
+        var iw = coursewareImage.width, ih = coursewareImage.height;
+        var scale = Math.max(CW / iw, CH / ih);
+        var dw = iw * scale, dh = ih * scale;
+        ctx.drawImage(coursewareImage, (CW - dw) / 2, (CH - dh) / 2, dw, dh);
+        if (annCanvases[pageIndex]) ctx.drawImage(annCanvases[pageIndex], 0, 0, CW, CH);
+        if (coursewareDocs[docIndex] && coursewareDocs[docIndex].texts) drawTexts(coursewareDocs[docIndex].texts[pageIndex]);
+      }
+      if (selection && selCanvas) {
+        ctx.drawImage(selCanvas, Math.round(selX), Math.round(selY));
+        ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2 / viewScale; ctx.setLineDash([8 / viewScale, 6 / viewScale]);
+        ctx.strokeRect(selX, selY, selW, selH); ctx.setLineDash([]);
+      }
+      if (selStart && selCur) {
+        ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 1.5 / viewScale; ctx.setLineDash([6 / viewScale, 5 / viewScale]);
+        ctx.strokeRect(Math.min(selStart.x, selCur.x), Math.min(selStart.y, selCur.y), Math.abs(selCur.x - selStart.x), Math.abs(selCur.y - selStart.y));
+        ctx.setLineDash([]);
+      }
+      ctx.restore();
+      drawLaserFrame();
+      ctx.drawImage(laserCanvas, 0, 0, CW, CH);
+      publishCtx.drawImage(canvas, 0, 0, 1280, 720);
+      rafId = requestAnimationFrame(drawFrame);
+    }
+
+    function currentTarget() {
+      if (mode === 'whiteboard') return { kind: 'wb', page: wbPageIndex, canvas: currentWb() };
+      if (mode === 'courseware' && currentInteraction === 'scroll' && activeAnnCanvas) return { kind: 'ann', page: activeAnnIndex, canvas: activeAnnCanvas };
+      return { kind: 'ann', page: pageIndex, canvas: currentAnn() };
+    }
+    function pushSnapshotCanvas(c) {
+      undoStack.push({ kind: 'ann', page: activeAnnIndex, data: c.toDataURL() });
+      if (undoStack.length > 80) undoStack.shift();
+      redoStack = [];
+    }
+    function pushSnapshot() {
+      var tgt = currentTarget();
+      undoStack.push({ kind: tgt.kind, page: tgt.page, data: tgt.canvas.toDataURL() });
+      if (undoStack.length > 80) undoStack.shift();
+      redoStack = [];
+    }
+    function applyData(canvas, data) {
+      var img = new Image();
+      img.onload = function() { var c = canvas.getContext('2d'); c.clearRect(0, 0, CW, CH); c.drawImage(img, 0, 0, CW, CH); };
+      img.src = data;
+    }
+    function undo() {
+      if (!undoStack.length) return;
+      var tgt = currentTarget();
+      redoStack.push({ kind: tgt.kind, page: tgt.page, data: tgt.canvas.toDataURL() });
+      var snap = undoStack.pop();
+      applyData(tgt.canvas, snap.data);
+      setTimeout(saveStudioState, 200);
+      setMsg('已撤销', 'ok');
+    }
+    function redo() {
+      if (!redoStack.length) return;
+      var tgt = currentTarget();
+      undoStack.push({ kind: tgt.kind, page: tgt.page, data: tgt.canvas.toDataURL() });
+      var snap = redoStack.pop();
+      applyData(tgt.canvas, snap.data);
+      setTimeout(saveStudioState, 200);
+      setMsg('已重做', 'ok');
+    }
+    function scrollMax() {
+      if (!scrollLayout || !scrollLayout.length) return 0;
+      var total = 0;
+      for (var i = 0; i < scrollLayout.length; i++) { if (scrollLayout[i]) total = scrollLayout[i].top + scrollLayout[i].height; }
+      return Math.max(0, total - CH);
+    }
+
+    function drawShapeTo(c, sx, sy, ex, ey) {
+      c.lineWidth = penSize; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = currentColor; c.setLineDash([]);
+      if (currentTool === 'line') {
+        c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.stroke();
+      } else if (currentTool === 'dash') {
+        c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.setLineDash([14, 10]); c.stroke(); c.setLineDash([]);
+      } else if (currentTool === 'arrow') {
+        c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.stroke();
+        var ang = Math.atan2(ey - sy, ex - sx);
+        var len = 16;
+        c.beginPath();
+        c.moveTo(ex, ey);
+        c.lineTo(ex - len * Math.cos(ang - 0.45), ey - len * Math.sin(ang - 0.45));
+        c.moveTo(ex, ey);
+        c.lineTo(ex - len * Math.cos(ang + 0.45), ey - len * Math.sin(ang + 0.45));
+        c.stroke();
+      } else if (currentTool === 'rect') {
+        c.strokeRect(Math.min(sx, ex), Math.min(sy, ey), Math.abs(ex - sx), Math.abs(ey - sy));
+      } else if (currentTool === 'ellipse') {
+        c.beginPath();
+        c.ellipse((sx + ex) / 2, (sy + ey) / 2, Math.abs(ex - sx) / 2, Math.abs(ey - sy) / 2, 0, 0, Math.PI * 2);
+        c.stroke();
+      } else if (currentTool === 'triangle') {
+        var mx = (sx + ex) / 2, my = (sy + ey) / 2;
+        var dx = ex - sx, dy = ey - sy;
+        var px = mx - dy * 0.8, py = my + dx * 0.8;
+        c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.lineTo(px, py); c.closePath(); c.stroke();
+      } else if (currentTool === 'compass') {
+        var rad = Math.sqrt((ex - sx) * (ex - sx) + (ey - sy) * (ey - sy));
+        c.beginPath(); c.arc(sx, sy, rad, 0, Math.PI * 2); c.stroke();
+        c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.stroke();
+        c.beginPath(); c.arc(sx, sy, 3, 0, Math.PI * 2); c.fillStyle = currentColor; c.fill();
+      } else if (currentTool === 'ruler') {
+        var dxr = ex - sx, dyr = ey - sy;
+        var dist = Math.sqrt(dxr * dxr + dyr * dyr) || 1;
+        var nxr = -dyr / dist, nyr = dxr / dist;
+        c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.lineWidth = penSize + 6; c.stroke();
+        c.lineWidth = 1; c.strokeStyle = 'rgba(255,255,255,.75)';
+        var ticks = Math.floor(dist / 24);
+        for (var ti = 1; ti <= ticks; ti++) {
+          var pxr = sx + dxr * ti / ticks, pyr = sy + dyr * ti / ticks;
+          var hl = (ti % 2 === 0) ? 12 : 8;
+          c.beginPath(); c.moveTo(pxr - nxr * hl, pyr - nyr * hl); c.lineTo(pxr + nxr * hl, pyr + nyr * hl); c.stroke();
+        }
+      } else if (currentTool === 'protractor') {
+        var rp = Math.sqrt((ex - sx) * (ex - sx) + (ey - sy) * (ey - sy));
+        c.beginPath(); c.arc(sx, sy, rp, Math.PI, Math.PI * 2); c.stroke();
+        c.beginPath(); c.moveTo(sx - rp, sy); c.lineTo(sx + rp, sy); c.stroke();
+        c.lineWidth = 1;
+        for (var deg = 0; deg <= 180; deg += 30) {
+          var a = Math.PI * deg / 180;
+          var inner = Math.max(2, rp - 8), outer = rp;
+          c.beginPath(); c.moveTo(sx + Math.cos(a) * inner, sy - Math.sin(a) * inner); c.lineTo(sx + Math.cos(a) * outer, sy - Math.sin(a) * outer); c.stroke();
+        }
+      }
+    }
+
+    function isShapeTool() {
+      return currentTool === 'line' || currentTool === 'arrow' || currentTool === 'dash' || currentTool === 'rect' || currentTool === 'ellipse' || currentTool === 'triangle' || currentTool === 'ruler' || currentTool === 'compass' || currentTool === 'protractor';
+    }
+
+    function updateToolCursor(e) {
+      if (!toolCursor) return;
+      var drawMode = mode === 'whiteboard' || mode === 'courseware';
+      if (!drawMode || !e) { toolCursor.style.display = 'none'; return; }
+      var box = document.getElementById('localPreview');
+      var r = box.getBoundingClientRect();
+      if (!r.width) return;
+      if (viewTool === 'move' || viewTool === 'pan') {
+        toolCursor.style.display = 'block';
+        toolCursor.style.width = '22px';
+        toolCursor.style.height = '22px';
+        toolCursor.style.left = (e.clientX - r.left) + 'px';
+        toolCursor.style.top = (e.clientY - r.top) + 'px';
+        toolCursor.style.borderRadius = '0';
+        toolCursor.style.border = '2px dashed rgba(255,255,255,.85)';
+        toolCursor.style.background = 'transparent';
+        toolCursor.style.boxShadow = 'none';
+        return;
+      }
+      var size = currentTool === 'eraser' ? 40 : (currentTool === 'marker' ? Math.max(8, penSize * 2.2) : penSize);
+      var d = Math.max(4, size * (r.width / CW));
+      var isErase = currentTool === 'eraser';
+      toolCursor.style.display = 'block';
+      toolCursor.style.width = d + 'px';
+      toolCursor.style.height = d + 'px';
+      toolCursor.style.left = (e.clientX - r.left) + 'px';
+      toolCursor.style.top = (e.clientY - r.top) + 'px';
+      toolCursor.style.borderRadius = '50%';
+      toolCursor.style.border = isErase ? '2px solid rgba(255,255,255,.85)' : '1.5px solid rgba(59,130,246,.9)';
+      toolCursor.style.background = isErase ? 'rgba(255,255,255,.12)' : (currentTool === 'highlighter' ? 'rgba(234,179,8,.25)' : 'rgba(59,130,246,.18)');
+      toolCursor.style.boxShadow = '0 0 0 1px rgba(0,0,0,.25)';
+    }
+
+    function restorePreviewBase(c) {
+      if (!previewBase) return;
+      var cc = c.canvas;
+      if (mode === 'whiteboard') { c.clearRect(0, 0, cc.width, cc.height); c.fillStyle = '#ffffff'; c.fillRect(0, 0, cc.width, cc.height); }
+      else { c.clearRect(0, 0, cc.width, cc.height); }
+      c.drawImage(previewBase, 0, 0);
+    }
+
+    function scrollPageAt(y) {
+      if (!scrollLayout) return null;
+      for (var i = 0; i < scrollLayout.length; i++) {
+        var p = scrollLayout[i];
+        if (p && y >= p.top && y <= p.top + p.height) return { idx: i, h: p.height, top: p.top };
+      }
+      return null;
+    }
+
+    function startTextInput(e, preset) {
+      try {
+        if (existingTextInput) commitTextInput();
+        var box = document.getElementById('localPreview');
+        var r = box.getBoundingClientRect();
+        var x, y;
+        if (preset) {
+          x = Math.max(2, Math.min(r.width - 260, preset.x / CW * r.width));
+          y = Math.max(2, Math.min(r.height - 120, preset.y / CH * r.height));
+        } else if (e && typeof e.clientX === 'number') {
+          x = Math.max(2, Math.min(r.width - 260, e.clientX - r.left));
+          y = Math.max(2, Math.min(r.height - 120, e.clientY - r.top));
+        } else {
+          x = Math.max(2, Math.round(r.width * 0.5 - 120));
+          y = Math.max(2, Math.round(r.height * 0.5 - 60));
+        }
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'position:absolute;left:' + x + 'px;top:' + y + 'px;z-index:99999;cursor:move;user-select:none;';
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.placeholder = '输入文字';
+        if (preset) inp.value = preset.text || '';
+        inp.style.cssText = 'width:240px;padding:6px 8px;background:#ffffff;color:#111827;border:2px dashed #2563eb;border-radius:6px;font-size:26px;outline:none;box-shadow:0 8px 24px rgba(0,0,0,.35);user-select:text;';
+        wrap.appendChild(inp);
+
+        var pendingColor = preset ? (preset.color || currentColor) : currentColor;
+        var pendingSize = preset ? (preset.size || 48) : 48;
+        var controls = document.createElement('div');
+        controls.style.cssText = 'display:flex;align-items:center;gap:6px;margin-top:6px;padding:6px 8px;background:rgba(15,23,42,.94);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.3);';
+        var colors = ['#111827','#e11d48','#f97316','#eab308','#16a34a','#2563eb','#7c3aed','#ffffff'];
+        colors.forEach(function(c) {
+          var dot = document.createElement('button');
+          dot.type = 'button';
+          dot.title = c;
+          dot.className = 'tx-color';
+          dot.setAttribute('data-c', c);
+          dot.style.cssText = 'width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:' + c + ';cursor:pointer;padding:0;';
+          if (c === '#ffffff') dot.style.borderColor = '#94a3b8';
+          if (c === pendingColor) { dot.style.borderColor = '#2563eb'; dot.style.boxShadow = '0 0 0 2px rgba(59,130,246,.45)'; }
+          dot.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            pendingColor = c;
+            controls.querySelectorAll('.tx-color').forEach(function(b2) { b2.style.borderColor = (b2.getAttribute('data-c') === '#ffffff') ? '#94a3b8' : 'rgba(255,255,255,.35)'; b2.style.boxShadow = 'none'; });
+            dot.style.borderColor = '#2563eb';
+            dot.style.boxShadow = '0 0 0 2px rgba(59,130,246,.45)';
+          });
+          controls.appendChild(dot);
+        });
+        var sizes = [['小', 32], ['中', 48], ['大', 64]];
+        sizes.forEach(function(sz) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = sz[0];
+          b.className = 'tx-size';
+          b.style.cssText = 'padding:3px 8px;border:none;border-radius:6px;background:rgba(255,255,255,.12);color:#fff;font-size:12px;cursor:pointer;';
+          if (sz[1] === pendingSize) b.style.background = '#2563eb';
+          b.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            pendingSize = sz[1];
+            controls.querySelectorAll('.tx-size').forEach(function(x2) { x2.style.background = 'rgba(255,255,255,.12)'; });
+            b.style.background = '#2563eb';
+            inp.style.fontSize = Math.round(pendingSize * (r.width / CW)) + 'px';
+          });
+          controls.appendChild(b);
+        });
+        var okBtn = document.createElement('button');
+        okBtn.type = 'button';
+        okBtn.textContent = '确定';
+        okBtn.style.cssText = 'padding:3px 10px;border:none;border-radius:6px;background:#2563eb;color:#fff;font-size:12px;cursor:pointer;';
+        okBtn.addEventListener('click', function(ev) { ev.stopPropagation(); commitTextInput(); });
+        controls.appendChild(okBtn);
+        wrap.appendChild(controls);
+
+        box.appendChild(wrap);
+        existingTextWrap = wrap;
+        existingTextInput = inp;
+        wrap._color = pendingColor;
+        wrap._size = pendingSize;
+        setMsg('输入框已创建：可直接输入，拖动移动，选择颜色和大小', 'ok');
+        requestAnimationFrame(function(){ inp.focus(); });
+
+        inp.addEventListener('keydown', function(ev) {
+          if (ev.key === 'Enter') { ev.preventDefault(); commitTextInput(); }
+          else if (ev.key === 'Escape') { ev.preventDefault(); cancelTextInput(); }
+        });
+
+        var dragState = null;
+        wrap.addEventListener('pointerdown', function(ev) {
+          ev.stopPropagation();
+          var wr = wrap.getBoundingClientRect();
+          dragState = { dx: ev.clientX - wr.left, dy: ev.clientY - wr.top };
+          try { wrap.setPointerCapture(ev.pointerId); } catch(e) {}
+        });
+        wrap.addEventListener('pointermove', function(ev) {
+          if (!dragState) return;
+          var br = box.getBoundingClientRect();
+          var nx = ev.clientX - br.left - dragState.dx;
+          var ny = ev.clientY - br.top - dragState.dy;
+          nx = Math.max(0, Math.min(br.width - 120, nx));
+          ny = Math.max(0, Math.min(br.height - 70, ny));
+          wrap.style.left = nx + 'px';
+          wrap.style.top = ny + 'px';
+        });
+        wrap.addEventListener('pointerup', function() { dragState = null; });
+        wrap.addEventListener('pointercancel', function() { dragState = null; });
+      } catch (err) {
+        setMsg('创建输入框失败：' + (err && err.message ? err.message : err), 'err');
+      }
+    }
+
+    function commitTextInput() {
+      var inp = existingTextInput;
+      if (!inp) return;
+      existingTextInput = null;
+      var wrap0 = existingTextWrap;
+      var textColor = (wrap0 && wrap0._color) || currentColor;
+      var textSize = (wrap0 && wrap0._size) || 48;
+      var text = inp.value.trim();
+      var box = document.getElementById('localPreview');
+      var ir = inp.getBoundingClientRect();
+      var br = box.getBoundingClientRect();
+      var x = (ir.left - br.left) / br.width * CW;
+      var y = (ir.top - br.top) / br.height * CH;
+      x = (x - viewX) / viewScale; y = (y - viewY) / viewScale;
+      if (existingTextWrap) { existingTextWrap.remove(); existingTextWrap = null; }
+      if (!text) return;
+      var c, tx, ty;
+      if (mode === 'courseware' && currentInteraction === 'scroll') {
+        var hit = scrollPageAt(scrollY + y);
+        if (!hit) return;
+        if (!annCanvases[hit.idx]) { var cc = document.createElement('canvas'); cc.width = CW; cc.height = CH; annCanvases[hit.idx] = cc; }
+        c = annCanvases[hit.idx].getContext('2d');
+        tx = x;
+        ty = (scrollY + y - hit.top) / hit.h * CH;
+      } else {
+        c = mode === 'whiteboard' ? currentWb().getContext('2d') : currentAnn().getContext('2d');
+        tx = x; ty = y;
+      }
+      if (mode === 'whiteboard' || (mode === 'courseware' && currentInteraction !== 'scroll')) {
+        var tArr = currentTextArr();
+        if (editingText) {
+          editingText.text = text;
+          editingText.x = x;
+          editingText.y = y;
+          editingText.color = textColor;
+          editingText.size = textSize;
+        } else if (tArr) {
+          tArr.push({ text: text, x: x, y: y, color: textColor, size: textSize });
+        }
+        editingText = null;
+        saveStudioState();
+        return;
+      }
+      c.save();
+      c.globalCompositeOperation = 'source-over';
+      c.fillStyle = textColor;
+      c.font = 'bold ' + textSize + 'px -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif';
+      c.textBaseline = 'top';
+      c.fillText(text, tx, ty);
+      c.restore();
+      saveStudioState();
+    }
+
+    function cancelTextInput() {
+      if (existingTextWrap) { existingTextWrap.remove(); existingTextWrap = null; }
+      existingTextInput = null;
+      editingText = null;
+    }
+
+    var viewScale = 1, viewX = 0, viewY = 0, viewTool = null;
+    var panStart = null;
+    function zoomAt(cx, cy, factor) {
+      var ns = Math.max(0.4, Math.min(3, viewScale * factor));
+      var k = ns / viewScale;
+      viewX = cx - (cx - viewX) * k;
+      viewY = cy - (cy - viewY) * k;
+      viewScale = ns;
+    }
+    var selection = false;
+    var selSource = null, selData = null, selCanvas = null, selX = 0, selY = 0, selW = 0, selH = 0;
+    var selOriginX = 0, selOriginY = 0;
+    var selStart = null, selCur = null, selMoving = false, selDragOff = null;
+    function targetCanvasForMove() {
+      if (mode === 'whiteboard') return currentWb();
+      if (mode === 'courseware' && currentInteraction === 'scroll' && activeAnnIndex >= 0 && annCanvases[activeAnnIndex]) return annCanvases[activeAnnIndex];
+      return currentAnn();
+    }
+    function cutSelection(srcCanvas, x, y, w, h) {
+      var ctx = srcCanvas.getContext('2d');
+      selData = ctx.getImageData(x, y, w, h);
+      ctx.clearRect(x, y, w, h);
+      if (srcCanvas === currentWb()) { ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y, w, h); }
+      selCanvas = document.createElement('canvas');
+      selCanvas.width = w; selCanvas.height = h;
+      selCanvas.getContext('2d').putImageData(selData, 0, 0);
+      selSource = srcCanvas; selX = x; selY = y; selW = w; selH = h;
+      selOriginX = x; selOriginY = y;
+      selection = true;
+    }
+    function commitSelection() {
+      if (!selection || !selData || !selSource) return;
+      selSource.getContext('2d').putImageData(selData, Math.round(selX), Math.round(selY));
+      clearSelectionState();
+      saveStudioState();
+    }
+    function cancelSelection() {
+      if (selection && selData && selSource) {
+        selSource.getContext('2d').putImageData(selData, selOriginX, selOriginY);
+      }
+      clearSelectionState();
+    }
+    function clearSelectionState() {
+      selection = false; selSource = null; selData = null; selCanvas = null;
+      selX = selY = selW = selH = 0; selOriginX = selOriginY = 0;
+      selStart = null; selCur = null; selMoving = false; selDragOff = null;
+    }
+    window.addEventListener('keydown', function(ev) { if (ev.key === 'Escape') cancelSelection(); });
+
+    function drawLaserImmediate(a, b) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = currentColor;
+      ctx.fillStyle = currentColor;
+      ctx.lineWidth = Math.max(3, penSize);
+      ctx.lineCap = 'round';
+      ctx.shadowColor = currentColor;
+      ctx.shadowBlur = 4;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      ctx.restore();
+    }
+
+    function setupPen() {
+      var box = document.getElementById('localPreview');
+      function toPos(e) { var r = box.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * CW, y: (e.clientY - r.top) / r.height * CH }; }
+      function toContent(e) { var s = toPos(e); return { x: (s.x - viewX) / viewScale, y: (s.y - viewY) / viewScale }; }
+      function tctx() { return mode === 'whiteboard' ? currentWb().getContext('2d') : currentAnn().getContext('2d'); }
+      function findScrollPage(y) {
+        if (!scrollLayout) return null;
+        for (var i = 0; i < scrollLayout.length; i++) {
+          var p = scrollLayout[i];
+          if (p && y >= p.top && y <= p.top + p.height) return { idx: i, h: p.height };
+        }
+        return null;
+      }
+      box.addEventListener('pointerdown', function(e) {
+        if (mode !== 'whiteboard' && mode !== 'courseware') return;
+        var sp = toPos(e);
+        var p = toContent(e);
+        updateToolCursor(e);
+        if (currentTool === 'text') {
+          if (existingTextWrap && existingTextWrap.contains(e.target)) return;
+          if (mode !== 'courseware' || currentInteraction !== 'scroll') {
+            var hitTxt = hitTextObject(p);
+            if (hitTxt) { editingText = hitTxt; startTextInput(e, hitTxt); }
+            else { editingText = null; startTextInput(e); }
+          } else {
+            editingText = null;
+            startTextInput(e);
+          }
+          return;
+        }
+        if (currentTool === 'selecttext') {
+          if (mode !== 'courseware' || currentInteraction !== 'scroll') {
+            var stSel = hitTextObject(p);
+            selectedText = stSel || null;
+            if (stSel) textDrag = { dx: p.x - stSel.x, dy: p.y - stSel.y };
+          } else {
+            selectedText = null;
+          }
+          return;
+        }
+        if (currentTool === 'laser') { drawing = true; startPoint = sp; addLaserSegment(sp, sp); drawLaserImmediate(sp, sp); return; }
+        if (viewTool === 'pan') {
+          panStart = { x: sp.x, y: sp.y, vx: viewX, vy: viewY };
+          drawing = true;
+          return;
+        }
+        if (viewTool === 'move') {
+          var tgt = null, my = p.y;
+          if (mode === 'courseware' && currentInteraction === 'scroll') {
+            var hit = scrollPageAt(scrollY + p.y);
+            if (!hit) return;
+            activeAnnIndex = hit.idx; activeAnnHeight = hit.h;
+            if (!annCanvases[activeAnnIndex]) { var cc = document.createElement('canvas'); cc.width = CW; cc.height = CH; annCanvases[activeAnnIndex] = cc; }
+            activeAnnCanvas = annCanvases[activeAnnIndex];
+            tgt = activeAnnCanvas;
+            my = (scrollY + p.y - hit.top) / hit.h * CH;
+          } else {
+            tgt = targetCanvasForMove();
+          }
+          if (selection && selCanvas && p.x >= selX && p.x <= selX + selW && p.y >= selY && p.y <= selY + selH) {
+            selMoving = true;
+            selDragOff = { x: p.x - selX, y: p.y - selY };
+            return;
+          }
+          commitSelection();
+          selSource = tgt;
+          selStart = { x: p.x, y: my };
+          selCur = { x: p.x, y: my };
+          return;
+        }
+        if (mode === 'courseware' && currentInteraction === 'scroll') {
+          var hit = findScrollPage(scrollY + p.y);
+          if (!hit) return;
+          activeAnnIndex = hit.idx;
+          activeAnnHeight = hit.h;
+          if (!annCanvases[activeAnnIndex]) { var cc = document.createElement('canvas'); cc.width = CW; cc.height = CH; annCanvases[activeAnnIndex] = cc; }
+          activeAnnCanvas = annCanvases[activeAnnIndex];
+          pushSnapshotCanvas(activeAnnCanvas);
+          drawing = true;
+          startPoint = { x: p.x, y: (scrollY + p.y - scrollLayout[hit.idx].top) / hit.h * CH };
+          var c = activeAnnCanvas.getContext('2d');
+          if (isShapeTool()) {
+            previewBase = document.createElement('canvas');
+            previewBase.width = c.canvas.width; previewBase.height = c.canvas.height;
+            previewBase.getContext('2d').drawImage(c.canvas, 0, 0);
+          }
+          var isErase = currentTool === 'eraser';
+          var isHigh = currentTool === 'highlighter';
+          var isMarker = currentTool === 'marker';
+          var isPencil = currentTool === 'pencil';
+          c.lineWidth = isErase ? 40 : (isHigh ? 28 : (isPencil ? 3 : (isMarker ? Math.max(8, penSize * 2.2) : penSize)));
+          c.lineCap = 'round'; c.lineJoin = 'round';
+          c.globalCompositeOperation = isErase ? 'destination-out' : 'source-over';
+          c.globalAlpha = isHigh ? 0.35 : (isMarker ? 0.5 : (isPencil ? 0.75 : 1));
+          c.strokeStyle = currentColor;
+          c.beginPath(); c.moveTo(startPoint.x, startPoint.y);
+          return;
+        }
+        pushSnapshot();
+        drawing = true;
+        startPoint = p;
+        var c = tctx();
+        if (isShapeTool()) {
+          previewBase = document.createElement('canvas');
+          previewBase.width = c.canvas.width; previewBase.height = c.canvas.height;
+          previewBase.getContext('2d').drawImage(c.canvas, 0, 0);
+        }
+        var isErase = currentTool === 'eraser';
+        var isHigh = currentTool === 'highlighter';
+        var isMarker = currentTool === 'marker';
+        var isPencil = currentTool === 'pencil';
+        c.lineWidth = isErase ? 40 : (isHigh ? 28 : (isPencil ? 3 : (isMarker ? Math.max(8, penSize * 2.2) : penSize)));
+        c.lineCap = 'round'; c.lineJoin = 'round';
+        c.globalCompositeOperation = isErase ? 'destination-out' : 'source-over';
+        c.globalAlpha = isHigh ? 0.35 : (isMarker ? 0.5 : (isPencil ? 0.75 : 1));
+        c.strokeStyle = currentColor;
+        c.beginPath(); c.moveTo(p.x, p.y);
+      });
+      box.addEventListener('pointermove', function(e) {
+        updateToolCursor(e);
+        if (currentTool === 'selecttext') {
+          if (textDrag && selectedText) {
+            var mp = toContent(e);
+            selectedText.x = mp.x - textDrag.dx;
+            selectedText.y = mp.y - textDrag.dy;
+          }
+          return;
+        }
+        if (!drawing) return;
+        var sp = toPos(e);
+        var p = toContent(e);
+        if (currentTool === 'laser') { addLaserSegment(startPoint || sp, sp); drawLaserImmediate(startPoint || sp, sp); startPoint = sp; return; }
+        if (viewTool === 'pan') {
+          viewX = panStart.vx + (sp.x - panStart.x);
+          viewY = panStart.vy + (sp.y - panStart.y);
+          return;
+        }
+        if (viewTool === 'move') {
+          if (selMoving && selCanvas) { selX = p.x - selDragOff.x; selY = p.y - selDragOff.y; }
+          else if (selStart) { selCur = { x: p.x, y: p.y }; }
+          return;
+        }
+        var c, sx, sy, ex, ey;
+        if (mode === 'courseware' && currentInteraction === 'scroll' && activeAnnCanvas && scrollLayout && scrollLayout[activeAnnIndex]) {
+          var pageY = scrollY + p.y - scrollLayout[activeAnnIndex].top;
+          pageY = Math.max(0, Math.min(activeAnnHeight, pageY));
+          c = activeAnnCanvas.getContext('2d');
+          sx = startPoint ? startPoint.x : p.x; sy = startPoint ? startPoint.y : pageY / activeAnnHeight * CH;
+          ex = p.x; ey = pageY / activeAnnHeight * CH;
+        } else {
+          c = tctx();
+          sx = startPoint ? startPoint.x : p.x; sy = startPoint ? startPoint.y : p.y;
+          ex = p.x; ey = p.y;
+        }
+        if (isShapeTool()) {
+          if (previewBase) {
+            restorePreviewBase(c);
+            drawShapeTo(c, sx, sy, ex, ey);
+          }
+          return;
+        }
+        var evts = [];
+        try { evts = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; } catch(err) { evts = [e]; }
+        for (var ei = 0; ei < evts.length; ei++) {
+          var pe = evts[ei];
+          var pp = toContent(pe);
+          var c2;
+          if (mode === 'courseware' && currentInteraction === 'scroll' && activeAnnCanvas && scrollLayout && scrollLayout[activeAnnIndex]) {
+            var py2 = scrollY + pp.y - scrollLayout[activeAnnIndex].top;
+            py2 = Math.max(0, Math.min(activeAnnHeight, py2));
+            c2 = activeAnnCanvas.getContext('2d');
+            if (currentTool === 'ballpoint') {
+              var pr = (typeof pe.pressure === 'number' && pe.pressure > 0) ? pe.pressure : 0.5;
+              c2.lineWidth = Math.max(1, penSize * (0.5 + pr));
+            }
+            c2.lineTo(pp.x, py2 / activeAnnHeight * CH);
+          } else {
+            c2 = tctx();
+            if (currentTool === 'ballpoint') {
+              var pr2 = (typeof pe.pressure === 'number' && pe.pressure > 0) ? pe.pressure : 0.5;
+              c2.lineWidth = Math.max(1, penSize * (0.5 + pr2));
+            }
+            c2.lineTo(pp.x, pp.y);
+          }
+          c2.stroke();
+          if (!(mode === 'courseware' && currentInteraction === 'scroll')) {
+            ctx.lineWidth = c2.lineWidth;
+            ctx.strokeStyle = currentColor;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.globalAlpha = c2.globalAlpha;
+            ctx.globalCompositeOperation = c2.globalCompositeOperation;
+            ctx.lineTo(pp.x, pp.y);
+            ctx.stroke();
+          }
+        }
+      });
+      window.addEventListener('pointerup', function(e) {
+        if (currentTool === 'selecttext') {
+          textDrag = null;
+          if (selectedText) saveStudioState();
+          return;
+        }
+        if (!drawing) return;
+        drawing = false;
+        if (currentTool === 'laser') { startPoint = null; return; }
+        if (viewTool === 'pan') { panStart = null; return; }
+        if (viewTool === 'move') {
+          if (selMoving && selCanvas) {
+            commitSelection();
+          } else if (selStart && selCur) {
+            var x1 = Math.min(selStart.x, selCur.x), y1 = Math.min(selStart.y, selCur.y);
+            var w = Math.abs(selCur.x - selStart.x), h = Math.abs(selCur.y - selStart.y);
+            if (w < 10 && h < 10) { w = 36; h = 36; x1 = selStart.x - 18; y1 = selStart.y - 18; }
+            if (selSource) {
+              x1 = Math.max(0, Math.min(x1, selSource.width - 4));
+              y1 = Math.max(0, Math.min(y1, selSource.height - 4));
+              w = Math.min(w, selSource.width - x1);
+              h = Math.min(h, selSource.height - y1);
+              if (w >= 4 && h >= 4) cutSelection(selSource, Math.round(x1), Math.round(y1), Math.round(w), Math.round(h));
+            }
+            selStart = null; selCur = null;
+          }
+          return;
+        }
+        var r = box.getBoundingClientRect();
+        var p = { x: (e.clientX - r.left) / r.width * CW, y: (e.clientY - r.top) / r.height * CH };
+        var pc = { x: (p.x - viewX) / viewScale, y: (p.y - viewY) / viewScale };
+        var c, sx, sy, ex, ey;
+        if (mode === 'courseware' && currentInteraction === 'scroll' && activeAnnCanvas && scrollLayout && scrollLayout[activeAnnIndex]) {
+          c = activeAnnCanvas.getContext('2d');
+          var pageY2 = scrollY + pc.y - scrollLayout[activeAnnIndex].top;
+          pageY2 = Math.max(0, Math.min(activeAnnHeight, pageY2));
+          ex = pc.x; ey = pageY2 / activeAnnHeight * CH;
+          sx = startPoint ? startPoint.x : pc.x; sy = startPoint ? startPoint.y : ey;
+        } else {
+          c = tctx();
+          sx = startPoint ? startPoint.x : pc.x; sy = startPoint ? startPoint.y : pc.y;
+          ex = pc.x; ey = pc.y;
+        }
+        c.globalAlpha = 1;
+        c.globalCompositeOperation = 'source-over';
+        if (startPoint && isShapeTool()) {
+          if (previewBase) restorePreviewBase(c);
+          drawShapeTo(c, sx, sy, ex, ey);
+        }
+        startPoint = null;
+        previewBase = null;
+        activeAnnCanvas = null;
+        activeAnnIndex = -1;
+        activeAnnHeight = 0;
+        saveStudioState();
+      });
+      box.addEventListener('pointerleave', function() { if (toolCursor) toolCursor.style.display = 'none'; });
+    }
+
+    function initCanvasPreview() {
+      var previewBox = document.getElementById('localPreview');
+      previewBox.innerHTML = '';
+      canvas.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;background:#000;';
+      previewBox.appendChild(canvas);
+    }
+
+    async function initCamera() {
+      try {
+        setMsg('正在开启摄像头和麦克风...');
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { width: CW, height: CH }, audio: true });
+        cameraVideo = document.createElement('video');
+        cameraVideo.srcObject = cameraStream;
+        cameraVideo.muted = true; cameraVideo.playsinline = true;
+        try { await cameraVideo.play(); } catch(e) {}
+        var camPrev = document.getElementById('cameraPreview');
+        if (camPrev) { camPrev.srcObject = cameraStream; try { camPrev.play(); } catch(e) {} }
+        var camPh = document.getElementById('camPlaceholder');
+        if (camPh) camPh.style.display = 'none';
+        initCanvasPreview();
+        applyToggles();
+        refreshCameraList();
+        startAudioMeter();
+        drawFrame();
+        setMsg('', '');
+      } catch (e) {
+        initCanvasPreview();
+        drawFrame();
+        var camPh = document.getElementById('camPlaceholder');
+        if (camPh) camPh.style.display = 'flex';
+        setMsg('摄像头/麦克风不可用（' + (e && e.message ? e.message : e) + '），白板仍可正常使用', 'err');
+      }
+    }
+
+    var camOn = true, micOn = true;
+    var cameraSelect = document.getElementById('cameraSelect');
+    var audioSelect = document.getElementById('audioSelect');
+    function applyToggles() {
+      if (cameraStream) {
+        var vt = cameraStream.getVideoTracks()[0]; if (vt) vt.enabled = camOn;
+        var at = cameraStream.getAudioTracks()[0]; if (at) at.enabled = micOn;
+      }
+    }
+    var audioCtx = null, analyser = null, audioSrc = null, meterRaf = null;
+    function startAudioMeter() {
+      try {
+        if (!cameraStream || !cameraStream.getAudioTracks().length) return;
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') { try { audioCtx.resume(); } catch(e) {} }
+        if (audioSrc) { try { audioSrc.disconnect(); } catch(e) {} }
+        audioSrc = audioCtx.createMediaStreamSource(cameraStream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        audioSrc.connect(analyser);
+        var el = document.getElementById('audioMeter');
+        if (el) el.style.display = 'flex';
+        if (meterRaf) cancelAnimationFrame(meterRaf);
+        var data = new Uint8Array(analyser.frequencyBinCount);
+        function tick() {
+          if (!analyser) return;
+          try { analyser.getByteFrequencyData(data); } catch(e) { return; }
+          var sum = 0;
+          for (var i = 0; i < data.length; i++) sum += data[i];
+          var avg = sum / data.length / 255;
+          var bar = document.getElementById('audioMeterBar');
+          if (bar) bar.style.height = Math.max(4, Math.min(100, Math.round(avg * 100))) + '%';
+          var dot = document.getElementById('audioMeterDot');
+          if (dot) dot.style.background = avg > 0.03 ? '#22c55e' : 'rgba(255,255,255,.35)';
+          meterRaf = requestAnimationFrame(tick);
+        }
+        tick();
+      } catch(e) {}
+    }
+    function stopAudioMeter() {
+      if (meterRaf) { cancelAnimationFrame(meterRaf); meterRaf = null; }
+      if (audioSrc) { try { audioSrc.disconnect(); } catch(e) {} audioSrc = null; }
+      analyser = null;
+      var el = document.getElementById('audioMeter');
+      if (el) el.style.display = 'none';
+    }
+    async function refreshCameraList() {
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+        var devices = await navigator.mediaDevices.enumerateDevices();
+        var cams = devices.filter(function(d) { return d.kind === 'videoinput'; });
+        var mics = devices.filter(function(d) { return d.kind === 'audioinput'; });
+        var curId = '';
+        var curMicId = '';
+        if (cameraStream && cameraStream.getVideoTracks().length) {
+          try { curId = cameraStream.getVideoTracks()[0].getSettings().deviceId || ''; } catch(e) {}
+        }
+        if (cameraStream && cameraStream.getAudioTracks().length) {
+          try { curMicId = cameraStream.getAudioTracks()[0].getSettings().deviceId || ''; } catch(e) {}
+        }
+        if (cameraSelect) {
+          cameraSelect.innerHTML = '';
+          var noneOpt = document.createElement('option');
+          noneOpt.value = '';
+          noneOpt.textContent = '无';
+          cameraSelect.appendChild(noneOpt);
+          var noneSel = !camOn || !curId;
+          cams.forEach(function(d, i) {
+            var opt = document.createElement('option');
+            opt.value = d.deviceId || '';
+            opt.textContent = d.label || ('摄像头 ' + (i + 1));
+            if (!noneSel && d.deviceId && d.deviceId === curId) opt.selected = true;
+            cameraSelect.appendChild(opt);
+          });
+          if (noneSel) noneOpt.selected = true;
+          if (!cameraSelect.options.length) {
+            var empty = document.createElement('option');
+            empty.textContent = '未检测到摄像头';
+            cameraSelect.appendChild(empty);
+          }
+        }
+        if (audioSelect) {
+          audioSelect.innerHTML = '';
+          var noneMic = document.createElement('option');
+          noneMic.value = '';
+          noneMic.textContent = '无';
+          audioSelect.appendChild(noneMic);
+          var micNoneSel = !micOn || !curMicId;
+          mics.forEach(function(d, i) {
+            var opt = document.createElement('option');
+            opt.value = d.deviceId || '';
+            opt.textContent = d.label || ('麦克风 ' + (i + 1));
+            if (!micNoneSel && d.deviceId && d.deviceId === curMicId) opt.selected = true;
+            audioSelect.appendChild(opt);
+          });
+          if (micNoneSel) noneMic.selected = true;
+          if (!audioSelect.options.length) {
+            var emptyMic = document.createElement('option');
+            emptyMic.textContent = '未检测到麦克风';
+            audioSelect.appendChild(emptyMic);
+          }
+        }
+      } catch(e) {}
+    }
+    async function switchCamera(deviceId) {
+      if (!deviceId) {
+        camOn = false;
+        if (cameraStream && cameraStream.getVideoTracks().length) {
+          cameraStream.getVideoTracks().forEach(function(t) { t.enabled = false; });
+        }
+        var camPh = document.getElementById('camPlaceholder');
+        if (camPh) camPh.style.display = 'flex';
+        if (publishing && camClient && cameraLocal) {
+          try { await camClient.unpublish(cameraLocal); } catch(e) {}
+          try { cameraLocal.close(); } catch(e) {}
+          cameraLocal = null;
+        }
+        refreshCameraList();
+        setMsg('摄像头已关闭', 'ok');
+        return;
+      }
+      camOn = true;
+      try {
+        var micId = '';
+        if (cameraStream && cameraStream.getAudioTracks().length) {
+          try { micId = cameraStream.getAudioTracks()[0].getSettings().deviceId || ''; } catch(e) {}
+        }
+        var audioC = micId ? { deviceId: { exact: micId } } : true;
+        var newStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId }, width: CW, height: CH }, audio: audioC });
+        if (cameraStream) cameraStream.getTracks().forEach(function(t) { t.stop(); });
+        cameraStream = newStream;
+        var camPrev = document.getElementById('cameraPreview');
+        if (camPrev) { camPrev.srcObject = cameraStream; try { camPrev.play(); } catch(e) {} }
+        applyToggles();
+        refreshCameraList();
+        var camPh = document.getElementById('camPlaceholder');
+        if (camPh) camPh.style.display = 'none';
+        if (publishing && camClient && cameraLocal) {
+          var newVt = cameraStream.getVideoTracks()[0];
+          try {
+            await cameraLocal.replaceTrack(newVt);
+          } catch(e) {
+            try { await camClient.unpublish(cameraLocal); } catch(e) {}
+            try { cameraLocal.close(); } catch(e) {}
+            cameraLocal = null;
+            cameraLocal = TRTC.createStream({ videoSource: newVt, videoProfile: '720p' });
+            try { cameraLocal.setVideoProfile('720p'); } catch(e) {}
+            await cameraLocal.initialize();
+            await camClient.publish(cameraLocal);
+          }
+        }
+        startAudioMeter();
+        setMsg('已切换摄像头', 'ok');
+      } catch(e) {
+        setMsg('切换摄像头失败：' + (e && e.message ? e.message : e), 'err');
+      }
+    }
+    async function switchAudio(deviceId) {
+      if (!deviceId) {
+        micOn = false;
+        if (cameraStream && cameraStream.getAudioTracks().length) {
+          cameraStream.getAudioTracks().forEach(function(t) { t.enabled = false; });
+        }
+        if (publishing && client && localStream) {
+          var vTrack = (sharing && screenTrack) ? screenTrack : publishCanvas.captureStream(30).getVideoTracks()[0];
+          var opts = { userId: USERID, videoSource: vTrack, videoProfile: '720p', videoBitrate: 3000, videoFps: 30 };
+          try { await client.unpublish(localStream); } catch(e) {}
+          try { localStream.close(); } catch(e) {}
+          localStream = TRTC.createStream(opts);
+          try { localStream.setVideoProfile('720p'); } catch(e) {}
+          await localStream.initialize();
+          document.getElementById('localPreview').innerHTML = '';
+          await localStream.play('localPreview');
+          await client.publish(localStream);
+        }
+        refreshCameraList();
+        startAudioMeter();
+        setMsg('麦克风已关闭', 'ok');
+        return;
+      }
+      micOn = true;
+      try {
+        var audioOnly = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: { exact: deviceId } } });
+        var newAudioTrack = audioOnly.getAudioTracks()[0];
+        if (cameraStream) {
+          var oldAudio = cameraStream.getAudioTracks()[0];
+          if (oldAudio) {
+            try { cameraStream.removeTrack(oldAudio); oldAudio.stop(); } catch(e) {}
+          }
+          try { cameraStream.addTrack(newAudioTrack); } catch(e) {}
+        }
+        applyToggles();
+        refreshCameraList();
+        if (publishing && client && localStream) {
+          try {
+            if (newAudioTrack) await localStream.replaceTrack(newAudioTrack);
+          } catch(e) {
+            var vTrack = (sharing && screenTrack) ? screenTrack : publishCanvas.captureStream(30).getVideoTracks()[0];
+            var opts = { userId: USERID, videoSource: vTrack, videoProfile: '720p', videoBitrate: 3000, videoFps: 30 };
+            if (newAudioTrack) opts.audioSource = newAudioTrack;
+            try { await client.unpublish(localStream); } catch(e) {}
+            try { localStream.close(); } catch(e) {}
+            localStream = TRTC.createStream(opts);
+            try { localStream.setVideoProfile('720p'); } catch(e) {}
+            await localStream.initialize();
+            document.getElementById('localPreview').innerHTML = '';
+            await localStream.play('localPreview');
+            await client.publish(localStream);
+          }
+        }
+        startAudioMeter();
+        setMsg('已切换麦克风', 'ok');
+      } catch(e) {
+        setMsg('切换麦克风失败：' + (e && e.message ? e.message : e), 'err');
+      }
+    }
+    window.addEventListener('beforeunload', function(e) {
+      if (publishing) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+    if (cameraSelect) {
+      cameraSelect.addEventListener('change', function() { switchCamera(cameraSelect.value); });
+    }
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) {
+        try { drawFrame(); } catch(e) {}
+        if (sharing && screenStream) showScreenPreview();
+      }
+    });
+    if (audioSelect) {
+      audioSelect.addEventListener('change', function() { switchAudio(audioSelect.value); });
+    }
+    var tabChat = document.getElementById('tabChat');
+    var tabOnline = document.getElementById('tabOnline');
+    var panelChat = document.getElementById('panelChat');
+    var panelOnline = document.getElementById('panelOnline');
+    function switchChatTab(which) {
+      var isChat = which === 'chat';
+      if (tabChat) tabChat.classList.toggle('active', isChat);
+      if (tabOnline) tabOnline.classList.toggle('active', !isChat);
+      if (panelChat) panelChat.style.display = isChat ? 'flex' : 'none';
+      if (panelOnline) panelOnline.style.display = isChat ? 'none' : 'flex';
+      if (isChat) { var cm = document.getElementById('chatMsgs'); if (cm) cm.scrollTop = cm.scrollHeight; }
+    }
+    if (tabChat) tabChat.addEventListener('click', function() { switchChatTab('chat'); });
+    if (tabOnline) tabOnline.addEventListener('click', function() { switchChatTab('online'); });
+    function closePops() {
+      document.querySelectorAll('.tool-pop').forEach(function(p){ p.classList.remove('show'); });
+      document.querySelectorAll('.pen-tool.cat').forEach(function(b){ b.classList.remove('open'); });
+    }
+    document.querySelectorAll('.pen-tool.cat').forEach(function(btn) {
+      btn.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        var pop = document.getElementById(btn.getAttribute('data-pop'));
+        var wasOpen = pop.classList.contains('show');
+        closePops();
+        if (!wasOpen) { pop.classList.add('show'); btn.classList.add('open'); }
+      });
+    });
+    document.querySelectorAll('.pop-item').forEach(function(item) {
+      item.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        var set = item.getAttribute('data-set');
+        var val = item.getAttribute('data-value');
+        if (set === 'tool') { currentTool = val; viewTool = null; }
+        else if (set === 'size') penSize = parseInt(val, 10);
+        var pop = item.closest('.tool-pop');
+        pop.querySelectorAll('.pop-item').forEach(function(i){ i.classList.remove('active'); });
+        item.classList.add('active');
+        if (currentTool === 'text') {
+          setMsg('已选择文本工具：输入框已弹出，直接输入', 'ok');
+          startTextInput(null);
+        }
+        closePops();
+        updateIndicators();
+      });
+    });
+    document.querySelectorAll('.pen-color').forEach(function(el) {
+      el.addEventListener('click', function() {
+        currentColor = el.getAttribute('data-color');
+        document.querySelectorAll('.pen-color').forEach(function(c){ c.classList.remove('active'); });
+        el.classList.add('active');
+        closePops();
+        updateIndicators();
+      });
+    });
+    document.addEventListener('click', closePops);
+    function penIconFor(tool) {
+      if (tool === 'laser') return '<path d="M5 19l9-9"/><path d="M14 10l4-4"/><path d="M13 5l6 6-3 3-6-6 3-3z"/><circle cx="4" cy="20" r="1.5" fill="currentColor" stroke="none"/>';
+      if (tool === 'ballpoint') return '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>';
+      if (tool === 'marker') return '<path d="M9 11l6-6 4 4-6 6-4-4z"/><path d="M11 13l-4 4H3l3-4"/>';
+      if (tool === 'eraser') return '<path d="M4 19h8"/><path d="M17 8L9 16l-3-3 8-8 3 3z"/>';
+      if (tool === 'text') return '<polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/>';
+      if (tool === 'selecttext') return '<path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/>';
+      return '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>';
+    }
+    function updateCatPenIcon() {
+      var svg = document.querySelector('#catPen svg');
+      var tools = ['laser','ballpoint','marker','eraser','text','selecttext'];
+      if (svg && tools.indexOf(currentTool) >= 0) svg.innerHTML = penIconFor(currentTool);
+      var btn = document.getElementById('catPen');
+      if (btn) btn.classList.toggle('active', tools.indexOf(currentTool) >= 0);
+    }
+
+    function updateIndicators() {
+      var isPen = ['laser','ballpoint','eraser','text','selecttext'].indexOf(currentTool) >= 0;
+      var isLine = ['line','arrow','dash'].indexOf(currentTool) >= 0;
+      var isShape = ['rect','ellipse','triangle','ruler','compass','protractor'].indexOf(currentTool) >= 0;
+      function ind(id, on) { var b = document.getElementById(id); var i = b ? b.querySelector('.ind') : null; if (i) i.style.display = on ? 'block' : 'none'; }
+      ind('catPen', isPen);
+      ind('catLine', isLine);
+      ind('catShape', isShape);
+      ind('catSize', true);
+      ind('catColor', true);
+      var ci = document.querySelector('#catColor .ind');
+      if (ci) ci.style.background = currentColor;
+      updateCatPenIcon();
+    }
+    document.getElementById('toolUndo').addEventListener('click', undo);
+    document.getElementById('toolRedo').addEventListener('click', redo);
+    updateIndicators();
+    document.getElementById('toolClear').addEventListener('click', function() {
+      if (mode === 'courseware' && currentInteraction === 'scroll') {
+        var hit = scrollPageAt(scrollY + CH / 2);
+        if (hit && annCanvases[hit.idx]) {
+          annCanvases[hit.idx].getContext('2d').clearRect(0, 0, CW, CH);
+        }
+        saveStudioState();
+        setMsg('已清除当前页批注', 'ok');
+        return;
+      }
+      var c = mode === 'whiteboard' ? currentWb().getContext('2d') : currentAnn().getContext('2d');
+      if (mode === 'whiteboard') { c.fillStyle = '#ffffff'; c.fillRect(0, 0, CW, CH); if (wbTexts[wbPageIndex]) wbTexts[wbPageIndex] = []; }
+      else { c.clearRect(0, 0, CW, CH); if (coursewareDocs[docIndex] && coursewareDocs[docIndex].texts && coursewareDocs[docIndex].texts[pageIndex]) coursewareDocs[docIndex].texts[pageIndex] = []; }
+      selectedText = null; editingText = null;
+      saveStudioState();
+      setMsg('已清除本页笔迹', 'ok');
+    });
+
+    var screenStream = null;
+    var screenTrack = null;
+    var sharing = false;
+    var shareBtn = document.getElementById('modeShare');
+    function showScreenPreview() {
+      var box = document.getElementById('localPreview');
+      box.innerHTML = '';
+      var v = document.createElement('video');
+      v.autoplay = true; v.muted = true; v.playsinline = true;
+      v.srcObject = screenStream;
+      box.appendChild(v);
+      v.play().catch(function(){});
+    }
+    async function stopScreenShare() {
+      sharing = false;
+      if (screenTrack) { try { screenTrack.stop(); } catch(e) {} }
+      screenTrack = null;
+      if (screenStream) { try { screenStream.getTracks().forEach(function(t) { t.stop(); }); } catch(e) {} }
+      screenStream = null;
+      if (shareBtn) shareBtn.classList.remove('active');
+      if (wbBtn) wbBtn.classList.toggle('active', mode === 'whiteboard');
+      if (cwBtn) cwBtn.classList.toggle('active', mode === 'courseware');
+      if (publishing && localStream) {
+        try {
+          var canvasStream = publishCanvas.captureStream(30);
+          await localStream.replaceTrack(canvasStream.getVideoTracks()[0]);
+        } catch(e) {}
+      }
+      initCanvasPreview();
+      drawFrame();
+      setMsg('已停止屏幕共享', 'ok');
+    }
+    shareBtn.addEventListener('click', async function() {
+      try {
+        if (sharing) { await stopScreenShare(); return; }
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+        screenTrack = screenStream.getVideoTracks()[0];
+        sharing = true;
+        if (wbBtn) wbBtn.classList.remove('active');
+        if (cwBtn) cwBtn.classList.remove('active');
+        shareBtn.classList.add('active');
+        showScreenPreview();
+        setMsg('已开启屏幕共享，可开始上课', 'ok');
+        screenTrack.onended = function() { stopScreenShare(); };
+      } catch (e) {
+        var msg = (e && e.message) ? e.message : String(e);
+        if (/denied|NotAllowedError|cancel/i.test(msg)) {
+          setMsg('已取消屏幕共享（若未弹出选择框，请检查浏览器是否允许屏幕捕获）', 'ok');
+        } else {
+          setMsg('屏幕共享失败：' + msg, 'err');
+        }
+      }
+    });
+
+    var liveStartTs = 0;
+    var clockTimer = null;
+    function startClock() {
+      if (clockTimer) clearInterval(clockTimer);
+      var el = document.getElementById('liveClock');
+      function tick() {
+        fetch('/live/api/clock/' + COURSE_ID).then(function(r){ return r.json(); }).then(function(d) {
+          if (el && d && typeof d.elapsed === 'number') {
+            var s = d.elapsed;
+            el.textContent = (Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'));
+          }
+        }).catch(function(){});
+      }
+      tick();
+      clockTimer = setInterval(tick, 1000);
+    }
+    function stopClock() {
+      if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+      var el = document.getElementById('liveClock');
+      if (el) el.textContent = '';
+    }
+    async function start() {
+      var lessonSel = document.getElementById('lessonSelect');
+      if (lessonSel && !lessonSel.value) {
+        setMsg('请先选择本次课次', 'err');
+        if (lessonSel) {
+          lessonSel.style.borderColor = '#f87171';
+          lessonSel.focus();
+          setTimeout(function() { lessonSel.style.borderColor = ''; }, 2500);
+        }
+        return;
+      }
+      try {
+        if (client) { try { await client.leave(); } catch(e) {} }
+        if (!cameraStream) { try { await initCamera(); } catch(e) {} }
+        var canvasStream = publishCanvas.captureStream(30);
+        var videoTrack = (sharing && screenTrack) ? screenTrack : canvasStream.getVideoTracks()[0];
+        var audioTrack = (cameraStream && cameraStream.getAudioTracks().length) ? cameraStream.getAudioTracks()[0] : null;
+        client = TRTC.createClient({ mode: 'live', sdkAppId: SDKAPPID, userId: USERID, userSig: USERSIG, useStringRoomId: false });
+        await client.join({ roomId: ROOMID, privateMapKey: PRIVATE_MAP_KEY, role: 'anchor' });
+        var streamOpts = { userId: USERID, videoSource: videoTrack, videoProfile: '720p', videoBitrate: 3000, videoFps: 30 };
+        if (audioTrack) streamOpts.audioSource = audioTrack;
+        localStream = TRTC.createStream(streamOpts);
+        try { localStream.setVideoProfile('720p'); } catch(e) {}
+        await localStream.initialize();
+        document.getElementById('localPreview').innerHTML = '';
+        await localStream.play('localPreview');
+        await client.publish(localStream);
+        publishing = true;
+        await fetch('/admin/live-manage/' + STREAM_ID + '/status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'start', lesson_id: document.getElementById('lessonSelect') ? document.getElementById('lessonSelect').value : '' }) });
+        var camErr = null;
+        if (cameraStream && cameraStream.getVideoTracks().length) {
+          try {
+            camClient = TRTC.createClient({ mode: 'live', sdkAppId: SDKAPPID, userId: CAM_USERID, userSig: CAM_USERSIG, useStringRoomId: false });
+            await camClient.join({ roomId: ROOMID, privateMapKey: CAM_PRIVATE_MAP_KEY, role: 'anchor' });
+            cameraLocal = TRTC.createStream({ videoSource: cameraStream.getVideoTracks()[0], videoProfile: '720p' });
+            try { cameraLocal.setVideoProfile('720p'); } catch(e) {}
+            await cameraLocal.initialize();
+            await camClient.publish(cameraLocal);
+          } catch (e) {
+            camErr = (e && e.message) ? e.message : String(e);
+          }
+        } else {
+          camErr = '未检测到摄像头';
+        }
+        mainBtn.textContent = '结束上课';
+        mainBtn.classList.add('live');
+        startClock();
+        var cm = document.getElementById('chatMsgs');
+        if (cm) cm.innerHTML = '<div class="chat-msg"><div class="head"><span class="who">系统</span><span class="time">' + fmtChatTime(new Date()) + '</span></div><span class="txt">欢迎来到课堂</span></div>';
+        try { socket.emit('live:start', { courseId: COURSE_ID }); } catch(e) {}
+        try { socket.emit('live:chat', { courseId: COURSE_ID, sender: '系统', content: '老师已开始直播' }); } catch(e) {}
+        if (camErr) {
+          setMsg('直播已开始，但摄像头画面推流失败：' + camErr, 'err');
+        } else {
+          setMsg(audioTrack ? '直播已开始，学生可实时观看' : '直播已开始（无麦克风，学生端无声）', audioTrack ? 'ok' : 'err');
+        }
+        drawFrame();
+      } catch (e) {
+        setMsg('开播失败：' + (e && e.message ? e.message : e), 'err');
+      }
+    }
+
+    async function stop() {
+      try {
+        if (rafId) cancelAnimationFrame(rafId);
+        try {
+          if (client) {
+            if (publishing && localStream) { try { await client.unpublish(localStream); } catch(e) {} publishing = false; }
+            if (cameraLocal) { try { if (camClient) await camClient.unpublish(cameraLocal); } catch(e) {} try { cameraLocal.close(); } catch(e) {} cameraLocal = null; }
+          if (camClient) { try { await camClient.leave(); } catch(e) {} camClient = null; }
+            try { await client.leave(); } catch(e) {}
+          }
+          if (localStream) { localStream.close(); localStream = null; }
+        } catch (e) {}
+        try { await fetch('/admin/live-manage/' + STREAM_ID + '/status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'stop' }) }); } catch(e) {}
+        try { socket.emit('live:ended', { courseId: COURSE_ID }); } catch(e) {}
+        mainBtn.textContent = '开始上课';
+        mainBtn.classList.remove('live');
+        stopClock();
+        setMsg('直播已结束', 'ok');
+        if (sharing && screenStream) showScreenPreview(); else initCamera();
+      } catch (e) {
+        setMsg('结束失败：' + (e && e.message ? e.message : e), 'err');
+      }
+    }
+
+    wbBtn.addEventListener('click', function() { if (!wbPages.length) newWhiteboardPage(); setMode('whiteboard'); });
+    cwBtn.addEventListener('click', function() { if (coursewareDocs.length) setMode('courseware'); });
+    document.querySelectorAll('#popWb .menu-item').forEach(function(item) {
+      item.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        var act = item.getAttribute('data-action');
+        if (!wbPages.length) newWhiteboardPage();
+        setMode('whiteboard');
+        if (act === 'new') {
+          newWhiteboardPage();
+          updatePageUI();
+          setMsg('已新建白板第 ' + wbPages.length + ' 页', 'ok');
+        } else if (act === 'prev' && wbPageIndex > 0) {
+          wbPageIndex--; updatePageUI(); drawFrame();
+        } else if (act === 'next' && wbPageIndex < wbPages.length - 1) {
+          wbPageIndex++; updatePageUI(); drawFrame();
+        }
+        closePops();
+      });
+    });
+    document.getElementById('cwUploadItem').addEventListener('click', function(ev) {
+      ev.stopPropagation();
+      closePops();
+      document.getElementById('coursewareInput').click();
+    });
+    document.querySelectorAll('#popCw .menu-item[data-cw-action]').forEach(function(item) {
+      item.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        var act = item.getAttribute('data-cw-action');
+        if (!coursewareDocs.length || mode !== 'courseware') return;
+        if (act === 'prev') {
+          if (currentInteraction === 'scroll') {
+            scrollY = Math.max(0, scrollY - CH);
+            if (coursewareDocs[docIndex]) coursewareDocs[docIndex].scrollY = scrollY;
+            updatePageUI(); saveStudioState();
+          } else if (pageIndex > 0) {
+            loadPage(pageIndex - 1);
+          }
+        } else if (act === 'next') {
+          if (currentInteraction === 'scroll') {
+            scrollY = Math.min(scrollMax(), scrollY + CH);
+            if (coursewareDocs[docIndex]) coursewareDocs[docIndex].scrollY = scrollY;
+            updatePageUI(); saveStudioState();
+          } else if (pageIndex < coursewarePages.length - 1) {
+            loadPage(pageIndex + 1);
+          }
+        }
+        closePops();
+      });
+    });
+    function parseJsonResponse(r) {
+      return r.text().then(function(body) {
+        var data = null;
+        try { data = JSON.parse(body); } catch(e) {}
+        if (!r.ok) throw new Error((data && data.error) ? data.error : ('HTTP ' + r.status + ' ' + String(body).slice(0, 100)));
+        return data;
+      });
+    }
+    function renderCwMenu() {
+      var box = document.getElementById('popCwDocs');
+      if (!box) return;
+      box.innerHTML = '';
+      coursewareDocs.forEach(function(doc, i) {
+        var row = document.createElement('div');
+        row.className = 'menu-row';
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'menu-item' + (i === docIndex ? ' active' : '');
+        btn.textContent = '课件' + (i + 1) + ' · ' + doc.name;
+        btn.addEventListener('click', function(ev) {
+          ev.stopPropagation();
+          switchDoc(i);
+          closePops();
+        });
+        var del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'doc-del';
+        del.textContent = '×';
+        del.title = '删除课件';
+        del.addEventListener('click', function(ev) {
+          ev.stopPropagation();
+          askConfirm('确定删除课件“' + doc.name + '”吗？', function() {
+            coursewareDocs.splice(i, 1);
+            if (docIndex >= coursewareDocs.length) docIndex = coursewareDocs.length - 1;
+            if (!coursewareDocs.length) {
+              docIndex = -1;
+              coursewarePages = []; pageIndex = 0; annCanvases = []; scrollLayout = null;
+              setMode('whiteboard');
+            } else if (docIndex >= 0) {
+              switchDoc(docIndex);
+            }
+            renderCwMenu();
+            setMsg('已删除课件', 'ok');
+          });
+        });
+        row.appendChild(btn);
+        row.appendChild(del);
+        box.appendChild(row);
+      });
+    }
+
+    function docInteraction(name) {
+      var n = String(name || '').toLowerCase();
+      if (/\.(ppt|pptx)$/.test(n)) return 'flip';
+      if (/\.(png|jpg|jpeg|gif|bmp|webp)$/.test(n)) return 'flip';
+      return 'scroll';
+    }
+
+    function recomputeScrollTops(doc) {
+      var top = 0;
+      for (var k = 0; k < doc.layout.length; k++) {
+        if (doc.layout[k]) { doc.layout[k].top = top; top += doc.layout[k].height + 24; }
+      }
+    }
+
+    function ensureScrollLayout(doc) {
+      if (!doc) return;
+      if (doc.layoutReady) { scrollLayout = doc.layout; return; }
+      if (!doc.layout) doc.layout = new Array(doc.pages.length);
+      var loaded = 0, total = doc.pages.length;
+      setMsg('课件加载中，请稍候...', '');
+      doc.pages.forEach(function(url, i) {
+        var img = new Image();
+        img.onload = function() {
+          var h = Math.round(img.height * CW / img.width);
+          doc.layout[i] = { img: img, height: h, top: 0 };
+          loaded++;
+          recomputeScrollTops(doc);
+          scrollLayout = doc.layout;
+          if (loaded === total) {
+            doc.layoutReady = true;
+            var sm = scrollMax();
+            if (scrollY > sm) scrollY = sm;
+            if (scrollY < 0) scrollY = 0;
+            updatePageUI();
+            setMsg('', '');
+          } else {
+            updatePageUI();
+          }
+        };
+        img.onerror = function() { loaded++; if (loaded === total) { doc.layoutReady = true; scrollLayout = doc.layout; updatePageUI(); setMsg('', ''); } };
+        img.src = url;
+      });
+    }
+
+    function switchDoc(i) {
+      if (i < 0 || i >= coursewareDocs.length) return;
+      if (i === docIndex) {
+        var same = coursewareDocs[i];
+        if (same) {
+          currentInteraction = same.interaction || 'flip';
+          coursewarePages = same.pages;
+          pageIndex = same.pageIndex || 0;
+          annCanvases = same.annCanvases || [];
+          scrollY = same.scrollY || 0;
+          scrollLayout = null;
+          activeAnnCanvas = null;
+          activeAnnIndex = -1;
+          if (currentInteraction === 'scroll') ensureScrollLayout(same); else loadPage(pageIndex);
+        }
+        setMode('courseware');
+        return;
+      }
+      if (docIndex >= 0 && coursewareDocs[docIndex]) {
+        coursewareDocs[docIndex].pageIndex = pageIndex;
+        coursewareDocs[docIndex].annCanvases = annCanvases;
+        coursewareDocs[docIndex].scrollY = scrollY;
+      }
+      docIndex = i;
+      var doc = coursewareDocs[i];
+      coursewarePages = doc.pages;
+      pageIndex = doc.pageIndex || 0;
+      annCanvases = doc.annCanvases || [];
+      currentInteraction = doc.interaction || 'flip';
+      scrollY = doc.scrollY || 0;
+      scrollLayout = null;
+      activeAnnCanvas = null;
+      activeAnnIndex = -1;
+      setMode('courseware');
+      if (currentInteraction === 'scroll') {
+        ensureScrollLayout(doc);
+      } else {
+        loadPage(pageIndex);
+      }
+      renderCwMenu();
+      saveStudioState();
+    }
+
+    function uploadCourseware(file, onDone, onError) {
+      var fd = new FormData();
+      fd.append('file', file);
+      fetch('/admin/live/studio/' + COURSE_ID + '/upload', { method: 'POST', body: fd })
+        .then(parseJsonResponse)
+        .then(function(data) {
+          if (data.jobId) {
+            setMsg('课件已上传，正在后台转换，请稍候...', '');
+            pollCoursewareJob(data.jobId, file.name, 90, onDone, onError);
+            return;
+          }
+          if (!data.pages || !data.pages.length) { onError(data.error || '转换失败'); return; }
+          onDone(file.name, data.pages);
+        })
+        .catch(function(err) { onError(err.message); });
+    }
+
+    function pollCoursewareJob(jobId, fileName, tries, onDone, onError) {
+      fetch('/admin/live/studio/' + COURSE_ID + '/upload-status/' + jobId)
+        .then(parseJsonResponse)
+        .then(function(d) {
+          if (d.status === 'done' && d.pages && d.pages.length) {
+            onDone(fileName, d.pages);
+          } else if (d.status === 'error') {
+            onError(d.error || '转换失败');
+          } else if (tries > 0) {
+            setTimeout(function() { pollCoursewareJob(jobId, fileName, tries - 1, onDone, onError); }, 2000);
+          } else {
+            onError('转换超时');
+          }
+        })
+        .catch(function(err) { onError(err.message); });
+    }
+
+    document.getElementById('coursewareInput').addEventListener('change', function(e) {
+      var files = Array.prototype.slice.call(e.target.files || []);
+      if (!files.length) return;
+      e.target.value = '';
+      var results = files.map(function(file, idx) { return { name: file.name, pages: null, error: null, idx: idx }; });
+      var remaining = files.length;
+      setMsg('正在上传课件 0/' + files.length + ' ...', '');
+      files.forEach(function(file, idx) {
+        uploadCourseware(file, function(name, pages) {
+          results[idx].pages = pages;
+          remaining--;
+          if (remaining === 0) {
+            coursewareDocs = coursewareDocs.concat(results.filter(function(r) { return r.pages; }).map(function(r) { return { name: r.name, pages: r.pages, pageIndex: 0, annCanvases: [], interaction: docInteraction(r.name), scrollY: 0, layout: null, layoutReady: false }; }));
+            renderCwMenu();
+            if (coursewareDocs.length) switchDoc(coursewareDocs.length - 1);
+            var failed = results.filter(function(r) { return r.error; }).length;
+            setMsg('课件上传完成：共 ' + coursewareDocs.length + ' 份' + (failed ? ('，失败 ' + failed + ' 份') : ''), failed ? 'err' : 'ok');
+          } else {
+            setMsg('正在上传课件 ' + (files.length - remaining) + '/' + files.length + ' ...', '');
+          }
+        }, function(errMsg) {
+          results[idx].error = errMsg;
+          remaining--;
+          if (remaining === 0) {
+            coursewareDocs = coursewareDocs.concat(results.filter(function(r) { return r.pages; }).map(function(r) { return { name: r.name, pages: r.pages, pageIndex: 0, annCanvases: [], interaction: docInteraction(r.name), scrollY: 0, layout: null, layoutReady: false }; }));
+            renderCwMenu();
+            if (coursewareDocs.length) switchDoc(coursewareDocs.length - 1);
+            var failed = results.filter(function(r) { return r.error; }).length;
+            setMsg('课件上传完成：共 ' + coursewareDocs.length + ' 份' + (failed ? ('，失败 ' + failed + ' 份') : ''), failed ? 'err' : 'ok');
+          }
+        });
+      });
+    });
+    var wheelLockAt = 0;
+    document.querySelector('.stage').addEventListener('wheel', function(e) {
+      if (mode !== 'courseware' || !coursewarePages.length) return;
+      if (e.target && e.target.closest && e.target.closest('.pen-toolbar')) return;
+      e.preventDefault();
+      if (currentInteraction === 'scroll') {
+        var sm = scrollMax();
+        scrollY = Math.max(0, Math.min(sm, scrollY + e.deltaY));
+        if (coursewareDocs[docIndex]) coursewareDocs[docIndex].scrollY = scrollY;
+        updatePageUI();
+        saveStudioState();
+        return;
+      }
+      var now = Date.now();
+      if (now - wheelLockAt < 300) return;
+      if (Math.abs(e.deltaY) < 8) return;
+      if (e.deltaY > 0) { if (pageIndex < coursewarePages.length - 1) { wheelLockAt = now; loadPage(pageIndex + 1); } }
+      else if (e.deltaY < 0) { if (pageIndex > 0) { wheelLockAt = now; loadPage(pageIndex - 1); } }
+    }, { passive: false });
+    window.addEventListener('keydown', function(ev) {
+      var tag = document.activeElement ? document.activeElement.tagName : '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      var k = ev.key;
+      if (k !== 'ArrowLeft' && k !== 'ArrowRight' && k !== 'ArrowUp' && k !== 'ArrowDown') return;
+      ev.preventDefault();
+      if (mode === 'whiteboard') {
+        if (k === 'ArrowLeft' && wbPageIndex > 0) { wbPageIndex--; updatePageUI(); drawFrame(); }
+        else if (k === 'ArrowRight' && wbPageIndex < wbPages.length - 1) { wbPageIndex++; updatePageUI(); drawFrame(); }
+      } else if (mode === 'courseware' && coursewarePages.length) {
+        if (currentInteraction === 'scroll') {
+          if (k === 'ArrowUp' || k === 'ArrowDown') {
+            var step = (k === 'ArrowUp') ? -120 : 120;
+            scrollY = Math.max(0, Math.min(scrollMax(), scrollY + step));
+            if (coursewareDocs[docIndex]) coursewareDocs[docIndex].scrollY = scrollY;
+            updatePageUI(); saveStudioState();
+          }
+        } else {
+          if (k === 'ArrowLeft' && pageIndex > 0) loadPage(pageIndex - 1);
+          else if (k === 'ArrowRight' && pageIndex < coursewarePages.length - 1) loadPage(pageIndex + 1);
+        }
+      }
+    });
+    mainBtn.addEventListener('click', function() { if (publishing) stop(); else start(); });
+
+    window.addEventListener('beforeunload', function(){ try { if (client) client.leave(); } catch(e) {} try { if (camClient) camClient.leave(); } catch(e) {} });
+    newWhiteboardPage();
+    var stateLoaded = false;
+    var stateSaveTimer = null;
+    function saveStudioState() {
+      if (!stateLoaded) return;
+      try {
+        var state = {
+          mode: mode,
+          docIndex: docIndex,
+          wbPageIndex: wbPageIndex,
+          wbPages: wbPages.map(function(c) { return c.toDataURL(); }),
+          wbTexts: wbTexts.map(function(a) { return a || []; }),
+          coursewareDocs: coursewareDocs.map(function(doc) {
+            return {
+              name: doc.name,
+              pages: doc.pages,
+              interaction: doc.interaction,
+              pageIndex: doc.pageIndex || 0,
+              scrollY: doc.scrollY || 0,
+              annCanvases: (doc.annCanvases || []).map(function(c) { return c ? c.toDataURL() : ''; }),
+              texts: doc.texts || []
+            };
+          })
+        };
+        if (stateSaveTimer) clearTimeout(stateSaveTimer);
+        stateSaveTimer = setTimeout(function() {
+          fetch('/admin/live/studio/' + COURSE_ID + '/state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(state)
+          }).catch(function(){});
+        }, 800);
+      } catch(e) {}
+    }
+    function canvasFromDataURL(url) {
+      return new Promise(function(resolve) {
+        var img = new Image();
+        img.onload = function() {
+          var c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+          c.getContext('2d').drawImage(img, 0, 0);
+          resolve(c);
+        };
+        img.onerror = function() { resolve(null); };
+        img.src = url;
+      });
+    }
+    async function restoreStudioState(saved) {
+      if (!saved || saved.empty) { stateLoaded = true; setMode('whiteboard'); return; }
+      var wbs = [];
+      for (var wi = 0; wi < (saved.wbPages || []).length; wi++) {
+        var wc = await canvasFromDataURL(saved.wbPages[wi]);
+        if (wc) {
+          if (wc.width !== CW || wc.height !== CH) {
+            var n = document.createElement('canvas'); n.width = CW; n.height = CH;
+            var nx = n.getContext('2d'); nx.fillStyle = '#ffffff'; nx.fillRect(0, 0, CW, CH); nx.drawImage(wc, 0, 0, CW, CH);
+            wc = n;
+          }
+          wbs.push(wc);
+        }
+      }
+      if (!wbs.length) {
+        var c0 = document.createElement('canvas'); c0.width = CW; c0.height = CH;
+        var x0 = c0.getContext('2d'); x0.fillStyle = '#ffffff'; x0.fillRect(0, 0, CW, CH);
+        wbs.push(c0);
+      }
+      wbPages = wbs;
+      wbTexts = (saved.wbTexts || []).map(function(a) { return a || []; });
+      while (wbTexts.length < wbPages.length) wbTexts.push([]);
+      wbPageIndex = Math.max(0, Math.min(saved.wbPageIndex || 0, wbPages.length - 1));
+      coursewareDocs = [];
+      for (var di2 = 0; di2 < (saved.coursewareDocs || []).length; di2++) {
+        var sd = saved.coursewareDocs[di2];
+        var anns = [];
+        for (var ai = 0; ai < (sd.annCanvases || []).length; ai++) {
+          if (sd.annCanvases[ai]) {
+            var ac = await canvasFromDataURL(sd.annCanvases[ai]);
+            if (ac && (ac.width !== CW || ac.height !== CH)) {
+              var an = document.createElement('canvas'); an.width = CW; an.height = CH;
+              an.getContext('2d').drawImage(ac, 0, 0, CW, CH);
+              ac = an;
+            }
+            anns.push(ac || null);
+          }
+          else anns.push(null);
+        }
+        coursewareDocs.push({
+          name: sd.name,
+          pages: sd.pages || [],
+          interaction: sd.interaction || 'flip',
+          pageIndex: sd.pageIndex || 0,
+          scrollY: sd.scrollY || 0,
+          annCanvases: anns,
+          texts: sd.texts || [],
+          layout: null,
+          layoutReady: false
+        });
+      }
+      stateLoaded = true;
+      renderCwMenu();
+      if (saved.mode === 'courseware' && coursewareDocs.length) {
+        var di = Math.max(0, Math.min(saved.docIndex || 0, coursewareDocs.length - 1));
+        switchDoc(di);
+      } else {
+        setMode('whiteboard');
+        updatePageUI();
+      }
+      saveStudioState();
+    }
+    setMode('whiteboard');
+    (function loadStudioState() {
+      fetch('/admin/live/studio/' + COURSE_ID + '/state')
+        .then(function(r) { return r.json(); })
+        .then(function(saved) { restoreStudioState(saved); })
+        .catch(function() { stateLoaded = true; setMode('whiteboard'); });
+    })();
+    setupPen();
+    var capChecks = [];
+    if (!(window.HTMLCanvasElement && window.HTMLCanvasElement.prototype && window.HTMLCanvasElement.prototype.captureStream)) capChecks.push('canvas.captureStream');
+    if (!window.PointerEvent) capChecks.push('PointerEvent');
+    if (!window.RTCPeerConnection && !window.webkitRTCPeerConnection) capChecks.push('WebRTC');
+    if (capChecks.length) {
+      setMsg('当前浏览器缺少直播所需能力（' + capChecks.join('、') + '），请升级 Edge/Chrome 到最新版本，并确认未使用 IE 模式', 'err');
+    }
+    initCamera();
+    var previewWarned = false;
+    function checkPreviewSource() {
+      try {
+        var probe = document.createElement('video');
+        probe.muted = true; probe.playsinline = true;
+        probe.srcObject = publishCanvas.captureStream(30);
+        probe.onloadeddata = function() {
+          try {
+            var c = document.createElement('canvas'); c.width = probe.videoWidth || publishCanvas.width; c.height = probe.videoHeight || publishCanvas.height;
+            var x = c.getContext('2d'); x.drawImage(probe, 0, 0, c.width, c.height);
+            var d = x.getImageData(0, 0, c.width, c.height).data;
+            var bright = 0;
+            for (var i = 0; i < d.length; i += 400) { if (d[i] > 120 || d[i+1] > 120 || d[i+2] > 120) bright++; }
+            if (bright === 0 && !previewWarned) { previewWarned = true; setMsg('推流画面源异常（全黑）：学生端可能看到黑屏，请在 Edge 设置中切换“使用硬件加速”后刷新重试', 'err'); }
+          } catch(e) {}
+        };
+        probe.play().catch(function(){});
+      } catch(e) {}
+    }
+    setTimeout(checkPreviewSource, 2500);
+  </script>
+</body>
+</html>

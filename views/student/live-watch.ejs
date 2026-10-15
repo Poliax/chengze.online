@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#2B2F36; color:#e5e7eb; font-family:'Noto Serif SC', '宋体', 'SimSun', 'Songti SC', Georgia, 'Times New Roman', serif; min-height:100vh; }
+    .watch-header { display:flex; align-items:center; gap:14px; padding:0 20px; height:64px; background:#2B2F36; border-bottom:1px solid rgba(255,255,255,.28); position:sticky; top:0; z-index:40; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+.watch-brand { display:inline-flex; align-items:center; gap:10px; font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; color:#fff; text-decoration:none; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; white-space:nowrap; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+.watch-brand img, .watch-brand svg { width:28px; height:28px; flex:none; }
+.watch-brand .brand-tag { font-size:11px; font-weight:400; color:rgba(255,255,255,.55); letter-spacing:1px; margin-left:2px; }
+.watch-course { margin-left:0; padding-left:14px; border-left:1px solid rgba(255,255,255,.16); color:rgba(255,255,255,.6); font-size:14px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:55%; }
+.page { max-width:1360px; margin:0 auto; padding:22px 26px; display:flex; gap:18px; align-items:stretch; transition:padding .2s ease; }
+    .player-col { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; height:calc(100vh - 128px); }
+    .player-wrap { position:relative; width:100%; aspect-ratio:16/9; background:#000; border-radius:14px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.1); transition:width .2s ease, border-radius .2s ease; }
+    .player-wrap video { width:100%; height:100%; object-fit:contain; background:#000; transform:translateZ(0); will-change:transform; transition:width .2s ease, height .2s ease; }
+    .cam-box, .chat-col { transition:opacity .15s ease, visibility .15s ease; }
+
+    .live-badge { background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:5px; letter-spacing:1px; box-shadow:0 0 0 3px rgba(239,68,68,.15); }
+    .player-title { font-size:16px; font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.6); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .player-status { margin-left:auto; font-size:12px; color:rgba(255,255,255,.7); background:rgba(255,255,255,.08); padding:4px 10px; border-radius:999px; }
+    .player-controls { display:flex; align-items:center; gap:10px; padding:7px 12px; background:#2B2F36; border:1px solid rgba(255,255,255,.12); border-top:none; border-radius:0 0 14px 14px; box-shadow:0 -8px 24px rgba(0,0,0,.25); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+.page.fullscreen-mode { position:fixed; inset:0; z-index:200; background:#000; box-shadow:0 0 0 100vmax #000; }
+.page.fullscreen-mode .watch-header { display:none; }
+.page.fullscreen-mode .right-col { display:none; }
+    .ctrl-btn { width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; font-size:13px; cursor:pointer; border-radius:8px; line-height:1; transition:all .18s ease; }
+    .ctrl-btn:hover { background:rgba(37,99,235,.28); border-color:rgba(96,165,250,.45); color:#fff; transform:translateY(-1px) scale(1.06); box-shadow:0 8px 20px rgba(37,99,235,.25); }
+    .ctrl-btn svg { display:block; }
+    .quality-btn { width:auto; padding:0 10px; font-size:12px; font-weight:600; }
+    .volume-box { display:flex; align-items:center; gap:8px; }
+    .vol-slider { width:70px; -webkit-appearance:none; appearance:none; height:3px; border-radius:2px; background:rgba(255,255,255,.2); outline:none; }
+    .vol-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:12px; height:12px; border-radius:50%; background:#e2e8f0; cursor:pointer; border:none; }
+    .vol-slider::-moz-range-thumb { width:12px; height:12px; border-radius:50%; background:#e2e8f0; cursor:pointer; border:none; }
+    .live-tag { color:#2563eb; font-size:12px; font-weight:700; }
+    .waiting { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#0a0f1a; z-index:4; }
+    .waiting .ring { width:54px; height:54px; border-radius:50%; border:3px solid rgba(37,99,235,.18); border-top-color:#2563eb; animation:spin 1s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .waiting h2 { font-size:16px; font-weight:600; color:rgba(255,255,255,.55); }
+    .unmute-tip { position:absolute; bottom:58px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.72); color:#fff; font-size:12px; padding:8px 16px; border-radius:8px; border:1px solid rgba(255,255,255,.2); cursor:pointer; z-index:6; display:none; }
+    .right-col { width:270px; display:flex; flex-direction:column; gap:14px; height:calc(100vh - 128px); max-height:calc(100vh - 128px); }
+    .right-col.hidden { visibility:hidden; }
+    .cam-box { background:#2B2F36; border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.35); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+    .cam-box #teacherCam { width:100%; aspect-ratio:16/9; background:#000; }
+    .cam-box #teacherCam video { width:100%; height:100%; object-fit:cover; }
+    .chat-col { flex:1; min-height:0; display:flex; flex-direction:column; background:#2B2F36; border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.32); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+    .chat-hd { padding:13px 16px; font-size:14px; font-weight:600; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,.08); }
+    .chat-hd input { width:80px; margin-left:8px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:4px 8px; color:#fff; font-size:11px; outline:none; }
+    .chat-msgs { flex:1; overflow-y:auto; padding:14px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.2) transparent; }
+    .chat-msgs::-webkit-scrollbar { width:6px; }
+    .chat-msgs::-webkit-scrollbar-thumb { background:rgba(255,255,255,.18); border-radius:3px; }
+    .chat-msg { margin-bottom:12px; font-size:13px; line-height:1.55; color:rgba(255,255,255,.88); }
+    .chat-msg .head { display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
+    .chat-msg .who { color:#60a5fa; font-weight:600; font-size:12px; }
+    .chat-msg .time { color:rgba(255,255,255,.32); font-size:11px; }
+    .chat-msg .txt { display:block; color:rgba(255,255,255,.9); line-height:1.5; word-break:break-word; }
+    .chat-input-row { display:flex; gap:6px; align-items:center; padding:10px 12px; border-top:1px solid rgba(255,255,255,.08); }
+    .chat-input-row input { flex:1; min-width:0; height:26px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:0 12px; color:#fff; font-size:12px; outline:none; transition:border .15s ease; }
+    .chat-input-row input:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    .chat-input-row button { height:26px; padding:0 16px; border:none; border-radius:14px; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,.2); }
+    .exit { position:fixed; top:18px; right:20px; z-index:50; padding:7px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.18); background:rgba(2,6,23,.6); color:#fff; font-size:12px; text-decoration:none; backdrop-filter:blur(8px); }
+    .exit:hover { background:rgba(2,6,23,.85); border-color:rgba(255,255,255,.35); }
+    @media (max-width:900px) {
+      .page { flex-direction:column; padding:14px; }
+      .player-col { height:auto; }
+      .right-col { width:100%; height:auto; max-height:none; }
+      .chat-col { min-height:260px; }
+    }
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+  <header class="watch-header">
+    <span class="watch-brand"><svg viewBox="0 0 340 300" role="img" aria-label="承泽教育"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
+<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
+<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg>承泽在线<span class="brand-tag">课程直播端</span></span>
+    <span class="watch-course"><%= course.title %><% if (lessonTitle) { %> · <%= lessonTitle %><% } %></span>
+  </header>
+  <a class="exit" href="/live/student/courses/<%= course.id %>">离开课堂</a>
+  <div class="page">
+    <div class="player-col">
+      <div class="player-wrap" id="playerWrap">
+        <div id="teacherVideoMain" style="position:absolute;inset:0"></div>
+        <div class="waiting" id="waitingOverlay">
+          <div class="ring"></div>
+          <h2>等待老师开始上课</h2>
+        </div>
+      </div>
+      <div class="player-controls">
+        <span class="live-badge">LIVE</span>
+        <button class="ctrl-btn" id="refreshBtn" title="刷新直播画面"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+        <div class="volume-box">
+          <button class="ctrl-btn" id="muteBtn"><svg id="volOn" style="display:none" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/><path d="M14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg><svg id="volOff" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg></button>
+          <input type="range" id="volRange" class="vol-slider" min="0" max="100" value="100">
+        </div>
+        <span style="font-size:12px;color:rgba(255,255,255,.5)" id="timeText">--:--</span>
+        
+        <button class="ctrl-btn" id="sideToggle" style="margin-left:auto" title="侧边栏"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/></svg></button>
+        <button class="ctrl-btn" id="pageFullBtn" title="网页全屏"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="15" y1="4" x2="15" y2="20"/><polyline points="11,9 7,12 11,15"/></svg></button>
+        <button class="ctrl-btn" id="fullBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="cam-box">
+<div id="teacherCam"></div>
+      </div>
+      <div class="chat-col">
+        <div class="chat-hd">课堂互动 <input id="nickInput" value="" placeholder="昵称" style="width:80px;margin-left:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:3px 6px;color:#fff;font-size:11px;outline:none"></div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div class="chat-input-row">
+          <input id="chatInput" placeholder="发送消息..." maxlength="200">
+          <button id="chatSend">发送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/player/trtc.js"></script>
+  <script>
+    var COURSE_ID = <%= course.id %>;
+    var socket = io();
+    var stuName = localStorage.getItem('stuName') || ('学生' + Math.floor(1000 + Math.random() * 9000));
+    localStorage.setItem('stuName', stuName);
+    var stuUid = localStorage.getItem('stuUid') || ('UID' + Math.floor(100000 + Math.random() * 900000));
+    localStorage.setItem('stuUid', stuUid);
+    socket.emit('live:join', { courseId: COURSE_ID, role: 'student', name: stuName, uid: stuUid });
+    var chatMsgs = document.getElementById('chatMsgs');
+    function appendChat(text) {
+      var div = document.createElement('div');
+      div.className = 'chat-msg';
+      div.innerHTML = text;
+      chatMsgs.appendChild(div);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
+    function fmtChatTime(t) {
+      try {
+        var d = t ? new Date(t) : new Date();
+        function p(n) { return (n < 10 ? '0' + n : '' + n); }
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+      } catch(e) { return ''; }
+    }
+    function appendChatStruct(sender, content, time) {
+      var div = document.createElement('div');
+      div.className = 'chat-msg';
+      var head = document.createElement('div');
+      head.className = 'head';
+      var who = document.createElement('span');
+      who.className = 'who';
+      who.textContent = sender || '学生';
+      var tm = document.createElement('span');
+      tm.className = 'time';
+      tm.textContent = fmtChatTime(time);
+      var txt = document.createElement('span');
+      txt.className = 'txt';
+      txt.textContent = content || '';
+      head.appendChild(who);
+      head.appendChild(tm);
+      div.appendChild(head);
+      div.appendChild(txt);
+      chatMsgs.appendChild(div);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
+    socket.on('live:chat', function(data) {
+      appendChatStruct(data.sender || '学生', data.content || '', data.time);
+    });
+    socket.on('live:ended', function() {
+      var waiting = document.getElementById('waitingOverlay');
+      if (waiting) {
+        waiting.style.display = 'flex';
+        var ring = waiting.querySelector('.ring');
+        if (ring) ring.style.display = 'none';
+        var h2 = waiting.querySelector('h2');
+        if (h2) h2.textContent = '直播已结束';
+        var link = document.createElement('a');
+        link.href = '/live/student/courses/' + COURSE_ID;
+        link.textContent = '返回课程';
+        link.style.cssText = 'margin-top:10px;padding:8px 20px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;';
+        waiting.appendChild(link);
+      }
+    });
+    document.getElementById('chatSend').addEventListener('click', function() {
+      var input = document.getElementById('chatInput');
+      if (!input.value.trim()) return;
+      socket.emit('live:chat', { courseId: COURSE_ID, sender: '学生', content: input.value.trim() });
+      appendChatStruct('我', input.value.trim(), new Date());
+      input.value = '';
+    });
+    document.getElementById('chatInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('chatSend').click();
+    });
+    var nickInput = document.getElementById('nickInput');
+    nickInput.value = stuName;
+    nickInput.addEventListener('change', function() {
+      stuName = nickInput.value.trim() || stuName;
+      localStorage.setItem('stuName', stuName);
+      socket.emit('live:join', { courseId: COURSE_ID, role: 'student', name: stuName, uid: stuUid });
+    });
+
+    var wrap = document.getElementById('playerWrap');
+    var waitingEl = document.getElementById('waitingOverlay');
+    var muteBtn = document.getElementById('muteBtn');
+    var volRange = document.getElementById('volRange');
+    var fullBtn = document.getElementById('fullBtn');
+    var timeText = document.getElementById('timeText');
+    var assignedCount = 0;
+    var audioMuted = true;
+    var lastVolume = 100;
+
+    function getVideo() { return document.querySelector('#playerWrap video'); }
+
+    document.getElementById('refreshBtn').addEventListener('click', function() { window.location.reload(); });
+    muteBtn.addEventListener('click', function() {
+      audioMuted = !audioMuted;
+      if (audioMuted) {
+        lastVolume = parseInt(volRange.value) || 100;
+        volRange.value = 0;
+        document.querySelectorAll('video').forEach(function(vv) { vv.muted = true; });
+      } else {
+        volRange.value = lastVolume || 100;
+        document.querySelectorAll('video').forEach(function(vv) { vv.muted = false; vv.volume = volRange.value / 100; });
+      }
+      document.getElementById('volOn').style.display = audioMuted ? 'none' : 'block';
+      document.getElementById('volOff').style.display = audioMuted ? 'block' : 'none';
+    });
+    volRange.addEventListener('input', function() {
+      audioMuted = false;
+      lastVolume = parseInt(volRange.value) || 0;
+      document.querySelectorAll('video').forEach(function(vv) { vv.muted = false; vv.volume = volRange.value / 100; });
+      document.getElementById('volOn').style.display = 'block';
+      document.getElementById('volOff').style.display = 'none';
+    });
+    fullBtn.addEventListener('click', function() {
+      if (document.fullscreenElement) { document.exitFullscreen().catch(function(){}); }
+      else { wrap.requestFullscreen().catch(function(){}); }
+    });
+    var modes = ['all', 'nochat', 'nocam', 'live'];
+    var modeIdx = 0;
+    function applyMode(m) {
+      var cam = document.querySelector('.cam-box');
+      var chat = document.querySelector('.chat-col');
+      function hideEl(el) { el.style.opacity = '0'; el.style.visibility = 'hidden'; }
+      function showEl(el) { el.style.opacity = '1'; el.style.visibility = 'visible'; }
+      if (m === 'all') { showEl(cam); showEl(chat); }
+      else if (m === 'nochat') { showEl(cam); hideEl(chat); }
+      else if (m === 'nocam') { hideEl(cam); showEl(chat); }
+      else { hideEl(cam); hideEl(chat); }
+      var el = document.getElementById('sideToggle');
+      if (el) el.title = '侧边栏';
+    }
+    document.getElementById('sideToggle').addEventListener('click', function() {
+      modeIdx = (modeIdx + 1) % 4;
+      applyMode(modes[modeIdx]);
+    });
+    var pageFullActive = false;
+    var savedColStyle = '';
+    document.getElementById('pageFullBtn').addEventListener('click', function() {
+      var page = document.querySelector('.page');
+      var col = document.querySelector('.player-col');
+      var btn = document.getElementById('pageFullBtn');
+      if (!page || !col) return;
+      if (!pageFullActive) {
+        var r = col.getBoundingClientRect();
+        savedColStyle = col.style.cssText;
+        page.classList.add('fullscreen-mode');
+        col.style.position = 'fixed';
+        col.style.left = r.left + 'px';
+        col.style.top = r.top + 'px';
+        col.style.width = r.width + 'px';
+        col.style.height = r.height + 'px';
+        col.style.margin = '0';
+        col.style.zIndex = '300';
+        col.style.transformOrigin = '0 0';
+        col.style.transition = 'transform .25s ease';
+        var vw = window.innerWidth, vh = window.innerHeight;
+        var scale = Math.min(vw / r.width, vh / r.height);
+        var tx = (vw - r.width * scale) / 2 - r.left;
+        var ty = (vh - r.height * scale) / 2 - r.top;
+        requestAnimationFrame(function() {
+          col.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+        });
+        pageFullActive = true;
+        if (btn) btn.title = '退出网页全屏';
+      } else {
+        col.style.transform = '';
+        setTimeout(function() {
+          col.style.cssText = savedColStyle;
+          page.classList.remove('fullscreen-mode');
+        }, 260);
+        pageFullActive = false;
+        if (btn) btn.title = '网页全屏';
+      }
+    });
+
+    var controlsBound = false;
+    var liveStart = 0;
+    var clockOffset = 0;
+    (function() {
+      try {
+        var ss = <%- JSON.stringify(streamStartedAt || '') %>;
+        if (ss) liveStart = new Date(ss.replace(' ', 'T')).getTime();
+        clockOffset = <%- JSON.stringify(serverNow || 0) %> ? (<%- JSON.stringify(serverNow || 0) %> - Date.now()) : 0;
+      } catch(e) {}
+    })();
+    function updateClock() {
+      var s;
+      if (liveStart) {
+        s = Math.floor(((Date.now() + clockOffset) - liveStart) / 1000);
+      } else {
+        var vv = getVideo();
+        s = Math.floor((vv && vv.currentTime) || 0);
+      }
+      timeText.textContent = (Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'));
+    }
+
+    function showMain() {
+      waitingEl.style.display = 'none';
+    }
+
+    function bindControls() {
+      var v = getVideo();
+      if (!v) return;
+      if (controlsBound) return;
+      controlsBound = true;
+      v.muted = audioMuted;
+      v.volume = volRange.value / 100;
+      document.getElementById('volOn').style.display = audioMuted ? 'none' : 'block';
+      document.getElementById('volOff').style.display = audioMuted ? 'block' : 'none';
+      v.addEventListener('timeupdate', updateClock);
+      setInterval(updateClock, 1000);
+    }
+
+    async function startTRTC() {
+      try {
+        var cfg = await (await fetch('/live/api/trtc-config?roomId=' + COURSE_ID)).json();
+        var client = TRTC.createClient({ mode: 'live', role: 'audience', sdkAppId: cfg.sdkAppId, userId: cfg.userId, userSig: cfg.userSig, useStringRoomId: false });
+        window.__trtcClient = client;
+        client.on('stream-added', function(e) {
+          try { client.setRemoteVideoStreamType(e.stream, 'big'); } catch(err) {}
+          client.subscribe(e.stream);
+        });
+        client.on('stream-subscribed', function(e) {
+          var uid = '';
+          try { uid = e.stream.getUserId ? e.stream.getUserId() : ''; } catch(err) {}
+          if (uid.indexOf('_cam') > -1) {
+            e.stream.play('teacherCam', { muted: true });
+            assignedCount++;
+          } else {
+            e.stream.play('teacherVideoMain', { muted: true });
+            assignedCount++;
+            showMain();
+          }
+          setTimeout(bindControls, 400);
+        });
+        client.on('stream-removed', function(e) { try { e.stream.stop(); } catch(err) {} });
+        client.on('error', function(e) { appendChat('实时连接异常，正在重试...'); });
+        if (!cfg.privateMapKey) throw new Error('课堂权限凭证不可用，请刷新页面');
+        await client.join({ roomId: cfg.roomId, privateMapKey: cfg.privateMapKey, role: 'audience' });
+        setTimeout(function() {
+          if (assignedCount === 0) {
+            appendChat('老师尚未开播，请稍候...');
+            waitingEl.style.display = '';
+          }
+        }, 10000);
+      } catch (e) {
+        appendChat('实时连接失败，请刷新重试');
+      }
+    }
+
+    startTRTC();
+  </script>
+</body>
+</html>

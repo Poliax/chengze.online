@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %>
+<div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<% function fmtDT(v){ if(!v) return '-'; try{ return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); }catch(e){ return v; } } %>
+
+<div class="stats">
+<div class="stat"><div class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div class="stat-info"><strong><%= stats.pending %></strong><span>待发货</span></div></div>
+<div class="stat"><div class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-info"><strong><%= stats.shipped %></strong><span>运输中</span></div></div>
+<div class="stat"><div class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="stat-info"><strong><%= stats.delivered %></strong><span>已签收</span></div></div>
+</div>
+
+<div class="list-header">
+<h2>发货列表</h2>
+<div class="list-tools">
+<form method="GET" action="/admin/logistics-manage" class="toolbar-form" data-client-filter="1">
+<input name="q" id="lq" value="<%= q || '' %>" placeholder="搜索运单号/姓名/手机号" class="toolbar-input" style="width:190px">
+<select name="status" id="lstatus" class="toolbar-select">
+<option value="">全部状态</option>
+<option value="pending" <%= status==='pending'?'selected':'' %>>待发货</option>
+<option value="shipped" <%= status==='shipped'?'selected':'' %>>运输中</option>
+<option value="delivered" <%= status==='delivered'?'selected':'' %>>已签收</option>
+</select>
+</form>
+<a href="/admin/logistics-manage/new" class="btn-primary--sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建发货单</a>
+</div>
+</div>
+
+<div class="table-wrap">
+<table><thead><tr><th>单号</th><th>类型</th><th>学员</th><th>收件人</th><th>物品</th><th>快递/运单号</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+<tbody id="logisticsTbody">
+<% if (list.length === 0) { %><tr><td colspan="9" class="empty">暂无物流记录</td></tr><% } %>
+<% list.forEach(l => { %>
+<tr>
+<td style="font-family:monospace;font-size:13px"><%= l.order_no %></td>
+<td><%= l.type==='material'?'讲义':l.type==='book'?'教材':l.type==='certificate'?'证书':'其他' %></td>
+<td><%= l.student_name||'-' %></td>
+<td><%= l.recipient_name %><br><span style="font-size:12px;color:var(--muted)"><%= l.recipient_phone %></span></td>
+<td><%= l.items_summary||'-' %></td>
+<td><%= l.carrier||'-' %><br><span style="font-size:12px;color:var(--muted)"><%= l.tracking_no||'-' %></span></td>
+<td>
+<span class="status-dot status-<%= l.status==='delivered'?'published':l.status==='shipped'?'draft':'archived' %>"></span>
+<%= l.status==='delivered'?'已签收':l.status==='shipped'?'运输中':'待发货' %>
+</td>
+<td style="font-size:13px;color:var(--muted)"><%= fmtDT(l.created_at) %></td>
+<td>
+<% if (l.status === 'pending') { %>
+<a href="/admin/logistics-manage/<%= l.id %>/ship" class="btn-table">发货</a>
+<% } else if (l.status === 'shipped') { %>
+<form method="POST" action="/admin/logistics-manage/<%= l.id %>/deliver" style="display:inline"><button class="btn-table">签收</button></form>
+<% } %>
+<a href="/admin/logistics-manage/<%= l.id %>/edit" class="btn-table">编辑</a>
+</td>
+</tr>
+<% }) %>
+</tbody></table>
+</div>
+</div></div>
+<script>
+document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});
+(function(){
+  var q=document.getElementById('lq'), st=document.getElementById('lstatus'), t;
+  function filter(){
+    var kw=q.value.trim().toLowerCase(), sv=st.value;
+    document.querySelectorAll('#logisticsTbody tr').forEach(function(tr){
+      var ok=true;
+      if(kw && tr.textContent.toLowerCase().indexOf(kw)===-1) ok=false;
+      if(ok && sv && tr.textContent.indexOf(sv)===-1) ok=false;
+      tr.style.display=ok?'':'none';
+    });
+  }
+  if(q) q.addEventListener('input',function(){ clearTimeout(t); t=setTimeout(filter,200); });
+  if(st) st.addEventListener('change',filter);
+})();
+</script>
+</body></html>

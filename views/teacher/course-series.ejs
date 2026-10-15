@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<style>
+.add-btn{display:inline-flex;align-items:center;justify-content:center;gap:0;width:24px;height:24px;padding:0;background:linear-gradient(180deg,#ffffff,#f4f6f8);color:#111827;border:1px solid #d9dee7;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;margin-top:6px;box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9)}
+.add-btn:hover{background:linear-gradient(180deg,#f8fafc,#e9edf2);border-color:#c3cad4;color:#000000;transform:translateY(-1px);box-shadow:0 2px 6px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.9)}
+.del-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:1px solid #fecaca;background:linear-gradient(180deg,#ffffff,#fef2f2);color:#dc2626;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(220,38,38,.06), inset 0 1px 0 rgba(255,255,255,.9)}
+.del-btn:hover{background:linear-gradient(180deg,#fff7f7,#fee2e2);border-color:#fca5a5;color:#b91c1c;transform:translateY(-1px)}
+.subj-row{display:flex;align-items:center;gap:6px;padding:8px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:6px;background:#f8fafc;flex-wrap:wrap}
+.subj-row .subj-main{display:flex;align-items:center;gap:6px;flex:1;min-width:320px}
+.subj-row select{padding:5px 7px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;outline:none;font-family:inherit;flex:1;min-width:0;background:#fff}
+.row-move{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:1px solid #d9dee7;background:linear-gradient(180deg,#ffffff,#f4f6f8);color:#111827;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;line-height:1;box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9)}
+.row-move:hover{background:linear-gradient(180deg,#f8fafc,#e9edf2);border-color:#c3cad4;color:#000000;transform:translateY(-1px)}
+#subjList{background:transparent;border:none;padding:0;margin:0}
+.stage-wrap{display:flex;flex-direction:column;margin-bottom:10px}
+.stage-add{display:flex;justify-content:flex-end;margin-top:6px}
+.stage-add .add-btn{margin-top:0}
+.add-row{display:flex;justify-content:flex-end;margin-top:6px}
+.add-row .add-btn{margin-top:0}
+.stage-card{flex:1;min-width:0;background:#fbfcfe;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px 12px}
+.stage-card .hd{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#0f172a;margin-bottom:12px}
+.stage-index{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:6px;background:linear-gradient(180deg,#2563eb,#4f46e5);color:#fff;font-size:11px;font-weight:700}
+.stage-card .row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.stage-card .field{display:flex;align-items:center;gap:6px;min-width:0}
+.stage-card .field span{flex-shrink:0;font-size:11px;font-weight:600;color:#475569;white-space:nowrap}
+.stage-card .row input,.stage-card .row select,.stage-card .dates input{flex:1;min-width:0;width:auto;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;background:#fff;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s}
+.stage-card .row input:focus,.stage-card .row select:focus,.stage-card .dates input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.stage-card .dates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.stage-card .dates label{display:flex;align-items:center;gap:6px;min-width:0;font-size:11px;font-weight:600;color:#475569}
+.stage-card .dates label span{flex-shrink:0;white-space:nowrap}
+.stage-card .rules{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.stage-card .rule-label{flex-shrink:0;font-size:11px;font-weight:600;color:#475569}
+.stage-card .week-days{display:flex;gap:5px;flex-wrap:wrap}
+.stage-card .day-cell{display:inline-flex;align-items:center;gap:4px}
+.stage-card .day-cell .day-time{width:96px;min-width:96px;padding:5px 6px;border:1px solid #d1d5db;border-radius:5px;font-size:11px;background:#fff;font-family:inherit;outline:none}
+.stage-card .week-btn{padding:5px 10px;border:1px solid #d1d5db;border-radius:6px;background:#fff;color:#475569;font-size:11px;cursor:pointer;transition:border-color .15s,color .15s,background .15s;font-family:inherit}
+.stage-card .week-btn:hover{border-color:#2563eb;color:#2563eb}
+.stage-card .week-btn.active{background:#2563eb;border-color:#2563eb;color:#fff}
+.stage-actions{display:flex;gap:6px;margin-left:auto;flex-shrink:0}
+.stage-actions .add-btn,.stage-actions .del-btn,.stage-actions .row-move{margin-top:0}
+.stage-actions button:disabled{opacity:.38;cursor:not-allowed;transform:none}
+.stage-card .lessons{display:flex;gap:6px;flex-wrap:wrap;padding:9px;background:#fff;border:1px dashed #dbe3ee;border-radius:7px;min-height:34px}
+.stage-card .lessons:empty{display:none}
+.stage-card .lessons span{padding:4px 10px;background:#fff;border:1px solid #dde3ec;border-radius:5px;font-size:11px;color:#334155;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.stage-card .lessons span:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+@media (max-width:640px){.stage-card .row,.stage-card .dates{grid-template-columns:1fr}}
+.modal-box{background:white;border-radius:10px;padding:20px;width:320px;box-shadow:0 10px 40px rgba(0,0,0,0.15)}
+.modal-box h3{margin:0 0 14px;font-size:15px;font-weight:700;color:#0f172a}
+.modal-box .field{margin-bottom:10px}
+.modal-box .field label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:3px}
+.modal-box .field input{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:5px;font-size:13px;box-sizing:border-box}
+.modal-actions{display:flex;gap:8px;margin-top:14px;justify-content:flex-end}
+.modal-actions button{padding:7px 16px;border-radius:5px;font-size:13px;cursor:pointer;font-weight:500}
+.modal-actions .btn-cancel{background:white;border:1px solid #d1d5db;color:#475569}
+.modal-actions .btn-save{background:#2563eb;border:none;color:white}
+body.modal-mode{background:#fff;display:block;overflow:auto}
+body.modal-mode .teacher-main{background:#fff;min-height:auto}
+body.modal-mode .teacher-content{padding:16px 20px;overflow:visible}
+body.modal-mode .list-header{display:none}
+body.modal-mode .form-card{max-width:none;box-shadow:none;background:transparent;border:0;padding:0;margin-bottom:14px}
+body.modal-mode .form-card h3{display:none}
+body.modal-mode .form-actions{display:none}
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body<% if (modal) { %> modal-mode<% } %>"><% if (typeof modal === 'undefined' || !modal) { %><%- include('partials/sidebar') %><% } %><div class="teacher-main"><% if (typeof modal === 'undefined' || !modal) { %><%- include('partials/header') %><% } %>
+<div class="teacher-content">
+<div class="list-header">
+<h2><%= typeof editMode !== 'undefined' && editMode ? '编辑系列课' : '新建课程·新建系列课' %></h2>
+</div>
+<form method="POST" action="/admin/courses-manage<%= typeof editMode !== 'undefined' && editMode ? '/' + course.id + '/edit-series' : '' %>" id="seriesForm" class="staff-form" onsubmit="updateAutoTitle(); var ok=collectSubjects(); if(ok && window.parent && parent.closeSeriesModal) parent.closeSeriesModal(); return ok;">
+<%
+function parseYMD(v){
+  if(!v) return {y:'',m:'',d:''};
+  var s=String(v);
+  if(s.indexOf('年')>-1){
+    var p1=s.split('年');
+    var p2=(p1[1]||'').split('月');
+    var p3=(p2[1]||'').split('日');
+    return {y:p1[0]||'',m:p2[0]||'',d:p3[0]||''};
+  }
+  var parts=s.split('-');
+  return {y:parts[0]||'',m:parseInt(parts[1])||'',d:parseInt(parts[2])||''};
+}
+var sd=parseYMD(course?course.start_date:'');
+var ed=parseYMD(course?course.valid_until:'');
+function pad2(n){ return String(n==null||n===''?'':n).padStart(2,'0'); }
+var _nowDate=new Date();
+var sdVal=sd.y?sd.y+'-'+pad2(sd.m)+'-'+pad2(sd.d):_nowDate.getFullYear()+'-'+pad2(_nowDate.getMonth()+1)+'-'+pad2(_nowDate.getDate());
+var edVal=ed.y?ed.y+'-'+pad2(ed.m)+'-'+pad2(ed.d):'';
+%>
+
+<div class="form-card">
+<h3>关联课程包</h3>
+<%
+var _pkgSel = null;
+var _pkgParent = null;
+if (typeof packages !== 'undefined' && course) {
+  for (var _pi=0;_pi<packages.length;_pi++) {
+    if (String(packages[_pi].id) === String(course.package_id || '')) { _pkgSel = packages[_pi]; break; }
+  }
+}
+if (_pkgSel && _pkgSel.parent_id && typeof packages !== 'undefined') {
+  for (var _pj=0;_pj<packages.length;_pj++) {
+    if (String(packages[_pj].id) === String(_pkgSel.parent_id)) { _pkgParent = packages[_pj]; break; }
+  }
+}
+var _pkgIds = [];
+if (typeof coursePackageIds !== 'undefined' && coursePackageIds) {
+  for (var _pk=0;_pk<coursePackageIds.length;_pk++) {
+    var _pidN = parseInt(coursePackageIds[_pk]) || 0;
+    if (_pidN > 0 && _pkgIds.indexOf(_pidN) < 0) _pkgIds.push(_pidN);
+  }
+} else if (course && course.package_id) {
+  var _pid0 = parseInt(course.package_id) || 0;
+  if (_pid0 > 0) _pkgIds.push(_pid0);
+}
+var _pkgDefaultText = '未选择';
+if (_pkgSel) {
+  _pkgDefaultText = (_pkgParent ? _pkgParent.title + ' · ' : '') + _pkgSel.title;
+}
+var _autoProv = (_pkgSel && _pkgSel.province) || (course && course.province) || '';
+var _autoYear = (_pkgSel && _pkgSel.year) || (course && course.year) || '';
+var _autoExam = (_pkgSel && _pkgSel.exam_type) || (course && course.exam_type) || '专升本';
+var _autoClass = (_pkgSel && _pkgSel.class_type) || (course && course.class_type) || (course && course.course_type === 'public' ? '公开课' : '班课');
+var _autoClassRaw = (_autoClass === '公开课' || _autoClass === '免费课' || _autoClass === '公共课') ? '公开课' : (_autoClass === '专项集训课' ? '专项集训课' : (_autoClass === '押题密训课' ? '押题密训课' : '班课'));
+var _autoClassText = _autoClassRaw === '公开课' ? '公开课（免费课）' : (_autoClassRaw === '专项集训课' ? '专项集训' : (_autoClassRaw === '押题密训课' ? '冲刺密训' : '系统学习'));
+var _autoCourseType = _autoClassRaw === '公开课' ? 'public' : 'class';
+%>
+<input type="hidden" name="package_id" id="pkgId" value="<%= course ? (course.package_id || 0) : 0 %>">
+<input type="hidden" name="package_ids" id="pkgIds" value="<%= _pkgIds.join(',') %>">
+<div style="width:100%">
+<div style="padding:8px;border:1px solid #e2e8f0;border-radius:6px;background:#f8fafc;box-sizing:border-box">
+<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;background:#fff;margin-bottom:6px"><span style="flex:1;min-width:0;font-size:12px;color:#334155;line-height:1.5"><%= _pkgDefaultText %></span></div>
+<div id="pkgAssocList" style="display:none;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+</div>
+<div style="display:flex;justify-content:flex-end;margin-top:6px"><button type="button" class="add-btn" title="添加课程包" onclick="openAddPkgModal()" style="margin-top:0">+</button></div>
+</div>
+</div>
+
+<div class="form-card">
+<h3>课程信息</h3>
+<input type="hidden" name="title" id="autoTitle" value="<%= course ? course.title : '' %>">
+<div class="form-grid">
+<div class="form-group"><label>考试科目</label><select name="category" required onchange="filterTeacherBySubject()"><option value="">选择科目</option><% var _subjectVal = course ? (course.category || course.title) : ''; var _provSel = (typeof provinceOptions !== 'undefined' ? provinceOptions : []).find(function(p){ return course && course.province === p.name; }); var _subsSel = _provSel && _provSel.subjects && _provSel.subjects.length ? _provSel.subjects : [{name:'数学',standard:'数学'},{name:'英语',standard:'英语'},{name:'语文',standard:'语文'},{name:'计算机',standard:'计算机'},{name:'政治',standard:'政治'},{name:'管理学',standard:'管理学'},{name:'教育学',standard:'教育学'},{name:'医学',standard:'医学'},{name:'会计',standard:'会计'},{name:'经济学',standard:'经济学'},{name:'法学',standard:'法学'},{name:'艺术',standard:'艺术'},{name:'体育',standard:'体育'}]; _subsSel.forEach(function(s){ var _lb=s.name+(s.standard&&s.standard!==s.name?'（'+s.standard+'）':'')+(s.type?' · '+s.type:''); %><option value="<%= s.name %>" data-standard="<%= s.standard||s.name||'' %>" <%= _subjectVal===s.name?'selected':'' %>><%= _lb %></option><% }); if(_subjectVal && !_subsSel.some(function(s){return s.name===_subjectVal;})){ %><option value="<%= _subjectVal %>" data-standard="<%= _subjectVal %>" selected><%= _subjectVal %></option><% } %></select></div>
+<div class="form-group"><label>授课教师</label><select name="teacher_id" required><option value="">选择教师</option><% (typeof teachers !== 'undefined' ? teachers : []).forEach(t=>{%><option value="<%=t.id%>" data-subject="<%= t.subject||'' %>" <%= course && course.teacher_id==t.id ? 'selected':'' %>><%=t.display_name%></option><%})%></select><input type="hidden" name="teaching_mode" value="<%= course ? course.teaching_mode||'' : '' %>"></div>
+</div>
+<div class="form-grid">
+<div class="form-group"><label>招考省份</label><input type="text" name="province" readonly value="<%= _autoProv %>"></div>
+<div class="form-group"><label>考试年份</label><input type="text" name="year" readonly value="<%= _autoYear %>"></div>
+</div>
+<div class="form-grid">
+<div class="form-group"><label>考试类型</label><input type="text" name="exam_type" readonly value="<%= _autoExam %>"></div>
+<div class="form-group"><label>课程类型</label><input type="text" readonly value="<%= _autoClassText %>"><input type="hidden" name="course_type" value="<%= _autoCourseType %>"><input type="hidden" name="class_type" value="<%= _autoClassRaw %>"></div>
+</div>
+
+</div>
+
+<div class="form-actions">
+<a href="/admin/courses-manage" class="btn btn-outline" onclick="if(window.parent && parent.closeSeriesModal){ event.preventDefault(); parent.closeSeriesModal(); }">取消</a>
+<button type="submit" class="btn btn-primary">保存</button>
+</div>
+</form>
+</div>
+</div>
+
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
+<script>
+// Province-driven subjects
+var _provs = <%- JSON.stringify(typeof provinceOptions !== 'undefined' ? provinceOptions : []) %>;
+var _editMode = <%- typeof editMode !== 'undefined' && editMode ? 1 : 0 %>;
+var _courseYear = '<%= course ? (course.year||'') : '' %>';
+var _courseTitle = <%- JSON.stringify(course ? (course.category||course.title||'') : '') %>;
+var _teachers = <%- JSON.stringify(typeof teachers !== 'undefined' ? teachers : []) %>;
+var _pkgData = <%- JSON.stringify(typeof packages !== 'undefined' ? packages : []) %>;
+var _selectedPkgIds = <%- JSON.stringify(_pkgIds) %>;
+function esc(v){ return String(v==null?'':v).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function pkgList(level){ return (_pkgData||[]).filter(function(p){ return level===1 ? (!p.parent_id) : !!p.parent_id; }); }
+function pkgById(id){ for(var i=0;i<_pkgData.length;i++){ if(parseInt(_pkgData[i].id)===parseInt(id)) return _pkgData[i]; } return null; }
+function renderPkgAssoc(){
+  var box=document.getElementById('pkgAssocList');
+  var hidden=document.getElementById('pkgIds');
+  var primary=document.getElementById('pkgId');
+  if(!box) return;
+  box.innerHTML='';
+  box.style.display=_selectedPkgIds.length ? 'flex' : 'none';
+  _selectedPkgIds.forEach(function(id){
+    var p=pkgById(id);
+    if(!p) return;
+    var card=document.createElement('div');
+    card.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;background:#f8fafc';
+    var parent=pkgById(p.parent_id);
+    var label=(parseInt(p.parent_id)||0) && parent ? parent.title + ' · ' + p.title : p.title;
+    card.innerHTML='<span style="flex:1;min-width:0;font-size:12px;color:#334155;line-height:1.5">'+esc(label)+'</span><button type="button" class="del-btn" onclick="removePkg('+p.id+')" title="移除">×</button>';
+    box.appendChild(card);
+  });
+  if(hidden) hidden.value=_selectedPkgIds.join(',');
+  if(primary && _selectedPkgIds.length) primary.value=_selectedPkgIds[0];
+}
+function renderParentSelect(selected){
+  var sel=document.getElementById('addPkgParent');
+  if(!sel) return;
+  var h='<option value="">选择一级课程包</option>';
+  pkgList(1).forEach(function(p){
+    h+='<option value="'+p.id+'"'+(parseInt(selected)===parseInt(p.id)?' selected':'')+'>'+esc(p.title)+'</option>';
+  });
+  sel.innerHTML=h;
+}
+function renderChildSelect(){
+  var parent=document.getElementById('addPkgParent');
+  var sel=document.getElementById('addPkgChild');
+  if(!sel) return;
+  var pid=parseInt(parent ? parent.value : 0)||0;
+  var h='<option value="">选择二级课程包</option>';
+  pkgList(2).filter(function(p){ return parseInt(p.parent_id)===pid; }).forEach(function(p){
+    h+='<option value="'+p.id+'">'+esc(p.title)+'</option>';
+  });
+  sel.innerHTML=h;
+}
+function addSelectedPkg(){
+  var sel=document.getElementById('addPkgChild');
+  var id=parseInt(sel ? sel.value : 0)||0;
+  if(!id){ alert('请选择二级课程包'); return; }
+  if(_selectedPkgIds.indexOf(id)<0) _selectedPkgIds.push(id);
+  renderPkgAssoc();
+}
+function removePkg(id){
+  id=parseInt(id)||0;
+  var i=_selectedPkgIds.indexOf(id);
+  if(i>=0) _selectedPkgIds.splice(i,1);
+  renderPkgAssoc();
+}
+function removeLastPkg(){
+  if(!_selectedPkgIds.length){ alert('暂无关联课程包可删除'); return; }
+  _selectedPkgIds.pop();
+  renderPkgAssoc();
+}
+function openAddPkgModal(){
+  var parentSel=document.getElementById('addModalParent');
+  var childSel=document.getElementById('addModalChild');
+  if(parentSel){
+    var h='<option value="">选择一级课程包</option>';
+    pkgList(1).forEach(function(p){
+      h+='<option value="'+p.id+'">'+esc(p.title)+'</option>';
+    });
+    parentSel.innerHTML=h;
+  }
+  if(childSel) childSel.innerHTML='<option value="">选择二级课程包</option>';
+  var overlay=document.getElementById('addPkgOverlay');
+  var modal=document.getElementById('addPkgModal');
+  if(overlay){ overlay.style.display='flex'; overlay.classList.add('open'); }
+  if(modal){ modal.style.display='block'; modal.classList.add('open'); }
+}
+function closeAddPkgModal(){
+  var overlay=document.getElementById('addPkgOverlay');
+  var modal=document.getElementById('addPkgModal');
+  if(overlay){ overlay.style.display='none'; overlay.classList.remove('open'); }
+  if(modal){ modal.style.display='none'; modal.classList.remove('open'); }
+}
+function fillAddParentSelect(selected){
+  var sel=document.getElementById('addModalParent');
+  if(!sel) return;
+  var h='<option value="">选择一级课程包</option>';
+  pkgList(1).forEach(function(p){
+    h+='<option value="'+p.id+'"'+(parseInt(selected)===parseInt(p.id)?' selected':'')+'>'+esc(p.title)+'</option>';
+  });
+  sel.innerHTML=h;
+}
+function onModalParentChange(){
+  var parent=document.getElementById('addModalParent');
+  var child=document.getElementById('addModalChild');
+  if(!parent || !child) return;
+  var pid=parseInt(parent.value)||0;
+  var h='<option value="">选择二级课程包</option>';
+  pkgList(2).filter(function(p){ return parseInt(p.parent_id)===pid; }).forEach(function(p){
+    h+='<option value="'+p.id+'">'+esc(p.title)+'</option>';
+  });
+  child.innerHTML=h;
+}
+function confirmAddPkg(){
+  var child=document.getElementById('addModalChild');
+  var id=parseInt(child ? child.value : 0)||0;
+  if(!id){ alert('请选择二级课程包'); return; }
+  if(_selectedPkgIds.indexOf(id)<0) _selectedPkgIds.push(id);
+  renderPkgAssoc();
+  closeAddPkgModal();
+}
+function fillPkgParentSelect(selected){
+  var sel=document.getElementById('pkgParentSel');
+  if(!sel) return;
+  var h='<option value="0">选择一级课程包</option>';
+  pkgList(1).forEach(function(p){
+    h+='<option value="'+p.id+'"'+(parseInt(selected)===parseInt(p.id)?' selected':'')+'>'+esc(p.title)+'</option>';
+  });
+  sel.innerHTML=h;
+}
+function onPkgParentChange(){
+  var sel=document.getElementById('pkgParentSel');
+  var id=parseInt(sel ? sel.value : 0)||0;
+  var p=pkgById(id);
+  if(p){
+    document.getElementById('pkgYear').value=p.year||'';
+    document.getElementById('pkgProvince').value=p.province||'';
+    document.getElementById('pkgClassType').value=(p.class_type==='公开课'||p.class_type==='免费课'||p.class_type==='公共课')?'公开课':(p.class_type==='专项集训课'?'专项集训课':(p.class_type==='押题密训课'?'押题密训课':'班课'));
+  }
+}
+function syncPkgHint(){
+  var l1=document.getElementById('pkgLevel1'), l2=document.getElementById('pkgLevel2'), hint=document.getElementById('pkgHint');
+  if(!l1 || !l2 || !hint) return;
+  var v1=parseInt(l1.value)||0, v2=parseInt(l2.value)||0;
+  if(v1>0 && v2===0){
+    hint.textContent='该一级课程包下暂无二级课程包，请先选择或新建二级课程包';
+    hint.style.color='#b45309';
+  } else {
+    var name=v2>0 ? (l2.options[l2.selectedIndex] ? l2.options[l2.selectedIndex].text : '') : (v1>0 ? (l1.options[l1.selectedIndex] ? l1.options[l1.selectedIndex].text : '') : '独立课程');
+    hint.textContent=v1>0 ? ('已选择：' + name) : '将创建独立课程';
+    hint.style.color='#94a3b8';
+  }
+}
+function validatePkg(){
+  var l1=document.getElementById('pkgLevel1'), l2=document.getElementById('pkgLevel2');
+  if(l1 && l2 && parseInt(l1.value)>0 && parseInt(l2.value)===0){
+    alert('请选择或新建二级课程包');
+    return false;
+  }
+  return true;
+}
+function renderPkgSelects(){
+  var l1=document.getElementById('pkgLevel1');
+  var l2=document.getElementById('pkgLevel2');
+  if(!l1 || !l2) return;
+  var curId=parseInt(document.getElementById('pkgId').value)||0;
+  var curPkg=null;
+  for(var i=0;i<_pkgData.length;i++){ if(parseInt(_pkgData[i].id)===curId){ curPkg=_pkgData[i]; break; } }
+  var curParent=curPkg ? parseInt(curPkg.parent_id)||0 : 0;
+  var h='<option value="0">无（独立课程）</option>';
+  pkgList(1).forEach(function(p){
+    h+='<option value="'+p.id+'"'+(curPkg && !curPkg.parent_id && parseInt(p.id)===curId ? ' selected' : (curParent===parseInt(p.id) ? ' selected' : ''))+'>'+esc(p.title)+'</option>';
+  });
+  l1.innerHTML=h;
+  var parent=parseInt(l1.value)||0;
+  var h2='<option value="0">无（独立课程）</option>';
+  pkgList(2).filter(function(p){ return parseInt(p.parent_id)===parent; }).forEach(function(p){
+    h2+='<option value="'+p.id+'"'+(curPkg && curPkg.parent_id && parseInt(p.id)===curId ? ' selected' : '')+'>'+esc(p.title)+'</option>';
+  });
+  l2.innerHTML=h2;
+  if(curPkg && !curPkg.parent_id){ l1.value=curId; l2.value=0; document.getElementById('pkgId').value=curId; }
+  else if(curPkg && curPkg.parent_id){ l1.value=curParent; l2.value=curId; document.getElementById('pkgId').value=curId; }
+  else { document.getElementById('pkgId').value=0; }
+  syncPkgHint();
+}
+function onPkgLevel1Change(){
+  var l1=document.getElementById('pkgLevel1');
+  var l2=document.getElementById('pkgLevel2');
+  if(!l1 || !l2) return;
+  var parent=parseInt(l1.value)||0;
+  var h='<option value="0">无（独立课程）</option>';
+  pkgList(2).filter(function(p){ return parseInt(p.parent_id)===parent; }).forEach(function(p){
+    h+='<option value="'+p.id+'">'+esc(p.title)+'</option>';
+  });
+  l2.innerHTML=h;
+  document.getElementById('pkgId').value=parent;
+  syncPkgHint();
+}
+function onPkgLevel2Change(){
+  var l2=document.getElementById('pkgLevel2');
+  document.getElementById('pkgId').value=l2 ? (parseInt(l2.value)||0) : (parseInt(document.getElementById('pkgLevel1').value)||0);
+  syncPkgHint();
+}
+var pkgModalLevel=1;
+function openPkgModal(level){
+  pkgModalLevel=level;
+  fillPkgParentSelect(0);
+  var parentField=document.getElementById('pkgParentField');
+  document.getElementById('pkgModalSub').textContent = level===2 ? '二级课程包' : '一级课程包';
+  document.getElementById('pkgParentId').value = 0;
+  if(parentField) parentField.style.display = level===2 ? '' : 'none';
+  document.getElementById('pkgTitle').value='';
+  document.getElementById('pkgYear').value='';
+  document.getElementById('pkgProvince').value='';
+  document.getElementById('pkgClassType').value='班课';
+  document.getElementById('pkgPrice').value='0';
+  document.getElementById('pkgOverlay').style.display='flex';
+  document.getElementById('pkgOverlay').classList.add('open');
+  document.getElementById('pkgModal').style.display='block';
+  document.getElementById('pkgModal').classList.add('open');
+}
+function closePkgModal(){
+  document.getElementById('pkgOverlay').style.display='none';
+  document.getElementById('pkgOverlay').classList.remove('open');
+  document.getElementById('pkgModal').style.display='none';
+  document.getElementById('pkgModal').classList.remove('open');
+}
+function savePkg(){
+  var title=document.getElementById('pkgTitle').value.trim();
+  if(!title){ alert('请输入课程包名称'); return; }
+  var parentSel=document.getElementById('pkgParentSel');
+  var parentId=parseInt(parentSel ? parentSel.value : 0)||0;
+  if(pkgModalLevel===2 && !parentId){ alert('请先选择一级课程包'); return; }
+  var data={
+    title: title,
+    year: document.getElementById('pkgYear').value,
+    province: document.getElementById('pkgProvince').value,
+    class_type: document.getElementById('pkgClassType').value,
+    price: document.getElementById('pkgPrice').value||'0',
+    parent_id: parentId,
+    level: pkgModalLevel,
+    status: 'draft'
+  };
+  fetch('/admin/packages-manage/api/create',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d && d.ok){
+      _pkgData.push(d);
+      if(_selectedPkgIds.indexOf(parseInt(d.id))<0) _selectedPkgIds.push(parseInt(d.id));
+      renderParentSelect();
+      renderChildSelect();
+      renderPkgAssoc();
+      closePkgModal();
+    } else {
+      alert((d && d.error) || '创建失败');
+    }
+  }).catch(function(){ alert('创建失败，请重试'); });
+}
+function currentProvince(){
+  var sel=document.querySelector('[name="province"]');
+  if(!sel) return null;
+  var name=sel.value;
+  for(var i=0;i<_provs.length;i++){ if(_provs[i].name===name) return _provs[i]; }
+  return null;
+}
+function subjectOptionsHtml(selected){
+  var p=currentProvince();
+  var subs=(p&&p.subjects)||[];
+  var h='<option value="">选择科目</option>';
+  for(var i=0;i<subs.length;i++){
+    var s=subs[i];
+    var label=s.name+(s.standard&&s.standard!==s.name?'（'+s.standard+'）':'')+(s.type?' · '+s.type:'');
+    h+='<option value="'+esc(s.name)+'" data-standard="'+esc(s.standard||'')+'"'+(selected===s.name?' selected':'')+'>'+esc(label)+'</option>';
+  }
+  return h;
+}
+function populateSubjectSelect(){
+  var p=currentProvince();
+  var sel=document.querySelector('select[name="category"]');
+  if(!sel) return;
+  var subs=(p&&p.subjects)||[];
+  var cur=sel.value || _courseTitle || '';
+  var std=[{name:'数学',standard:'数学'},{name:'英语',standard:'英语'},{name:'语文',standard:'语文'},{name:'计算机',standard:'计算机'},{name:'政治',standard:'政治'},{name:'管理学',standard:'管理学'},{name:'教育学',standard:'教育学'},{name:'医学',standard:'医学'},{name:'会计',standard:'会计'},{name:'经济学',standard:'经济学'},{name:'法学',standard:'法学'},{name:'艺术',standard:'艺术'},{name:'体育',standard:'体育'}];
+  var list=subs.length?subs:std;
+  var h='<option value="">选择科目</option>';
+  list.forEach(function(s){
+    var label=s.name+(s.standard&&s.standard!==s.name?'（'+s.standard+'）':'')+(s.type?' · '+s.type:'');
+    h+='<option value="'+esc(s.name)+'" data-standard="'+esc(s.standard||s.name||'')+'">'+esc(label)+'</option>';
+  });
+  sel.innerHTML=h;
+  var found=false;
+  for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===cur) found=true; }
+  if(cur && !found) sel.innerHTML+='<option value="'+esc(cur)+'" selected>'+esc(cur)+'</option>';
+  if(found) sel.value=cur;
+}
+function filterTeacherBySubject(){
+  updateAutoTitle();
+  var subj=document.querySelector('select[name="category"]');
+  var tsel=document.querySelector('select[name="teacher_id"]');
+  if(!tsel) return;
+  var subject=subj?subj.value:'';
+  var opt=subj?subj.options[subj.selectedIndex]:null;
+  var standard=opt?opt.getAttribute('data-standard')||'':'';
+  var cur=tsel.value;
+  tsel.innerHTML='<option value="">选择教师</option>';
+  _teachers.forEach(function(t){
+    if(!subject || t.subject===subject || t.subject===standard || !t.subject){
+      tsel.innerHTML+='<option value="'+t.id+'"'+(String(t.id)===String(cur)?' selected':'')+'>'+esc(t.display_name)+'</option>';
+    }
+  });
+  if(cur && !Array.prototype.some.call(tsel.options,function(o){return String(o.value)===String(cur);})) tsel.value='';
+}
+function populateYearSelect(){
+  var p=currentProvince();
+  var ysel=document.querySelector('[name="year"]');
+  if(!ysel) return;
+  if(ysel.tagName !== 'SELECT'){
+    if(!ysel.value && _courseYear) ysel.value=_courseYear;
+    return;
+  }
+  var years=(p&&p.years)||[];
+  if(!years || !years.length) years=[2026,2027,2028,2029,2030,2031,2032,2033,2034,2035];
+  ysel.innerHTML='<option value="">选择年份</option>';
+  for(var i=0;i<years.length;i++){
+    var y=years[i];
+    ysel.innerHTML+='<option value="'+esc(y)+'">'+esc(y)+'年</option>';
+  }
+  if(_courseYear) ysel.value=_courseYear;
+}
+function examDateToInput(v){
+  var s=String(v||'');
+  var m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+  if(m) return m[1]+'-'+String(parseInt(m[2])).padStart(2,'0')+'-'+String(parseInt(m[3])).padStart(2,'0');
+  var p=s.split('T')[0].split('-');
+  if(p.length===3) return p[0]+'-'+p[1]+'-'+p[2];
+  return '';
+}
+function onYearChange(){
+  updateAutoTitle();
+  var p=currentProvince();
+  var ysel=document.querySelector('[name="year"]');
+  var year=ysel?ysel.value:'';
+  var time='';
+  if(p && p.examSchedule){
+    for(var i=0;i<p.examSchedule.length;i++){
+      if(String(p.examSchedule[i].year)===String(year)){
+        time=p.examSchedule[i].exam_time||'';
+        break;
+      }
+    }
+  }
+  if(!time && p && p.exam_time) time=p.exam_time;
+  if(year && time){
+    var ed=document.querySelector('input[name="end_date"]');
+    var v=examDateToInput(time);
+    if(ed && v) ed.value=v;
+  }
+  updateSubjectsJson();
+}
+function onProvinceChange(){
+  updateAutoTitle();
+  var p=currentProvince();
+  populateYearSelect();
+  populateSubjectSelect();
+  filterTeacherBySubject();
+  onYearChange();
+  document.querySelectorAll('#subjList select[name="subject[]"]').forEach(function(s){
+    s.innerHTML=subjectOptionsHtml('');
+    filterT(s);
+    updateSubjectsJson();
+  });
+}
+// Teachers
+var _ts=[];document.querySelectorAll('option[data-subj]').forEach(function(o){_ts.push({id:o.value,name:o.text,subj:o.getAttribute('data-subj')});});
+function filterT(s){var opt=s.options[s.selectedIndex];var c=opt?opt.getAttribute('data-standard')||'':'';var t=s.parentElement.parentElement.querySelector('select[name="teacher[]"]');t.innerHTML='<option value="">选择教师</option>';_ts.forEach(function(x){if(x.subj===c||!c)t.innerHTML+='<option value="'+x.id+'">'+x.name+'</option>';});}
+function updateSubjectsJson(){
+  var rows=document.querySelectorAll('#subjList .subj-row');
+  var data=[];
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var s=r.querySelector('select[name="subject[]"]');
+    var t=r.querySelector('select[name="teacher[]"]');
+    if(s&&s.value)data.push({subject:s.value,teacher:t?t.value:''});
+  }
+  var h=document.getElementById('subjectsJson');
+  if(h)h.value=JSON.stringify(data);
+  return true;
+}
+function updateAutoTitle(){
+  if(_editMode) return;
+  var year=document.querySelector('[name="year"]');
+  var prov=document.querySelector('[name="province"]');
+  var cat=document.querySelector('select[name="category"]');
+  var el=document.getElementById('autoTitle');
+  if(!el) return;
+  if(!year || !year.value || !prov || !prov.value || !cat || !cat.value){ el.value=''; return; }
+  var title=year.value+prov.value+'专升本'+cat.value;
+  el.value=title;
+}
+function collectSubjects(){return updateSubjectsJson();}
+
+function addSubj(){var l=document.getElementById('subjList');var r=document.createElement('div');r.className='subj-row';var os=subjectOptionsHtml('');var ts='<option value="">选择教师</option>';_ts.forEach(function(x){ts+='<option value="'+x.id+'" data-subj="'+x.subj+'">'+x.name+'</option>';});r.innerHTML='<div class="subj-main"><select name="subject[]" onchange="filterT(this);updateSubjectsJson()" required>'+os+'</select><select name="teacher[]" onchange="updateSubjectsJson()" required>'+ts+'</select></div><button type="button" class="del-btn" onclick="this.parentElement.remove()">✕</button>';l.appendChild(r);}
+setTimeout(function(){
+  var psel=document.querySelector('[name="province"]');
+  if(psel && psel.value && !(window._savedSubj && window._savedSubj.length)) onProvinceChange();
+  filterTeacherBySubject();
+  var pkgParentSel=document.getElementById('addPkgParent');
+  if(pkgParentSel) pkgParentSel.addEventListener('change', renderChildSelect);
+  renderPkgAssoc();
+  renderParentSelect();
+  renderChildSelect();
+}, 60);
+
+// Stages
+var stageLabels=['第一阶段','第二阶段','第三阶段','第四阶段','第五阶段','第六阶段'];
+var _savedStages = <%- JSON.stringify(typeof stageData !== 'undefined' ? stageData : []) %>;
+var _stages=[];
+function cloneStage(s){
+  return {
+    name:(s&&s.name)||'',
+    count:(s&&s.count)||30,
+    duration:(s&&s.duration)||120,
+    start:(s&&s.start)||'',
+    end:(s&&s.end)||'',
+    rule:(s&&s.rule)||'',
+    time:(s&&s.time)||''
+  };
+}
+if(_savedStages.length){
+  _savedStages.forEach(function(s){_stages.push(cloneStage(s));});
+} else {
+  _stages.push(cloneStage({count:30,duration:120}));
+}
+function stageTitle(i){ return i < stageLabels.length ? stageLabels[i] : '第'+(i+1)+'阶段'; }
+function countOptions(v){
+  var h='';
+  var val=Math.min(30,Math.max(1,parseInt(v)||30));
+  for(var c=1;c<=30;c++){
+    h+='<option value="'+c+'"'+(c===val?' selected':'')+'>'+c+'次</option>';
+  }
+  return h;
+}
+function durOptions(v){
+  var h='';
+  var val=[30,45,60,90,120].indexOf(parseInt(v))>-1?parseInt(v):120;
+  [30,45,60,90,120].forEach(function(d){
+    h+='<option value="'+d+'"'+(d===val?' selected':'')+'>'+d+'分钟</option>';
+  });
+  return h;
+}
+function weekHtml(rule,timeStr){
+  var days=[['1','周一'],['2','周二'],['3','周三'],['4','周四'],['5','周五'],['6','周六'],['0','周日']];
+  var r=String(rule||'').split(',').filter(Boolean);
+  var tm={};
+  String(timeStr||'').split(',').forEach(function(v,i){ if(r[i]) tm[r[i]]=v; });
+  var h='';
+  days.forEach(function(d){
+    var on=r.indexOf(d[0])>-1;
+    var t=on?(tm[d[0]]||'19:30'):'';
+    h+='<span class="day-cell'+(on?' active':'')+'" data-wd="'+d[0]+'"><button type="button" class="week-btn'+(on?' active':'')+'" data-wd="'+d[0]+'">'+d[1]+'</button>'+(on?'<input type="time" class="day-time" data-wd="'+d[0]+'" value="'+esc(t)+'">':'')+'</span>';
+  });
+  return h;
+}
+function collectStageInputs(){
+  for(var i=0;i<_stages.length;i++){
+    var sn=document.getElementById('sn_'+i); if(sn) _stages[i].name=sn.value;
+    var sc=document.getElementById('sc_'+i); if(sc) _stages[i].count=parseInt(sc.value)||0;
+    var sd=document.getElementById('sd_'+i); if(sd) _stages[i].duration=parseInt(sd.value)||120;
+    var s0=document.getElementById('sd_start_'+i); if(s0) _stages[i].start=s0.value;
+    var s1=document.getElementById('sd_end_'+i); if(s1) _stages[i].end=s1.value;
+    var rv=document.getElementById('rule_'+i); if(rv) _stages[i].rule=rv.value;
+    var tm=document.getElementById('time_'+i); if(tm) _stages[i].time=tm.value;
+  }
+}
+function addStage(i){
+  collectStageInputs();
+  _stages.splice(i+1,0,cloneStage({count:30,duration:120}));
+  renderStages();
+}
+function delStage(i){
+  if(_stages.length<=1) return;
+  collectStageInputs();
+  _stages.splice(i,1);
+  renderStages();
+}
+function moveStage(i,d){
+  if((i===0&&d<0)||(i===_stages.length-1&&d>0)) return;
+  collectStageInputs();
+  var st=_stages.splice(i,1)[0];
+  _stages.splice(i+d,0,st);
+  renderStages();
+}
+function renderStages(){
+  var area=document.getElementById('stageArea');
+  if(!area) return;
+  area.innerHTML='';
+  for(var i=0;i<_stages.length;i++){
+    var st=_stages[i];
+    var wrap=document.createElement('div');wrap.className='stage-wrap';
+    var card=document.createElement('div');card.className='stage-card';
+    card.setAttribute('data-i',i);
+    card.innerHTML='<div class="hd"><span class="stage-index">'+(i+1)+'</span><span>'+stageTitle(i)+'</span><div class="stage-actions"><button type="button" class="row-move" title="上移" onclick="moveStage('+i+',-1)"'+(i===0?' disabled':'')+'><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button><button type="button" class="row-move" title="下移" onclick="moveStage('+i+',1)"'+(i===_stages.length-1?' disabled':'')+'><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button><button type="button" class="del-btn" title="删除阶段" onclick="delStage('+i+')"'+( _stages.length===1?' disabled':'')+'>×</button></div></div><div class="row"><label class="field"><span>阶段名称</span><input name="sn_'+i+'" id="sn_'+i+'" placeholder="如：基础阶段" value="'+esc(st.name)+'" oninput="sch()"></label><label class="field"><span>课次</span><select name="sc_'+i+'" id="sc_'+i+'" onchange="sch()">'+countOptions(st.count)+'</select></label><label class="field"><span>每次</span><select name="sd_'+i+'" id="sd_'+i+'" onchange="sch()">'+durOptions(st.duration)+'</select></label></div><div class="dates"><label><span>开始日期</span><input type="date" name="sd_start_'+i+'" id="sd_start_'+i+'" value="'+esc(st.start)+'" onchange="sch()"></label><label><span>结束日期</span><input type="date" name="sd_end_'+i+'" id="sd_end_'+i+'" value="'+esc(st.end)+'" onchange="sch()"></label></div><div class="rules"><span class="rule-label">排课规则</span><div class="week-days" id="wd_'+i+'">'+weekHtml(st.rule,st.time)+'</div><input type="hidden" name="rule_'+i+'" id="rule_'+i+'" value="'+esc(st.rule)+'"><input type="hidden" name="time_'+i+'" id="time_'+i+'" value="'+esc(st.time)+'"></div><div class="lessons" id="ls_'+i+'"></div>';
+    wrap.appendChild(card);
+    if(i===_stages.length-1){
+      var addBar=document.createElement('div');addBar.className='stage-add';
+      addBar.innerHTML='<button type="button" class="add-btn" title="添加阶段" onclick="addStage('+i+')">+</button>';
+      wrap.appendChild(addBar);
+    }
+    area.appendChild(wrap);
+  }
+  sch();
+}
+
+function sch(){
+  var n=_stages.length;
+  var idx=1;
+  // Remove old hidden lesson data
+  var oldData=document.getElementById("lessonData");
+  if(oldData)oldData.innerHTML="";
+  for(var i=0;i<n;i++){
+    var ls=document.getElementById("ls_"+i);if(!ls)continue;
+    var sn=document.getElementById("sn_"+i);var sc=document.getElementById("sc_"+i);
+    var sname=sn?sn.value:"";var cnt=parseInt(sc?sc.value:0)||0;
+    ls.innerHTML="";
+    for(var j=0;j<cnt;j++){
+      var box=document.createElement("span");
+      box.style.cssText="cursor:pointer;padding:3px 8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;font-size:11px;color:#374151;display:inline-flex;align-items:center;gap:4px";
+      box.innerHTML="\u7b2c"+idx+"\u8bb2 <small style=\"color:#94a3b8;font-size:9px\">\u270e</small>";
+      box.title="\u70b9\u51fb\u4fee\u6539\u540d\u79f0\u548c\u65e5\u671f";
+      box.onclick=function(){
+      window._editBox=this;
+      try{document.getElementById("editName").value=this.childNodes[0].textContent.trim();}catch(e){}
+      try{var ed=this.querySelector(".lesson-date");var v=ed?ed.textContent:"";document.getElementById("editDate").value=v?v.replace(" ","T"):"";}catch(e){}
+      // Populate subject dropdown
+      var subjSel=document.getElementById("editSubject");subjSel.innerHTML='<option value="">\u9009\u62e9\u79d1\u76ee</option>';
+      var subjSet={};
+      document.querySelectorAll('select[name="subject[]"]').forEach(function(s){var v=s.value;if(v&&!subjSet[v]){subjSet[v]=1;subjSel.innerHTML+='<option value="'+v+'">'+v+'</option>';}});
+      var curSubj=this.getAttribute("data-subject");
+      if(curSubj)subjSel.value=curSubj;
+      // Populate teacher dropdown
+      var teaSel=document.getElementById("editTeacher");teaSel.innerHTML='<option value="">\u9009\u62e9\u6559\u5e08</option>';
+      _ts.forEach(function(t){teaSel.innerHTML+='<option value="'+t.id+'">'+t.name+'</option>';});
+      var curTea=this.getAttribute("data-teacher");
+      if(curTea)teaSel.value=curTea;
+      document.getElementById("lessonModal").classList.add("open");
+      document.getElementById("lessonOverlay").classList.add("open");
+      if(window._fp){window._fp.destroy();}
+      window._fp=flatpickr("#editDate",{enableTime:true,time_24hr:true,dateFormat:"Y-m-d H:i",locale:"zh"});
+    };
+      ls.appendChild(box);
+      idx++;
+    }
+  }
+}
+
+function closeModal(){document.getElementById("lessonModal").classList.remove("open");document.getElementById("lessonOverlay").classList.remove("open")}
+function saveLesson(){
+  var box=window._editBox;if(!box)return;
+  var name=document.getElementById("editName").value;
+  if(name)box.childNodes[0].textContent=name;
+  var subj=document.getElementById("editSubject").value;
+  var tea=document.getElementById("editTeacher").value;
+  if(subj)box.setAttribute("data-subject",subj);
+  if(tea)box.setAttribute("data-teacher",tea);
+  var date=document.getElementById("editDate").value;
+  if(date){date=date.replace("T"," ");}
+  var ex=box.querySelector(".lesson-date");
+  if(date){
+    if(ex)ex.textContent=date;
+    else{var d=document.createElement("small");d.style.cssText="color:#2563eb;font-size:9px;margin-left:4px";d.className="lesson-date";d.textContent=date;box.appendChild(d);}
+  }else{if(ex)ex.remove();}
+  closeModal();
+}
+function syncRule(i,card){
+  var days=[],times=[];
+  card.querySelectorAll('.day-cell.active').forEach(function(cell){
+    var wd=cell.getAttribute('data-wd');
+    var t=cell.querySelector('.day-time');
+    days.push(wd);
+    times.push(t?t.value:'19:30');
+  });
+  var ri=document.getElementById('rule_'+i); if(ri) ri.value=days.join(',');
+  var ti=document.getElementById('time_'+i); if(ti) ti.value=times.join(',');
+}
+var stageArea=document.getElementById('stageArea');
+if(stageArea) stageArea.addEventListener('click',function(e){
+  var btn=e.target.closest ? e.target.closest('.week-btn') : null;
+  if(!btn) return;
+  var card=btn.closest('.stage-card');
+  if(!card) return;
+  var i=parseInt(card.getAttribute('data-i'));
+  var cell=btn.closest('.day-cell');
+  if(!cell) return;
+  var active=btn.classList.toggle('active');
+  cell.classList.toggle('active',active);
+  if(active){
+    if(!cell.querySelector('.day-time')){
+      var t=document.createElement('input');
+      t.type='time';t.className='day-time';t.value='19:30';
+      cell.appendChild(t);
+    }
+  } else {
+    var inp=cell.querySelector('.day-time'); if(inp) inp.remove();
+  }
+  syncRule(i,card);
+});
+if(stageArea) stageArea.addEventListener('change',function(e){
+  if(e.target.classList && e.target.classList.contains('day-time')){
+    var card=e.target.closest('.stage-card');
+    if(!card) return;
+    var i=parseInt(card.getAttribute('data-i'));
+    syncRule(i,card);
+  }
+});
+renderStages();
+updateAutoTitle();
+</script>
+<div class="modal-overlay" id="lessonOverlay"></div>
+<div class="course-detail-modal" id="lessonModal">
+  <div class="course-detail-modal__header">
+    <div>
+      <h3 class="course-detail-modal__title">编辑课程</h3>
+      <p class="course-detail-modal__sub">编辑课程名称和上课时间</p>
+    </div>
+    <button class="course-detail-modal__close" onclick="closeModal()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="course-detail-modal__body">
+    <div class="field" style="margin-bottom:14px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">课程名称</label>
+      <input id="editName" placeholder="如: 函数极限" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">科目</label>
+      <select id="editSubject" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box"><option value="">选择科目</option></select>
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">教师</label>
+      <select id="editTeacher" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box"><option value="">选择教师</option></select>
+    </div>
+    <div class="field">
+      <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">上课时间</label>
+      <input id="editDate" type="datetime-local" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--color-border-light,#e2e8f0)">
+    <button onclick="closeModal()" class="btn btn-outline">取消</button>
+    <button onclick="saveLesson()" class="btn btn-primary">保存</button>
+  </div>
+</div>
+<div class="modal-overlay" id="addPkgOverlay" style="position:fixed;inset:0;z-index:280;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center"></div>
+<div class="course-detail-modal" id="addPkgModal" style="position:fixed;top:50%;left:50%;z-index:290;transform:translate(-50%,-50%);width:460px;max-width:92vw;background:#fff;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.18);display:none">
+  <div class="course-detail-modal__header">
+    <div>
+      <h3 class="course-detail-modal__title">添加关联课程包</h3>
+      <p class="course-detail-modal__sub">先选择一级课程包，再选择二级课程包。</p>
+    </div>
+    <button class="course-detail-modal__close" onclick="closeAddPkgModal()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="course-detail-modal__body">
+    <div class="field" style="margin-bottom:12px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">一级课程包</label>
+      <select id="addModalParent" onchange="onModalParentChange()" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box"></select>
+    </div>
+    <div class="field">
+      <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">二级课程包</label>
+      <select id="addModalChild" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box"></select>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--color-border-light,#e2e8f0)">
+    <button onclick="closeAddPkgModal()" class="btn btn-outline">取消</button>
+    <button onclick="confirmAddPkg()" class="btn btn-primary">添加</button>
+  </div>
+</div>
+<div class="modal-overlay" id="pkgOverlay" style="position:fixed;inset:0;z-index:260;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center"></div>
+<div class="course-detail-modal" id="pkgModal" style="position:fixed;top:50%;left:50%;z-index:270;transform:translate(-50%,-50%);width:420px;max-width:92vw;background:#fff;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.18);display:none">
+  <div class="course-detail-modal__header">
+    <div>
+      <h3 class="course-detail-modal__title">新建课程包</h3>
+      <p class="course-detail-modal__sub" id="pkgModalSub">一级课程包</p>
+    </div>
+    <button class="course-detail-modal__close" onclick="closePkgModal()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="course-detail-modal__body">
+    <input type="hidden" id="pkgParentId" value="0">
+    <div class="field" id="pkgParentField" style="display:none;margin-bottom:12px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">所属一级课程包</label>
+      <select id="pkgParentSel" onchange="onPkgParentChange()" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box"></select>
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">课程包名称</label>
+      <input id="pkgTitle" placeholder="如：2027山东专升本卓越班" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      <div class="field" style="flex:1">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">年份</label>
+        <select id="pkgYear" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+          <option value="">选择年份</option>
+          <% for(var _y=2026;_y<=2035;_y++){ %><option value="<%= _y %>"><%= _y %>年</option><% } %>
+        </select>
+      </div>
+      <div class="field" style="flex:1">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">省份</label>
+        <select id="pkgProvince" style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+          <option value="">选择省份</option>
+          <% (typeof provinceOptions !== 'undefined' ? provinceOptions : []).forEach(p=>{ %><option value="<%= p.name %>"><%= p.name %></option><% }) %>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      <div class="field" style="flex:1">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">课程类型</label>
+        <select id="pkgClassType" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+          <option value="班课">系统学习</option>
+          <option value="专项集训课">专项集训</option>
+          <option value="押题密训课">冲刺密训</option>
+          <option value="公开课">公开课（免费课）</option>
+        </select>
+      </div>
+      <div class="field" style="flex:1">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">价格</label>
+        <input id="pkgPrice" type="number" value="0" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--color-border-light,#e2e8f0)">
+    <button onclick="closePkgModal()" class="btn btn-outline">取消</button>
+    <button onclick="savePkg()" class="btn btn-primary">保存</button>
+  </div>
+</div>
+</body></html>

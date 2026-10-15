@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    .replay-form { max-width: 860px; }
+    .code-box { font-family: Menlo,Consolas,monospace; font-size: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 3px 6px; word-break: break-all; }
+    .code-wrap{display:inline-flex;align-items:center;gap:4px;max-width:280px;min-width:0}
+    .code-wrap .code-box{flex:1;min-width:0;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .code-link{flex:1;min-width:0;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#2563eb;text-decoration:none;font-size:12px}
+    .code-link:hover{text-decoration:underline}
+    .copy-btn{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;padding:0;border:1px solid #d9dee7;background:#fff;color:#475569;border-radius:5px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+    .copy-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+    .copy-btn.copied{color:#16a34a;border-color:#bbf7d0;background:#f0fdf4}
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <% function fmtDT(v){ if(!v) return '-'; try{ return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); }catch(e){ return v; } } %>
+      <div class="stats">
+        <div class="stat"><span class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></span><div class="stat-info"><strong><%= (replays || []).length %></strong><span>回放总数</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><div class="stat-info"><strong><%= (replays || []).reduce(function(ids, r) { return ids.indexOf(r.course_id) === -1 ? ids.concat(r.course_id) : ids; }, []).length %></strong><span>覆盖课程</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div class="stat-info"><strong><%= Math.floor((replays || []).reduce(function(s, r) { return s + (r.duration || 0); }, 0) / 60) %></strong><span>总时长(分钟)</span></div></div>
+      </div>
+
+      <div class="list-header">
+        <h2>回放列表</h2>
+        <div class="list-tools">
+          <form method="GET" action="/admin/replays-manage" class="toolbar-form" data-client-filter="1">
+            <input name="q" id="replaySearch" value="<%= q || '' %>" placeholder="搜索课程/回放标题" class="toolbar-input" style="min-width:220px">
+          </form>
+          <a href="/admin/replays-manage/new" class="btn-primary--sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            添加回放
+          </a>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>课程</th><th>标题</th><th>时长</th><th>视频地址</th><th>直播回放链接</th><th>创建时间</th><th>操作</th></tr>
+          </thead>
+          <tbody id="replaysTbody">
+            <% if (!replays || replays.length === 0) { %>
+              <tr><td colspan="7" class="empty">暂无回放</td></tr>
+            <% } %>
+            <% (replays || []).forEach(r => { %>
+            <tr>
+              <td><%= r.course_title || ('课程 #' + r.course_id) %></td>
+              <td><%= r.title %></td>
+              <td><%= Math.floor(r.duration / 60) %>分钟</td>
+              <td><span class="code-wrap"><% if (r.video_url) { %><a class="code-link" href="<%= r.video_url %>" target="_blank" rel="noopener"><%= r.video_url %></a><% } else { %><span class="code-box">-</span><% } %><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><span class="code-wrap"><% var rpPath = r.lesson_id ? ('/live/student/replay-duo/' + r.course_id + '?lesson=' + r.lesson_id + '&v=2') : ('/live/student/replay/' + r.id); %><a class="code-link" href="<%= rpPath %>" target="_blank" rel="noopener">https://chengze.online<%= rpPath %></a><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><%= fmtDT(r.created_at) %></td>
+              <td>
+                <form method="POST" action="/admin/replays-manage/delete/<%= r.id %>" style="display:inline" onsubmit="return confirm('确认删除该回放？')">
+                  <button type="submit" class="btn-table btn-table-danger">删除</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var input=document.getElementById('replaySearch'), t;
+      if(!input) return;
+      input.addEventListener('input',function(){
+        clearTimeout(t);
+        t=setTimeout(function(){
+          var kw=input.value.trim().toLowerCase();
+          document.querySelectorAll('#replaysTbody tr').forEach(function(tr){
+            tr.style.display=tr.textContent.toLowerCase().indexOf(kw)>-1 ? '' : 'none';
+          });
+        },200);
+      });
+    })();
+    ['menuToggle','sidebarToggle'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open');});
+    });
+    function copyText(btn, txt){
+      function done(){ btn.classList.add('copied'); var t=btn.getAttribute('title'); btn.setAttribute('title','已复制'); setTimeout(function(){ btn.classList.remove('copied'); btn.setAttribute('title',t); },1200); }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(done).catch(function(){ fallbackCopy(txt, done); });
+      } else { fallbackCopy(txt, done); }
+    }
+    function fallbackCopy(txt, done){
+      var ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} ta.remove();
+    }
+  </script>
+</body>
+</html>

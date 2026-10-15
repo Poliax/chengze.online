@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<div class="course-detail-header">
+<h2><%= assistant ? '编辑助教' : '添加助教' %></h2>
+</div>
+<% if (typeof error !== 'undefined' && error) { %><div style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:14px"><%= error %></div><% } %>
+<form method="POST" action="/admin/assistants-manage/<%= assistant ? assistant.id : 'create' %>">
+<div class="form-card"><h3>基本信息</h3>
+<div class="form-grid">
+<div class="form-group"><label>姓名</label><input name="name" value="<%= assistant ? assistant.name : '' %>" required></div>
+<div class="form-group"><label>手机号</label><input name="phone" value="<%= assistant ? assistant.phone : '' %>"></div>
+<div class="form-group"><label>邮箱</label><input name="email" value="<%= assistant ? assistant.email : '' %>"></div>
+<div class="form-group"><label>时薪(元)</label><input name="hourly_rate" type="number" step="0.5" value="<%= assistant ? assistant.hourly_rate : 0 %>"></div>
+<div class="form-group full-width">
+<label>简介</label>
+<textarea name="bio"><%= assistant ? assistant.bio : '' %></textarea>
+</div>
+</div>
+</div>
+<div class="form-card"><h3>课程分配</h3>
+<div class="form-grid">
+<% courses.forEach(c => { %>
+<div class="form-group" style="display:flex;align-items:center;gap:8px">
+<input type="checkbox" name="course_ids" value="<%= c.id %>" id="c<%= c.id %>" <%= (assignedCourseIds||[]).includes(c.id)?'checked':'' %>>
+<label for="c<%= c.id %>" style="margin:0"><%= c.title %></label>
+</div>
+<% }) %>
+</div>
+</div>
+<div class="form-actions">
+<a href="/admin/assistants-manage" class="btn btn-outline">取消</a>
+<button type="submit" class="btn btn-primary">保存</button>
+</div>
+</form>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

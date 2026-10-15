@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 24px}
+    .detail-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px dashed #eef2f7;font-size:13px}
+    .detail-item .dl{width:90px;flex-shrink:0;color:#64748b;font-weight:600}
+    .detail-item .dv{flex:1;color:#111827;word-break:break-all}
+    @media(max-width:640px){.detail-grid{grid-template-columns:1fr}}
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <% function fmtDT(v){ if(!v) return '-'; try{ return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); }catch(e){ return v; } } %>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+        <div class="course-detail-header" style="margin-bottom:0">
+          <h2><%= course.title %></h2>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a href="/admin/courses-manage/<%= course.id %>/scheduler" class="btn btn-primary btn-sm">新版排课</a>
+          <a href="/admin/live/studio/<%= course.id %>" target="_blank" rel="noopener" class="btn btn-outline btn-sm">课件预览</a>
+        </div>
+      </div>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="toast toast--error"><%= error %></div>
+      <% } %>
+
+      <!-- Course Settings -->
+      <div class="form-card">
+        <h3>课程信息</h3>
+        <div class="detail-grid">
+          <div class="detail-item"><span class="dl">招考省份</span><span class="dv"><%= course.province || '-' %></span></div>
+          <div class="detail-item"><span class="dl">考试年份</span><span class="dv"><%= course.year || '-' %></span></div>
+          <div class="detail-item"><span class="dl">考试科目</span><span class="dv"><%= course.category || course.title %></span></div>
+          <div class="detail-item"><span class="dl">授课教师</span><span class="dv"><%= course.teacher_name || '-' %></span></div>
+          <div class="detail-item"><span class="dl">课程类型</span><span class="dv"><% var _ct = course.class_type || ''; %><%= (_ct === '公开课' || _ct === '免费课' || _ct === '公共课') ? '公开课（免费课）' : (_ct === '专项集训课' ? '专项集训' : (_ct === '押题密训课' ? '冲刺密训' : '系统学习')) %></span></div>
+          <div class="detail-item"><span class="dl">上架日期</span><span class="dv"><%= course.start_date || '-' %></span></div>
+          <div class="detail-item"><span class="dl">下架日期</span><span class="dv"><%= course.valid_until || '-' %></span></div>
+          <div class="detail-item"><span class="dl">课程定价</span><span class="dv"><%= course.price || '0' %></span></div>
+          <div class="detail-item"><span class="dl">优惠价格</span><span class="dv"><%= course.sale_price || '-' %></span></div>
+          <div class="detail-item"><span class="dl">课程包</span><span class="dv"><%= packageTitle || '无' %></span></div>
+          <div class="detail-item"><span class="dl">状态</span><span class="dv" style="color:<%= course.status==='published'?'#16a34a':course.status==='archived'||course.status==='disabled'?'#dc2626':lessons.length>0?'#2563eb':'#ca8a04' %>;font-weight:600"><%= course.status==='published'?'上架中':course.status==='archived'||course.status==='disabled'?'已下架':lessons.length>0?'已排课':'待排课' %></span></div>
+          <div class="detail-item"><span class="dl">创建时间</span><span class="dv"><%= fmtDT(course.created_at) %></span></div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <form method="POST" action="/admin/courses-manage/<%= course.id %>/delete" style="display:inline" onsubmit="return confirm('确定删除该课程？')">
+          <button type="submit" class="btn btn-danger">删除</button>
+        </form>
+        <a href="/admin/courses-manage/<%= course.id %>/edit-series" class="btn btn-primary">编辑</a>
+      </div>
+
+      <!-- Lesson Management -->
+      <div class="form-card">
+        <h3>课时管理</h3>
+        <p style="color: var(--color-text-muted); font-size: 13px; padding: 6px 0;">当前共 <strong><%= lessons.length %></strong> 个课时</p>
+        <% if (lessons.length) { %>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:12px">
+          <thead>
+            <tr style="text-align:left;font-size:12px;color:#64748b;border-bottom:1px solid #e2e8f0">
+              <th style="padding:8px">课次</th>
+              <th style="padding:8px">主题</th>
+              <th style="padding:8px">上课时间</th>
+              <th style="padding:8px">视频地址</th>
+              <th style="padding:8px">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% lessons.forEach(l => { %>
+            <tr style="font-size:13px;color:#334155;border-bottom:1px solid #eef2f7">
+              <td style="padding:8px"><%= l.title || '-' %></td>
+              <td style="padding:8px"><%= l.description || '-' %></td>
+              <td style="padding:8px"><%= l.schedule_time || '待排课' %></td>
+              <td style="padding:8px;word-break:break-all"><%= l.video_url || '-' %></td>
+              <td style="padding:8px"><a href="/admin/courses-manage/<%= course.id %>/scheduler?lesson=<%= l.id %>" class="btn-table">调整</a></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% } else { %>
+          <p style="color: var(--color-text-muted); font-size: 13px; padding: 6px 0;">暂无课时，请先进入新版排课生成课表。</p>
+        <% } %>
+        <div class="form-actions">
+          <a href="/admin/courses-manage/<%= course.id %>/scheduler" class="btn btn-primary">进入新版排课</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <script>
+    document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+      document.querySelector('.teacher-sidebar').classList.toggle('open');
+    });
+    <% if (typeof error !== 'undefined' && error) { %>
+      setTimeout(() => { document.querySelector('.toast')?.remove(); }, 3000);
+    <% } %>
+  </script>
+</body>
+</html>

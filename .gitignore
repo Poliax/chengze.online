@@ -1,12 +1,36 @@
+# Dependencies and generated files
 node_modules/
-package-lock.json
-package.json
-server.js
-routes/
-views/
-middleware/
-public/
-db/
-assets/
-css/teacher.css
-teacher-backend/
+.DS_Store
+._*
+output/
+tmp/
+backups/
+*.log
+*.bak*
+# Server-only secrets and runtime data
+.env
+.env.*
+!.env.example
+live-config.json
+*.pem
+*.key
+*.p12
+db/*.db*
+db/*.saving-*
+data/
+public/courseware/
+public/materials/
+public/recordings/
+public/live/
+public/provinces/
+uploads/
+recordings/
+
+# Local development state and internal operational notes
+.local-runtime*/
+docs/线上*
+docs/代码审查*
+docs/剩余待办*
+docs/本地与线上*
+docs/微信扫码登录*
+deploy-favicon.command

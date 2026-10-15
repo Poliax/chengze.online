@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<style>
+  .prov-back { font-size:12px; color:#64748b; text-decoration:none; }
+  .prov-back:hover { color:#2563eb; }
+  .prov-title { font-size:17px; font-weight:800; color:#0f172a; margin:0 0 12px; }
+  .grid2 { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px 48px; }
+  .field { display:flex; align-items:center; gap:4px; margin-bottom:8px; }
+  .field label { width:72px; flex-shrink:0; font-size:12px; font-weight:600; color:#111827; }
+  .field input, .field select { flex:0 1 260px; width:260px; min-width:0; padding:7px 10px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; outline:none; box-sizing:border-box; font-family:inherit; }
+  .field input:focus, .field select:focus { border-color:#64748b; box-shadow:0 0 0 2px rgba(100,116,139,.14); }
+  .error-box { background:#fef2f2; border:1px solid #fecaca; color:#dc2626; padding:8px 12px; border-radius:6px; margin-bottom:12px; font-size:13px; }
+  .add-btn { display:inline-flex; align-items:center; justify-content:center; gap:0; width:24px; height:24px; padding:0; margin-top:6px; background:linear-gradient(180deg,#ffffff,#f4f6f8); color:#111827; border:1px solid #d9dee7; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9); }
+  .add-btn:hover { background:linear-gradient(180deg,#f8fafc,#e9edf2); border-color:#c3cad4; color:#000000; transform:translateY(-1px); box-shadow:0 2px 6px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.9); }
+  .subj-row { display:flex; align-items:flex-start; gap:6px; padding:8px; border:1px solid #e2e8f0; border-radius:6px; margin-bottom:6px; background:#f8fafc; flex-wrap:wrap; }
+  .subj-row .subj-main { display:flex; gap:6px; flex:1; min-width:260px; }
+  .subj-row select, .subj-row input { padding:5px 7px; border:1px solid #cbd5e1; border-radius:5px; font-size:12px; outline:none; font-family:inherit; }
+  .subj-row .subj-standard { width:150px; flex:0 0 150px; }
+  .subj-row .subj-type { width:120px; flex:0 0 120px; }
+  .subj-row .subj-name { width:220px; flex:0 0 220px; min-width:220px; }
+  .cat-row { display:flex; gap:8px; padding:8px 10px; border:1px solid #e2e8f0; border-radius:5px; margin-bottom:6px; background:#fff; flex-wrap:wrap; }
+  .cat-row .cat-name { width:180px; padding:6px 8px; border:1px solid #cbd5e1; border-radius:5px; font-size:12px; outline:none; font-family:inherit; }
+  .cat-row .cat-majors { flex:1; min-width:200px; padding:6px 8px; border:1px solid #cbd5e1; border-radius:5px; font-size:12px; outline:none; font-family:inherit; }
+  .cat-row .link-cat { width:150px; padding:6px 8px; border:1px solid #cbd5e1; border-radius:5px; font-size:12px; outline:none; font-family:inherit; background:#fff; }
+  .cat-subjects { display:flex; flex-wrap:wrap; gap:6px; align-items:center; flex:1; min-width:240px; }
+  .cat-subjects label { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:#475569; background:#f8fafc; border:1px solid #e2e8f0; padding:4px 8px; border-radius:5px; cursor:pointer; }
+  .cat-subjects label input { margin:0; }
+  .cat-subjects label.disabled { background:#eff6ff; color:#2563eb; border-color:#dbeafe; }
+  .cat-subjects .empty-tip { font-size:11px; color:#94a3b8; }
+  .subj-files { display:flex; gap:5px; flex-wrap:wrap; align-items:center; width:100%; margin-top:6px; }
+  .subj-file { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border:1px solid #e2e8f0; border-radius:5px; background:#fff; font-size:11px; color:#475569; }
+  .subj-file input[type=file] { max-width:150px; font-size:11px; }
+  .subj-file button { display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 8px; background:linear-gradient(180deg,#ffffff,#f4f6f8); color:#111827; border:1px solid #d9dee7; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9); }
+  .subj-file button:hover { background:linear-gradient(180deg,#f8fafc,#e9edf2); border-color:#c3cad4; color:#000000; transform:translateY(-1px); }
+  .subj-file a { color:#2563eb; text-decoration:none; }
+  .row-del { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; padding:0; border:1px solid #fecaca; background:linear-gradient(180deg,#ffffff,#fef2f2); color:#dc2626; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; box-shadow:0 1px 2px rgba(220,38,38,.06), inset 0 1px 0 rgba(255,255,255,.9); }
+  .row-del:hover { background:linear-gradient(180deg,#fff7f7,#fee2e2); border-color:#fca5a5; color:#b91c1c; transform:translateY(-1px); }
+  .row-move { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; padding:0; border:1px solid #d9dee7; background:linear-gradient(180deg,#ffffff,#f4f6f8); color:#111827; border-radius:6px; font-size:11px; cursor:pointer; font-family:inherit; line-height:1; box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9); }
+  .row-move:hover { background:linear-gradient(180deg,#f8fafc,#e9edf2); border-color:#c3cad4; color:#000000; transform:translateY(-1px); }
+  .add-row { display:flex; justify-content:flex-end; margin-top:6px; }
+  .add-row .add-btn { margin-top:0; }
+  .sch-row > .row-move:first-of-type, .cat-row > .row-move:first-of-type, .subj-main > .row-move:first-of-type { margin-left:auto; }
+  .sch-row { display:flex; gap:6px; padding:6px 8px; border:1px solid #e2e8f0; border-radius:5px; margin-bottom:6px; background:#f8fafc; flex-wrap:wrap; }
+  .sch-row input { padding:5px 7px; border:1px solid #cbd5e1; border-radius:5px; font-size:12px; outline:none; font-family:inherit; }
+  .sch-row select { padding:5px 7px; border:1px solid #cbd5e1; border-radius:5px; font-size:12px; outline:none; font-family:inherit; background:#fff; }
+  .sch-row .m { width:150px; flex:0 0 150px; }
+  .sch-row .e { width:120px; flex:0 0 120px; min-width:120px; }
+  .sch-row .d { width:220px; flex:0 0 220px; min-width:220px; }
+  #examScheduleRows .sch-row .es-year { width:150px; flex:0 0 150px; }
+  #examScheduleRows .sch-row .es-date { width:120px; flex:0 0 120px; }
+  .hint { font-size:11px; color:#94a3b8; margin-top:3px; }
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %>
+<div class="teacher-main">
+<%- include('partials/header') %>
+<div class="teacher-content">
+  <h2 class="prov-title"><%= prov ? '编辑省份：' + prov.name : '创建省份' %></h2>
+  <% if (typeof error !== 'undefined' && error) { %><div class="error-box"><%= error %></div><% } %>
+  <%
+    var examTimeVal = '';
+    if (typeof prov !== 'undefined' && prov && prov.exam_time) examTimeVal = String(prov.exam_time);
+    else if (typeof examSchedule !== 'undefined' && examSchedule && examSchedule.length) examTimeVal = String(examSchedule[0].exam_time || '');
+    var etInput = examTimeVal.replace(/年/g, '-').replace(/月/g, '-').replace(/日/g, '');
+  %>
+
+  <form method="POST" action="/admin/provinces-manage<%= prov ? '/' + prov.id : '' %>" id="provForm">
+    <div class="form-card">
+      <h3>招考省份</h3>
+      <div class="grid2">
+        <div class="field"><label>省份</label><select name="name" required onchange="fillProvinceCode()">
+          <option value="">选择省份</option>
+          <% var provinceList = ['北京','天津','河北','山西','内蒙古','辽宁','吉林','黑龙江','上海','江苏','浙江','安徽','福建','江西','山东','河南','湖北','湖南','广东','广西','海南','重庆','四川','贵州','云南','西藏','陕西','甘肃','青海','宁夏','新疆']; %>
+          <% provinceList.forEach(function(p){ %><option value="<%= p %>" <%= prov && prov.name === p ? 'selected' : '' %>><%= p %></option><% }); %>
+          <% if (prov && provinceList.indexOf(prov.name) === -1) { %><option value="<%= prov.name %>" selected><%= prov.name %></option><% } %>
+        </select></div>
+        <div class="field"><label>省份编码</label><input id="code" name="code" value="<%= prov ? prov.code : '' %>" placeholder="选择省份后自动填充" required></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>考试时间</h3>
+      <div id="examScheduleRows"></div>
+      <div class="add-row"><button type="button" class="add-btn" onclick="addExamScheduleRow('','')">+</button></div>
+      <input type="hidden" name="exam_schedule_json" id="examScheduleJson">
+    </div>
+
+    <div class="form-card">
+      <h3 style="display:flex;align-items:baseline;gap:8px">考试日程 <span class="hint" style="margin:0;font-weight:400">维护该省份的报名、考试、查分等关键节点。</span></h3>
+      <div id="scheduleRows"></div>
+      <div class="add-row"><button type="button" class="add-btn" onclick="addScheduleRow('','','')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button></div>
+      <input type="hidden" name="schedule_json" id="scheduleJson">
+    </div>
+
+    <div class="form-card">
+      <h3 style="display:flex;align-items:baseline;gap:8px">考试科目 <span class="hint" style="margin:0;font-weight:400">每个省份独立命题，同一科目在不同省份可填写不同叫法，例如标准科目“数学”在山东可叫“高等数学Ⅰ”。</span></h3>
+      <div id="subjectRows"></div>
+      <div class="add-row"><button type="button" class="add-btn" onclick="addSubjectRow('','')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button></div>
+      <input type="hidden" name="subjects_json" id="subjectsJson">
+    </div>
+
+    <div class="form-card">
+      <h3 style="display:flex;align-items:baseline;gap:8px">专科专业 <span class="hint" style="margin:0;font-weight:400">同卷科目为公共课（所有专业都考），区分专业的科目为专业课。</span></h3>
+      <div id="juniorCategoryRows"></div>
+      <div class="add-row"><button type="button" class="add-btn" onclick="addCategoryRow('',{})">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button></div>
+    </div>
+
+    <div class="form-card">
+      <h3 style="display:flex;align-items:baseline;gap:8px">本科专业 <span class="hint" style="margin:0;font-weight:400">维护招收专升本的本科专业，供专科专业对应。</span></h3>
+      <div id="undergradCategoryRows"></div>
+      <div class="add-row"><button type="button" class="add-btn" onclick="addUndergradRow('',[])">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button></div>
+      <input type="hidden" name="categories_json" id="categoriesJson">
+    </div>
+
+  <% if (prov) { %>
+    <div class="form-card">
+      <h3 style="display:flex;align-items:baseline;gap:8px">专科院校 <span class="hint" style="margin:0;font-weight:400">维护本省招收专升本考生的专科院校名单。</span></h3>
+      <div id="juniorRows"></div>
+      <div class="add-row"><button type="button" class="add-btn" onclick="addCollegeRow('juniorRows','')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button></div>
+      <input type="hidden" name="junior_colleges_json" id="juniorCollegesJson">
+    </div>
+
+    <div class="form-card">
+      <h3 style="display:flex;align-items:baseline;gap:8px">本科院校 <span class="hint" style="margin:0;font-weight:400">维护本省招录专升本的本科院校名单。</span></h3>
+      <div id="undergradRows"></div>
+      <div class="add-row"><button type="button" class="add-btn" onclick="addCollegeRow('undergradRows','')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button></div>
+      <input type="hidden" name="undergrad_colleges_json" id="undergradCollegesJson">
+    </div>
+
+    <div class="form-card">
+      <h3 style="display:flex;align-items:baseline;gap:8px">招录数据 <span class="hint" style="margin:0;font-weight:400">按年份维护院校、专业、招生人数和投档线。</span></h3>
+      <div id="admissionRows"></div>
+      <div class="add-row"><button type="button" class="add-btn" onclick="addAdmissionRow('','','','','')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button></div>
+      <input type="hidden" name="admissions_json" id="admissionsJson">
+    </div>
+
+  <% } %>
+  </form>
+
+  <% if (prov) { %>
+  <div class="form-card">
+    <h3>考试大纲</h3>
+    <div class="subj-files">
+      <form method="POST" action="/admin/provinces-manage/<%= prov.id %>/upload" enctype="multipart/form-data" class="subj-file">
+        <strong>上传文件</strong>
+        <input type="file" name="file" accept=".pdf,.doc,.docx" required>
+        <input type="hidden" name="fileType" value="outline">
+        <button type="submit">上传</button>
+        <% if (prov.outline_file) { %><a href="<%= prov.outline_file %>" target="_blank">查看</a><% } %>
+      </form>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>历年真题</h3>
+    <div class="subj-files">
+      <form method="POST" action="/admin/provinces-manage/<%= prov.id %>/upload" enctype="multipart/form-data" class="subj-file">
+        <strong>上传文件</strong>
+        <input type="file" name="file" accept=".pdf,.doc,.docx" required>
+        <input type="hidden" name="fileType" value="papers">
+        <button type="submit">上传</button>
+        <% if (prov.papers_file) { %><a href="<%= prov.papers_file %>" target="_blank">查看</a><% } %>
+      </form>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="form-actions">
+    <a href="/admin/provinces-manage" class="btn btn-outline">取消</a>
+    <button type="submit" form="provForm" class="btn btn-primary">保存</button>
+  </div>
+</div>
+</div>
+
+<script>
+var STANDARD_SUBJECTS = <%- JSON.stringify(subjects || []) %>;
+var subjectRows = <%- JSON.stringify(subjectRows || []) %>;
+var scheduleRows = <%- JSON.stringify(scheduleRows || []) %>;
+var juniorList = <%- JSON.stringify(juniorList || []) %>;
+var undergradList = <%- JSON.stringify(undergradList || []) %>;
+var admissionRows = <%- JSON.stringify(admissionRows || []) %>;
+var examSchedule = <%- JSON.stringify(examSchedule || []) %>;
+var categories = <%- JSON.stringify(categories || []) %>;
+var provId = <%= prov ? prov.id : 0 %>;
+
+function esc(v){ return String(v == null ? '' : v).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+var PROVINCE_CODES = {
+  '北京':'11','天津':'12','河北':'13','山西':'14','内蒙古':'15',
+  '辽宁':'21','吉林':'22','黑龙江':'23','上海':'31','江苏':'32',
+  '浙江':'33','安徽':'34','福建':'35','江西':'36','山东':'37',
+  '河南':'41','湖北':'42','湖南':'43','广东':'44','广西':'45',
+  '海南':'46','重庆':'50','四川':'51','贵州':'52','云南':'53',
+  '西藏':'54','陕西':'61','甘肃':'62','青海':'63','宁夏':'64','新疆':'65'
+};
+function fillProvinceCode(){
+  var sel = document.querySelector('select[name="name"]');
+  var input = document.getElementById('code');
+  if (!sel || !input) return;
+  input.value = PROVINCE_CODES[sel.value] || '';
+}
+
+function addSubjectRow(standard, name, sid, outline, papers, type) {
+  var box = document.getElementById('subjectRows');
+  var row = document.createElement('div');
+  row.className = 'subj-row';
+  row.dataset.sid = sid || '';
+  var opts = '<option value="">标准科目</option>' + STANDARD_SUBJECTS.map(function(s){
+    return '<option value="' + esc(s) + '"' + (s === standard ? ' selected' : '') + '>' + esc(s) + '</option>';
+  }).join('');
+  var curType = type || '公共课';
+  var typeOpts = '<option value="公共课"' + (curType === '公共课' ? ' selected' : '') + '>公共课</option>' +
+    '<option value="专业课"' + (curType === '专业课' ? ' selected' : '') + '>专业课</option>';
+  var files = '';
+  row.innerHTML =
+    '<div class="subj-main">' +
+    '<select class="subj-standard">' + opts + '</select>' +
+    '<select class="subj-type">' + typeOpts + '</select>' +
+    '<input class="subj-name" placeholder="本省叫法，如 高等数学Ⅰ" value="' + esc(name) + '">' +
+    '<button type="button" class="row-move" title="上移" onclick="moveSubject(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>' +
+    '<button type="button" class="row-move" title="下移" onclick="moveSubject(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>' +
+    '<button type="button" class="row-del" onclick="this.closest(\'.subj-row\').remove()">✕</button>' +
+    '</div>' + files;
+  box.appendChild(row);
+}
+
+function moveSubject(btn, dir) {
+  var row = btn.closest('.subj-row');
+  var box = row.parentElement;
+  var rows = Array.prototype.slice.call(box.children);
+  var idx = rows.indexOf(row);
+  var target = idx + dir;
+  if (target < 0 || target >= rows.length) return;
+  box.insertBefore(row, target > idx ? rows[target + 1] : rows[target]);
+}
+
+function addScheduleRow(month, event, desc, date) {
+  var box = document.getElementById('scheduleRows');
+  var row = document.createElement('div');
+  row.className = 'sch-row';
+  var timeVal = month || date || '';
+  var tm = String(timeVal).match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+  if (tm) {
+    timeVal = tm[1] + '-' + String(parseInt(tm[2])).padStart(2, '0') + '-' + String(parseInt(tm[3])).padStart(2, '0');
+  } else {
+    var tp = String(timeVal).split('T')[0].split('-');
+    if (tp.length === 3) timeVal = String(timeVal).split('T')[0];
+  }
+  row.innerHTML =
+    '<input class="m" type="date" value="' + esc(timeVal) + '">' +
+    '<input class="e" placeholder="事项，如 网上报名" value="' + esc(event) + '">' +
+    '<input class="d" placeholder="说明，如 登录省教育考试院网站报名" value="' + esc(desc) + '">' +
+    '<button type="button" class="row-move" title="上移" onclick="moveRow(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>' +
+    '<button type="button" class="row-move" title="下移" onclick="moveRow(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>' +
+    '<button type="button" class="row-del" onclick="this.closest(\'.sch-row\').remove()">✕</button>';
+  box.appendChild(row);
+}
+
+function moveRow(btn, dir) {
+  var row = btn.closest('.sch-row');
+  var box = row.parentElement;
+  var rows = Array.prototype.slice.call(box.children);
+  var idx = rows.indexOf(row);
+  var target = idx + dir;
+  if (target < 0 || target >= rows.length) return;
+  box.insertBefore(row, target > idx ? rows[target + 1] : rows[target]);
+}
+
+function addCollegeRow(listId, name) {
+  var box = document.getElementById(listId);
+  var row = document.createElement('div');
+  row.className = 'sch-row';
+  row.innerHTML =
+    '<input class="col-name" placeholder="院校名称" value="' + esc(name) + '" style="flex:1;min-width:160px">' +
+    '<button type="button" class="row-move" title="上移" onclick="moveRow(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>' +
+    '<button type="button" class="row-move" title="下移" onclick="moveRow(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>' +
+    '<button type="button" class="row-del" onclick="this.closest(\'.sch-row\').remove()">✕</button>';
+  box.appendChild(row);
+}
+
+function addAdmissionRow(year, university, major, plan, score) {
+  var box = document.getElementById('admissionRows');
+  var row = document.createElement('div');
+  row.className = 'sch-row';
+  row.innerHTML =
+    '<input class="ad-year" placeholder="年份" value="' + esc(year) + '" style="width:80px">' +
+    '<input class="ad-uni" placeholder="院校" value="' + esc(university) + '" style="flex:1;min-width:150px">' +
+    '<input class="ad-major" placeholder="专业" value="' + esc(major) + '" style="flex:1;min-width:140px">' +
+    '<input class="ad-plan" placeholder="招生人数" value="' + esc(plan) + '" style="width:100px">' +
+    '<input class="ad-score" placeholder="投档线" value="' + esc(score) + '" style="width:100px">' +
+    '<button type="button" class="row-move" title="上移" onclick="moveRow(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>' +
+    '<button type="button" class="row-move" title="下移" onclick="moveRow(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>' +
+    '<button type="button" class="row-del" onclick="this.closest(\'.sch-row\').remove()">✕</button>';
+  box.appendChild(row);
+}
+
+function parseExamTime(v) {
+  var s = String(v || '');
+  var m = s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+  if (m) return { month: parseInt(m[2]), day: parseInt(m[3]) };
+  var p = s.split('-');
+  if (p.length === 3) return { month: parseInt(p[1]), day: parseInt(p[2]) };
+  return { month: 0, day: 0 };
+}
+function addExamScheduleRow(year, examTime) {
+  var box = document.getElementById('examScheduleRows');
+  var row = document.createElement('div');
+  row.className = 'sch-row';
+  var yOpts = '<option value="">年份</option>';
+  for (var y = 2026; y <= 2035; y++) {
+    yOpts += '<option value="' + y + '"' + (String(year) === String(y) ? ' selected' : '') + '>' + y + '年</option>';
+  }
+  if (year && /^\d{4}$/.test(String(year)) && (year < 2026 || year > 2035)) {
+    yOpts += '<option value="' + esc(year) + '" selected>' + esc(year) + '年</option>';
+  }
+  var dateVal = '';
+  if (examTime) {
+    var m = String(examTime).match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+    if (m) {
+      dateVal = m[1] + '-' + String(parseInt(m[2])).padStart(2, '0') + '-' + String(parseInt(m[3])).padStart(2, '0');
+    } else {
+      var p = String(examTime).split('T')[0].split('-');
+      if (p.length === 3) dateVal = String(examTime).split('T')[0];
+    }
+  }
+  row.innerHTML =
+    '<select class="es-year" style="width:150px">' + yOpts + '</select>' +
+    '<input type="date" class="es-date" value="' + esc(dateVal) + '" style="width:120px">' +
+    '<button type="button" class="row-move" title="上移" onclick="moveRow(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>' +
+    '<button type="button" class="row-move" title="下移" onclick="moveRow(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>' +
+    '<button type="button" class="row-del" onclick="this.closest(\'.sch-row\').remove()">✕</button>';
+  box.appendChild(row);
+}
+
+function undergradNames() {
+  var names = [];
+  document.querySelectorAll('#undergradCategoryRows .cat-row').forEach(function(r){
+    var n = r.querySelector('.cat-name').value.trim();
+    if (n) names.push(n);
+  });
+  return names;
+}
+function refreshLinkOptions() {
+  var names = undergradNames();
+  document.querySelectorAll('#juniorCategoryRows .cat-row .link-cat').forEach(function(sel){
+    var cur = sel.value;
+    var h = '<option value="">对应本科专业</option>';
+    names.forEach(function(n){ h += '<option value="' + esc(n) + '"' + (cur === n ? ' selected' : '') + '>' + esc(n) + '</option>'; });
+    sel.innerHTML = h;
+  });
+}
+function addCategoryRow(name, opts) {
+  opts = opts || {};
+  var box = document.getElementById('juniorCategoryRows');
+  var row = document.createElement('div');
+  row.className = 'cat-row';
+  var ids = (opts.subject_ids || []).map(Number);
+  var chk = '';
+  var hasSubjects = subjectRows.some(function(s) { return s.id; });
+  if (hasSubjects) {
+    subjectRows.forEach(function(s) {
+      var isPublic = s.type === '公共课';
+      var checked = isPublic || ids.indexOf(Number(s.id)) > -1;
+      chk += '<label' + (isPublic ? ' class="disabled"' : '') + '><input type="checkbox" data-sid="' + s.id + '"' + (checked ? ' checked' : '') + (isPublic ? ' disabled' : '') + '>' + esc(s.name || '') + (isPublic ? '（公共课）' : '') + '</label>';
+    });
+  } else {
+    chk = '<span class="empty-tip">先保存考试科目后，再勾选该大类考试的科目</span>';
+  }
+  var linkOpts = '<option value="">对应本科专业</option>';
+  undergradNames().forEach(function(n){
+    linkOpts += '<option value="' + esc(n) + '"' + (opts.link_category_name === n ? ' selected' : '') + '>' + esc(n) + '</option>';
+  });
+  row.innerHTML =
+    '<input class="cat-name" placeholder="专科专业，如 计算机类" value="' + esc(name) + '">' +
+    '<input class="cat-majors" placeholder="专科专业，多个用逗号分隔" value="' + esc((opts.majors || []).join(',')) + '">' +
+    '<select class="link-cat">' + linkOpts + '</select>' +
+    '<div class="cat-subjects">' + chk + '</div>' +
+    '<button type="button" class="row-move" title="上移" onclick="moveCategory(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>' +
+    '<button type="button" class="row-move" title="下移" onclick="moveCategory(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>' +
+    '<button type="button" class="row-del" onclick="this.closest(\'.cat-row\').remove()">✕</button>';
+  box.appendChild(row);
+}
+
+function addUndergradRow(name, majors) {
+  var box = document.getElementById('undergradCategoryRows');
+  var row = document.createElement('div');
+  row.className = 'cat-row';
+  row.innerHTML =
+    '<input class="cat-name" placeholder="本科专业，如 计算机类" value="' + esc(name) + '">' +
+    '<input class="cat-majors" placeholder="本科专业，多个用逗号分隔" value="' + esc((majors || []).join(',')) + '">' +
+    '<button type="button" class="row-move" title="上移" onclick="moveCategory(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>' +
+    '<button type="button" class="row-move" title="下移" onclick="moveCategory(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>' +
+    '<button type="button" class="row-del" onclick="this.closest(\'.cat-row\').remove(); refreshLinkOptions()">✕</button>';
+  box.appendChild(row);
+  refreshLinkOptions();
+}
+
+function moveCategory(btn, dir) {
+  var row = btn.closest('.cat-row');
+  var box = row.parentElement;
+  var rows = Array.prototype.slice.call(box.children);
+  var idx = rows.indexOf(row);
+  var target = idx + dir;
+  if (target < 0 || target >= rows.length) return;
+  box.insertBefore(row, target > idx ? rows[target + 1] : rows[target]);
+}
+
+subjectRows.forEach(function(s){ addSubjectRow(s.standard, s.name, s.id, s.outline_file, s.papers_file, s.type); });
+scheduleRows.forEach(function(s){ addScheduleRow(s.month || s.date || '', s.event, s.desc); });
+juniorList.forEach(function(n){ addCollegeRow('juniorRows', n); });
+undergradList.forEach(function(n){ addCollegeRow('undergradRows', n); });
+admissionRows.forEach(function(a){ addAdmissionRow(a.year, a.university, a.major, a.plan, a.score); });
+examSchedule.forEach(function(x){ addExamScheduleRow(x.year, x.exam_time); });
+categories.forEach(function(c){
+  if (c.kind === 'undergrad') addUndergradRow(c.name, c.majors);
+  else addCategoryRow(c.name, c);
+});
+if (!subjectRows.length) addSubjectRow('', '');
+if (!scheduleRows.length) addScheduleRow('', '', '');
+if (!examSchedule.length) addExamScheduleRow('', '');
+
+document.getElementById('provForm').addEventListener('submit', function(){
+  var es = [];
+  document.querySelectorAll('#examScheduleRows .sch-row').forEach(function(r){
+    var year = r.querySelector('.es-year').value.trim();
+    var date = r.querySelector('.es-date').value;
+    if (year && date) es.push({ year: year, exam_time: date });
+  });
+  document.getElementById('examScheduleJson').value = JSON.stringify(es);
+  var subs = [];
+  document.querySelectorAll('#subjectRows .subj-row').forEach(function(r){
+    var standard = r.querySelector('.subj-standard').value;
+    var type = r.querySelector('.subj-type').value;
+    var name = r.querySelector('.subj-name').value.trim();
+    if (name) subs.push({ standard: standard, name: name, type: type });
+  });
+  document.getElementById('subjectsJson').value = JSON.stringify(subs);
+  var cats = [];
+  document.querySelectorAll('#juniorCategoryRows .cat-row').forEach(function(r){
+    var name = r.querySelector('.cat-name').value.trim();
+    if (!name) return;
+    var majors = r.querySelector('.cat-majors').value.split(/[,，、]/).map(function(s){ return s.trim(); }).filter(Boolean);
+    var ids = [];
+    r.querySelectorAll('input[data-sid]:checked').forEach(function(cb){
+      var v = Number(cb.getAttribute('data-sid'));
+      if (v) ids.push(v);
+    });
+    cats.push({ name: name, kind: 'junior', majors: majors, subject_ids: ids, link_category_name: r.querySelector('.link-cat').value });
+  });
+  document.querySelectorAll('#undergradCategoryRows .cat-row').forEach(function(r){
+    var name = r.querySelector('.cat-name').value.trim();
+    if (!name) return;
+    var majors = r.querySelector('.cat-majors').value.split(/[,，、]/).map(function(s){ return s.trim(); }).filter(Boolean);
+    cats.push({ name: name, kind: 'undergrad', majors: majors, subject_ids: [] });
+  });
+  document.getElementById('categoriesJson').value = JSON.stringify(cats);
+  var sched = [];
+  document.querySelectorAll('#scheduleRows .sch-row').forEach(function(r){
+    var time = r.querySelector('.m').value.trim();
+    var event = r.querySelector('.e').value.trim();
+    var desc = r.querySelector('.d').value.trim();
+    if (time || event) sched.push({ month: time, event: event, desc: desc });
+  });
+  document.getElementById('scheduleJson').value = JSON.stringify(sched);
+  var junior = [];
+  document.querySelectorAll('#juniorRows .sch-row').forEach(function(r){
+    var n = r.querySelector('.col-name').value.trim();
+    if (n) junior.push(n);
+  });
+  document.getElementById('juniorCollegesJson').value = JSON.stringify(junior);
+  var undergrad = [];
+  document.querySelectorAll('#undergradRows .sch-row').forEach(function(r){
+    var n = r.querySelector('.col-name').value.trim();
+    if (n) undergrad.push(n);
+  });
+  document.getElementById('undergradCollegesJson').value = JSON.stringify(undergrad);
+  var adms = [];
+  document.querySelectorAll('#admissionRows .sch-row').forEach(function(r){
+    var a = {
+      year: r.querySelector('.ad-year').value.trim(),
+      university: r.querySelector('.ad-uni').value.trim(),
+      major: r.querySelector('.ad-major').value.trim(),
+      plan: r.querySelector('.ad-plan').value.trim(),
+      score: r.querySelector('.ad-score').value.trim()
+    };
+    if (a.university || a.major) adms.push(a);
+  });
+  document.getElementById('admissionsJson').value = JSON.stringify(adms);
+});
+</script>
+</body>
+</html>

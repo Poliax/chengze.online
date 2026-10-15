@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css">
+<style>
+body{background:#f8fafc;font-family:'Noto Sans SC',sans-serif;color:#0f172a}
+.container{max-width:800px;margin:0 auto;padding:24px}
+h1{font-size:22px;font-weight:800;margin-bottom:4px}
+.sub{color:#64748b;font-size:14px;margin-bottom:20px}
+.back{color:#64748b;text-decoration:none;font-size:13px;display:inline-block;margin-bottom:12px}
+.back:hover{color:#881538}
+.file-item{display:flex;align-items:center;gap:14px;padding:14px 18px;background:white;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px;transition:box-shadow .2s}
+.file-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.icon{width:40px;height:40px;border-radius:8px;background:#fee2e2;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.info{flex:1}
+.name{font-size:15px;font-weight:600}
+.meta{font-size:12px;color:#94a3b8;display:flex;gap:12px}
+.dl{padding:7px 16px;background:#881538;color:white;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600}
+.dl:hover{background:#5a0f22}
+.empty{text-align:center;padding:60px;color:#94a3b8}
+.empty .big{font-size:48px;margin-bottom:12px}
+</style><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+<div class="container">
+<a href="/live/student" class="back">&larr; 返回课程中心</a>
+<h1>学习资料</h1>
+<div class="sub">历年真题、考试大纲、模拟试卷等</div>
+<% if (files.length === 0) { %>
+<div class="empty"><div class="big">&#128196;</div><h3>暂无资料</h3><p>资料正在上传中</p></div>
+<% } else { %>
+<% files.forEach(f => { %>
+<div class="file-item">
+<div class="icon">&#128196;</div>
+<div class="info"><div class="name"><%= f.name %></div><div class="meta"><%= f.size %> | <%= f.date %></div></div>
+<a href="/materials/<%= f.filename %>" class="dl" target="_blank">下载</a>
+</div>
+<% }) %>
+<% } %>
+</div>
+</body></html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<div class="course-detail-header">
+<h2>题库管理</h2>
+</div>
+<% if (msg) { %><div style="background:<%= msg==='请填写科目和题目'?'#fef2f2':'#f0fdf4' %>;border:1px solid <%= msg==='请填写科目和题目'?'#fecaca':'#bbf7d0' %>;color:<%= msg==='请填写科目和题目'?'#dc2626':'#15803d' %>;padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:14px"><%= msg %></div><% } %>
+<div class="form-card"><h3>添加课后题</h3>
+<form method="POST" action="/admin/questions-manage">
+<div class="form-grid">
+<div class="form-group"><label>科目</label><input name="subject" required placeholder="例如：高等数学"></div>
+<div class="form-group"><label>课时ID（选填）</label><input name="lesson_id" type="number" placeholder="绑定时课时的 ID"></div>
+<div class="form-group"><label>正确答案</label>
+<select name="answer">
+<option value="0">选项 1</option>
+<option value="1">选项 2</option>
+<option value="2">选项 3</option>
+<option value="3">选项 4</option>
+</select>
+</div>
+<div class="form-group full-width"><label>题目</label><textarea name="content" rows="2" required placeholder="请输入题目内容"></textarea></div>
+<div class="form-group"><label>选项 1</label><input name="option1" required></div>
+<div class="form-group"><label>选项 2</label><input name="option2" required></div>
+<div class="form-group"><label>选项 3</label><input name="option3" required></div>
+<div class="form-group"><label>选项 4</label><input name="option4" required></div>
+<div class="form-group full-width"><label>解析</label><textarea name="explanation" rows="2" placeholder="答案解析，选填"></textarea></div>
+</div>
+<div class="form-actions">
+<a href="/admin/dashboard" class="btn btn-outline">取消</a>
+<button type="submit" class="btn btn-primary">保存</button>
+</div>
+</form>
+</div>
+<div class="form-card" style="margin-top:18px"><h3>Excel 批量导入</h3>
+<form method="POST" action="/admin/questions-manage/import" enctype="multipart/form-data">
+<div class="form-grid">
+<div class="form-group full-width"><label>选择 .xlsx 文件（列：科目 / 课时ID / 题目 / 选项1-4 / 答案 / 解析）</label><input type="file" name="file" accept=".xlsx" required></div>
+</div>
+<div class="form-actions">
+<button type="submit" class="btn btn-primary">批量导入</button>
+</div>
+</form>
+</div>
+<div class="form-card" style="margin-top:18px"><h3>题库列表（<%= questions.length %>）</h3>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse">
+<thead>
+<tr style="text-align:left;font-size:12px;color:#64748b;border-bottom:1px solid #e2e8f0">
+<th style="padding:8px">ID</th><th style="padding:8px">科目</th><th style="padding:8px">课时</th><th style="padding:8px">题目</th><th style="padding:8px">选项</th><th style="padding:8px">答案</th><th style="padding:8px">来源</th><th style="padding:8px">操作</th>
+</tr>
+</thead>
+<tbody>
+<% if (questions.length === 0) { %><tr><td colspan="8" style="padding:18px;text-align:center;color:#94a3b8">暂无题目</td></tr><% } %>
+<% questions.forEach(q => { %>
+<tr style="font-size:13px;color:#334155;border-bottom:1px solid #eef2f7">
+<td style="padding:8px"><%= q.id %></td>
+<td style="padding:8px"><%= q.subject %></td>
+<td style="padding:8px"><%= q.lesson_id ? (q.lesson_title || ('课时 ' + q.lesson_id)) : '-' %></td>
+<td style="padding:8px;max-width:280px"><%= q.content %></td>
+<td style="padding:8px;max-width:260px"><%= (q.options||[]).join(' / ') %></td>
+<td style="padding:8px"><%= (q.answer != null ? q.answer + 1 : '-') %></td>
+<td style="padding:8px"><%= q.source || '-' %></td>
+<td style="padding:8px">
+<form method="POST" action="/admin/questions-manage/<%= q.id %>/delete" style="display:inline" onsubmit="return confirm('确定删除该题？')">
+<button type="submit" class="btn btn-sm btn-outline" style="color:#dc2626">删除</button>
+</form>
+</td>
+</tr>
+<% }) %>
+</tbody>
+</table>
+</div>
+</div>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

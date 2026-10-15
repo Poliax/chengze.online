@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  body { background:#f4f6fb; font-family:'Noto Sans SC','PingFang SC',sans-serif; color:#0f172a; min-height:100vh; }
+  .topbar { height:56px; background:#0b1220; display:flex; align-items:center; padding:0 24px; color:#fff; }
+  .topbar a { color:rgba(255,255,255,.7); text-decoration:none; font-size:13px; margin-right:18px; }
+  .topbar a:hover { color:#fff; }
+  .topbar h1 { font-size:16px; font-weight:800; margin:0; }
+  .wrap { max-width:860px; margin:28px auto; padding:0 20px; }
+  .card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:16px 18px; margin-bottom:12px; }
+  .card-hd { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .card-hd strong { font-size:15px; }
+  .badge { padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-paid { background:#dcfce7; color:#15803d; }
+  .badge-pending { background:#fef3c7; color:#b45309; }
+  .badge-cancelled { background:#f1f5f9; color:#64748b; }
+  .row { display:flex; gap:24px; font-size:13px; color:#64748b; flex-wrap:wrap; }
+  .actions { display:flex; gap:8px; margin-top:12px; }
+  .btn { border:1px solid #d1d5db; background:#fff; color:#334155; border-radius:7px; padding:7px 14px; font-size:13px; cursor:pointer; font-family:inherit; text-decoration:none; display:inline-block; }
+  .btn-primary { background:#2563eb; border-color:#2563eb; color:#fff; }
+  .btn-primary:hover { background:#1d4ed8; }
+  .empty { text-align:center; color:#94a3b8; padding:60px 0; }
+  .notice { font-size:12px; color:#94a3b8; margin-top:8px; }
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+  <div class="topbar">
+    <a href="/live/student">← 课程中心</a>
+    <h1>我的订单</h1>
+  </div>
+  <div class="wrap">
+    <% if (!orders || orders.length === 0) { %>
+      <div class="empty">暂无订单，去课程中心选择课程吧</div>
+    <% } %>
+    <% (orders || []).forEach(o => { %>
+      <div class="card" id="order-<%= o.id %>">
+        <div class="card-hd">
+          <strong><%= o.package_title || o.course_title || ('订单 #' + o.order_no) %></strong>
+          <span class="badge badge-<%= o.status %>"><%= o.status === 'paid' ? '已支付' : (o.status === 'cancelled' ? '已取消' : '待支付') %></span>
+        </div>
+        <div class="row">
+          <span>订单号：<%= o.order_no %></span>
+          <span>金额：¥<%= Number(o.amount || 0).toFixed(2) %></span>
+          <span>下单时间：<%= o.created_at %></span>
+        </div>
+        <% if (o.status === 'pending') { %>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" onclick="payOrder(<%= o.id %>, 'wechat')">微信支付</button>
+          <button type="button" class="btn btn-primary" onclick="payOrder(<%= o.id %>, 'alipay')">支付宝</button>
+        </div>
+        <% } %>
+      </div>
+    <% }) %>
+  </div>
+  <script>
+    function payOrder(id, channel) {
+      var btn = event && event.target;
+      if (btn) btn.disabled = true;
+      fetch('/api/orders/' + id + '/pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel: channel })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (!d.ok) { alert(d.error || '支付失败'); if (btn) btn.disabled = false; return; }
+        if (d.dev) { alert('开发模式：已模拟支付成功'); location.reload(); return; }
+        alert(d.error || '支付参数生成中，请稍后再试');
+        if (btn) btn.disabled = false;
+      }).catch(function() { if (btn) btn.disabled = false; alert('支付请求失败'); });
+    }
+  </script>
+</body>
+</html>

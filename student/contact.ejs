@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+<link rel="shortcut icon" type="image/x-icon" href="/favicon-v18.ico?v=20260905"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192-v18.png?v=20260905"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16-v18.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-v18.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192-v18.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v18.png">
+<style>
+  :root { --indigo:#6366f1; --violet:#8b5cf6; --purple:#a855f7; --ink:#1e293b; --muted:#64748b; --line:#e7e6f2; --radius:16px; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Arial,sans-serif; background:#f8f9ff; color:var(--ink); }
+  a { text-decoration:none; color:inherit; }
+  .container { max-width:1180px; margin:0 auto; padding:0 28px; }
+  .topbar { background:#23272B; color:rgba(255,255,255,.78); font-size:13px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .topbar-inner { display:flex; align-items:center; justify-content:space-between; height:44px; }
+  .topbar .hot { color:#fbbf24; }
+  header.site-header { background:#2E3438; border-bottom:1px solid rgba(255,255,255,.12); position:sticky; top:0; z-index:30; }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:76px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand svg { width:28px; height:28px; }
+  .brand-name { font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; color:#fff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  .brand-name em { font-style:normal; font-weight:400; background:linear-gradient(90deg,var(--indigo),var(--purple)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .main-nav { display:flex; align-items:center; gap:30px; }
+  .main-nav a { font-size:14px; color:rgba(255,255,255,.78); font-weight:600; }
+  .main-nav a:hover, .main-nav a.active { color:#fff; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; font-weight:700; }
+  .btn-primary { background:linear-gradient(90deg,var(--indigo),var(--purple)); color:#fff; }
+  .btn-light { background:#fff; color:#1e293b; }
+  .btn-lg { padding:15px 32px; font-size:15px; }
+  .btn-sm { padding:9px 20px; font-size:13px; }
+  .page-hero { background:linear-gradient(120deg,#eef2ff,#f5f3ff 55%,#faf5ff); padding:72px 0; }
+  .page-hero h1 { font-size:38px; font-weight:800; }
+  .page-hero p { margin-top:14px; color:var(--muted); font-size:15px; line-height:1.8; max-width:640px; }
+  .crumbs { font-size:13px; color:var(--muted); margin-bottom:18px; }
+  .section { padding:72px 0; }
+  .section-tint { background:#f1f2fe; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start; }
+  .form-card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:30px; box-shadow:0 14px 40px rgba(99,102,241,.1); }
+  .kicker { font-size:12px; letter-spacing:3px; color:var(--violet); text-transform:uppercase; font-weight:700; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+  .field label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
+  .field label em { color:#ef4444; font-style:normal; }
+  .field input, .field select, .field textarea { width:100%; padding:11px 12px; border:1px solid #d8d7e8; border-radius:10px; font-size:14px; font-family:inherit; color:var(--ink); background:#fff; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline:none; border-color:var(--indigo); box-shadow:0 0 0 3px rgba(99,102,241,.12); }
+  .field.full { grid-column:1 / -1; }
+  .err { display:none; font-size:12px; color:#ef4444; margin-top:4px; }
+  .field.invalid .err { display:block; }
+  .contact-side .contact-card { display:flex; gap:14px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:14px; }
+  .contact-side .icon-box { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,rgba(99,102,241,.14),rgba(168,85,247,.16)); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+  .contact-side h3 { font-size:15px; margin-bottom:4px; }
+  .contact-side p { font-size:13px; color:var(--muted); line-height:1.6; }
+  .faq-item { background:#fff; border:1px solid var(--line); border-radius:14px; margin-bottom:12px; overflow:hidden; }
+  .faq-q { width:100%; display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border:none; background:none; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .faq-a { display:none; padding:0 20px 18px; font-size:14px; color:var(--muted); line-height:1.8; }
+  .faq-item.open .faq-a { display:block; }
+  .cta-banner { background:linear-gradient(120deg,var(--indigo),var(--purple)); color:#fff; border-radius:20px; padding:42px 48px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+  .cta-banner h2 { font-size:24px; font-weight:800; }
+  .cta-banner p { margin-top:8px; color:rgba(255,255,255,.82); font-size:14px; }
+  footer { background:#111827; color:rgba(255,255,255,.55); }
+  .footer-grid { display:grid; grid-template-columns:1.6fr 1fr 1fr 1.2fr; gap:32px; padding:52px 0 40px; }
+  footer h4 { color:#fff; font-size:14px; margin-bottom:14px; }
+  footer ul { list-style:none; } footer li { margin-bottom:8px; font-size:13px; } footer a:hover { color:#fff; }
+  .contact-line { font-size:13px; margin-bottom:8px; }
+  .footer-bottom { border-top:1px solid rgba(255,255,255,.1); padding:18px 0; font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+  @media (max-width:960px) { .grid-2 { grid-template-columns:1fr; } .form-grid { grid-template-columns:1fr; } .footer-grid { grid-template-columns:1fr 1fr; } .cta-banner { flex-direction:column; align-items:flex-start; padding:30px; } }
+  @media (max-width:640px) { .topbar-inner { flex-direction:column; height:auto; padding:8px 0; gap:4px; text-align:center; } .nav-inner { flex-direction:column; height:auto; padding:14px 0; gap:12px; } .main-nav { flex-wrap:wrap; gap:16px; } .page-hero h1 { font-size:28px; } .footer-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#881538"/><path d="M32 16 47 22 32 28 17 22Z" fill="#C8A96A"/><path d="M22 28v8c0 3.3 4.7 6 10 6s10-2.7 10-6v-8l-10 5Z" fill="#C8A96A" opacity=".9"/><path d="M47 22v9" stroke="#C8A96A" stroke-width="2" stroke-linecap="round"/><circle cx="47" cy="33" r="2.2" fill="#C8A96A"/></svg><span class="brand-name">承泽教育<em>专升本</em></span></a>
+      <nav class="main-nav"><a href="/">首页</a><a href="/learning" target="_blank" rel="noopener">学习中心</a><a href="/about">关于我们</a><a class="btn btn-primary btn-sm" href="/contact">联系报名</a></nav>
+    </div>
+  </header>
+  <div class="topbar"><div class="container topbar-inner"><p>📞 咨询热线：<b>service@chengze.online</b></p><p><span class="hot">🔥 2027 专升本备考季</span> · 早鸟优惠进行中</p></div></div>
+
+  <section class="page-hero"><div class="container"><p class="crumbs"><a href="/">首页</a> / <span>联系报名</span></p><h1>预约免费试听 & 学情测评</h1><p>留下联系方式，课程顾问将在 1 个工作日内与您联系，免费领取备考资料与 1 对 1 备考规划。</p></div></section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid-2">
+        <div class="form-card" id="enrollForm">
+          <span class="kicker">预约报名</span>
+          <h2 style="font-size:26px;font-weight:800;margin:10px 0 24px;">免费领取备考资料</h2>
+          <form novalidate onsubmit="return submitEnroll(this)">
+            <div class="form-grid">
+              <div class="field"><label for="name">姓名<em>*</em></label><input type="text" id="name" name="name" placeholder="请输入您的姓名" required><span class="err">请填写姓名</span></div>
+              <div class="field"><label for="phone">手机号<em>*</em></label><input type="tel" id="phone" name="phone" placeholder="请输入 11 位手机号" maxlength="11" required><span class="err">请填写正确的手机号</span></div>
+              <div class="field"><label for="grade">当前阶段<em>*</em></label><select id="grade" name="grade" required><option value="">请选择</option><option>大一</option><option>大二</option><option>大三（应届备考）</option><option>已毕业 / 在职备考</option></select><span class="err">请选择当前阶段</span></div>
+              <div class="field"><label for="type">报考类型<em>*</em></label><select id="type" name="type" required><option value="">请选择</option><option>统招专升本（全日制）</option><option>自考专升本</option><option>成人高考专升本</option><option>还不确定，需要咨询</option></select><span class="err">请选择报考类型</span></div>
+              <div class="field"><label for="course">意向班型</label><select id="course" name="course"><option value="">请选择（可咨询后确定）</option><option>系统学习</option><option>专项集训</option><option>冲刺密训</option><option>公开课</option></select></div>
+              <div class="field"><label for="note">备注</label><input type="text" id="note" name="note" placeholder="想了解的问题（选填）"></div>
+              <div class="field full"><button class="btn btn-primary btn-lg" style="width:100%;border:none;cursor:pointer" type="submit">提交预约</button></div>
+            </div>
+          </form>
+        </div>
+        <div class="contact-side">
+          <div class="contact-card"><div class="icon-box">📞</div><div><h3>咨询热线</h3><p><b>service@chengze.online</b>（每日 9:00–21:00）</p></div></div>
+          <div class="contact-card"><div class="icon-box">✉️</div><div><h3>电子邮箱</h3><p><b>service@chengze.online</b> 商务合作 / 意见反馈</p></div></div>
+          <div class="contact-card"><div class="icon-box">💬</div><div><h3>学习中心</h3><p>注册后可在线学习，课程、讲义、刷题、答疑一站式完成。</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tint">
+    <div class="container">
+      <div class="section-head" style="max-width:680px;margin-bottom:32px"><span class="kicker">报名答疑</span><h2 style="font-size:28px;font-weight:800">报名前，你可能想问</h2></div>
+      <div class="faq-list">
+        <div class="faq-item open"><button class="faq-q">怎么报名？流程复杂吗？<span class="chev">＋</span></button><div class="faq-a"><p>两步完成：① 在本页提交预约表单或直接发送邮件；② 顾问联系你确认班型并安排试听。</p></div></div>
+        <div class="faq-item"><button class="faq-q">可以免费试听吗？<span class="chev">＋</span></button><div class="faq-a"><p>可以，预约后即可安排试听与全科基础测评，让你先了解再决定。</p></div></div>
+        <div class="faq-item"><button class="faq-q">现在报名有什么优惠？<span class="chev">＋</span></button><div class="faq-a"><p>2027 备考季早鸟优惠与资料礼包以顾问确认为准。</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="container"><div class="cta-banner"><div><h2>还在犹豫？先领份资料看看</h2><p>《2027 专升本报考指南》电子版免费送</p></div><a class="btn btn-light btn-lg" href="#enrollForm">立即免费领取</a></div></div>
+  </section>
+
+  <footer><div class="container footer-grid"><div><a class="brand" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#881538"/><path d="M32 16 47 22 32 28 17 22Z" fill="#C8A96A"/><path d="M22 28v8c0 3.3 4.7 6 10 6s10-2.7 10-6v-8l-10 5Z" fill="#C8A96A" opacity=".9"/><path d="M47 22v9" stroke="#C8A96A" stroke-width="2" stroke-linecap="round"/><circle cx="47" cy="33" r="2.2" fill="#C8A96A"/></svg><span class="brand-name" style="color:#fff">承泽教育<em>专升本</em></span></a><p style="font-size:13px;line-height:1.8;margin-top:16px">专注专升本在线教育，让每一个有梦的专科生，都有机会成为本科生。</p></div><div><h4>快捷导航</h4><ul><li><a href="/">网站首页</a></li><li><a href="/learning" target="_blank">学习中心</a></li><li><a href="/about">关于我们</a></li><li><a href="/contact">联系报名</a></li></ul></div><div><h4>课程类型</h4><ul><li>系统学习</li><li>专项集训</li><li>冲刺密训</li><li>公开课</li></ul></div><div><h4>联系方式</h4><p class="contact-line">✉️ <span><b>service@chengze.online</b></span></p><p class="contact-line">🕘 <span><b>全年无休</b> 在线学习</span></p></div></div><div class="container footer-bottom"><p>© 2026 承泽教育 版权所有</p><p>专升本在线教育第一品牌</p></div></footer>
+  <script>
+    document.querySelectorAll('.faq-q').forEach(function(b){ b.addEventListener('click', function(){ this.closest('.faq-item').classList.toggle('open'); }); });
+    function submitEnroll(form){
+      var ok = true;
+      form.querySelectorAll('[required]').forEach(function(el){
+        var field = el.closest('.field');
+        var valid = el.value && String(el.value).trim() !== '';
+        if (el.name === 'phone') valid = /^1\d{10}$/.test(String(el.value||'').trim());
+        if (field) field.classList.toggle('invalid', !valid);
+        if (!valid) ok = false;
+      });
+      if (!ok) return false;
+      alert('预约提交成功，课程顾问将在 1 个工作日内与您联系。');
+      form.reset();
+      return false;
+    }
+  </script>
+</body>
+</html>

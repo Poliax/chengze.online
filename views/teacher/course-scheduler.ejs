@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>承泽教育 · 排课系统</title>
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<style>
+  .sched-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .sched-head h1{font-size:20px;font-weight:800;color:#0f172a;margin:0}
+  .sched-body{background:linear-gradient(160deg,#f5f7fc 0%,#eef2f8 100%);min-height:100vh;font-family:var(--font-cn);color:#0f172a}
+  .sched-shell{display:flex;flex-direction:column;min-height:100vh;padding:16px 20px;box-sizing:border-box}
+  .sched-topbar{height:52px;background:#fff;border-bottom:1px solid var(--color-border);padding:0 18px;margin-bottom:14px;border-radius:0;box-shadow:none;flex-wrap:nowrap}
+  .sched-brand{font-size:15px;font-weight:800;color:#0f172a;white-space:nowrap}
+  .sched-scope{font-size:13px;color:#64748b;max-width:32vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sched-course{font-size:13px;color:var(--color-text-muted);max-width:38vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sched-stats{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;padding:5px 10px}
+  .sched-stats b{color:#2563eb;font-weight:700}
+  .sched-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .sched-layout{display:flex;gap:18px;align-items:flex-start;flex:1;min-height:0}
+  .rule-panel{width:clamp(200px,18vw,260px);flex-shrink:0;max-height:calc(100vh - 90px);overflow-y:auto;scrollbar-width:none}
+  .rule-panel::-webkit-scrollbar{display:none}
+  .calendar-panel{flex:1;min-width:0;height:auto}
+  .rule-card{background:#fbfcfe;border:1px solid #e2e8f0;border-radius:8px;padding:6px 8px;margin-bottom:10px}
+  .rule-card .hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;position:relative}
+  .rule-card .hd .stage-index{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:6px;background:linear-gradient(180deg,#2563eb,#4f46e5);color:#fff;font-size:11px;font-weight:700}
+  .rule-card .hd .rule-title{position:absolute;left:50%;transform:translateX(-50%);font-size:16px;font-weight:800;color:#1e3a8a;line-height:24px;white-space:nowrap}
+  .rule-card .hd .hd-actions{display:flex;gap:6px;margin-left:auto}
+  .rule-card .hd .hd-actions .add-btn,.rule-card .hd .hd-actions .del-btn{margin-top:0}
+  .add-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;background:linear-gradient(180deg,#ffffff,#f4f6f8);color:#111827;border:1px solid #d9dee7;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9)}
+  .add-btn:hover{background:linear-gradient(180deg,#f8fafc,#e9edf2);border-color:#c3cad4;color:#000000;transform:translateY(-1px)}
+  .del-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:1px solid #fecaca;background:linear-gradient(180deg,#ffffff,#fef2f2);color:#dc2626;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(220,38,38,.06), inset 0 1px 0 rgba(255,255,255,.9)}
+  .del-btn:hover{background:linear-gradient(180deg,#fff7f7,#fee2e2);border-color:#fca5a5;color:#b91c1c;transform:translateY(-1px)}
+  .rule-fields{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:8px}
+  .rule-fields label{display:flex;align-items:center;gap:2px;font-size:11px;font-weight:600;color:#475569;min-width:0}
+  .rule-fields label .f-label{width:60px;flex-shrink:0;white-space:nowrap}
+  .rule-fields input,.rule-fields select{flex:0 0 130px;width:130px;min-width:0;padding:5px 7px;border:1px solid #d1d5db;border-radius:5px;font-size:11px;font-family:inherit;background:#fff;box-sizing:border-box}
+  .rule-days{border:1px solid #e2e8f0;border-radius:6px;padding:3px 4px;margin-bottom:8px;background:#fff}
+  .rule-days .tip{font-size:10px;color:#94a3b8;margin-bottom:4px}
+  .day-row{display:flex;align-items:center;gap:2px;padding:2px 0;font-size:11px;color:#475569}
+  .day-label{display:flex;align-items:center;gap:3px;width:60px;flex-shrink:0;font-size:11px;color:#475569;white-space:nowrap}
+  .day-label input[type=checkbox]{width:14px;height:14px;margin:0}
+  .day-row select.wd-time{flex:0 0 130px;width:130px;min-width:0;padding:3px 4px;border:1px solid #d1d5db;border-radius:4px;font-size:11px;font-family:inherit;background:#fff;box-sizing:border-box}
+  .rule-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+  .rule-actions button{height:26px;padding:0 8px;border:1px solid #cbd5e1;border-radius:5px;background:linear-gradient(180deg,#f3f4f6,#e5e7eb);color:#111827;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .rule-actions .primary{background:linear-gradient(180deg,#ffffff,#f4f6f8);border-color:#2563eb;color:#2563eb}
+  .rule-actions .danger{border-color:#fecaca;color:#dc2626;background:#fff7f7}
+  .stage-tabs{display:flex;flex-direction:row;align-items:center;gap:8px;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:6px}
+  .stage-tabs-label{font-size:16px;font-weight:700;color:#0f172a;line-height:24px;white-space:nowrap}
+  .stage-tabs-nums{display:flex;gap:4px;flex-wrap:wrap}
+  .stage-tab{padding:5px 10px;border:1px solid #d9dee7;border-radius:6px;background:#fff;color:#475569;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s,background .15s}
+  .stage-tab:hover{border-color:#2563eb;color:#2563eb}
+  .stage-tab.active{background:#2563eb;border-color:#2563eb;color:#fff}
+  .cal-panel{background:#fff;border:1px solid #e8edf4;border-radius:10px;padding:12px 14px;max-width:840px;margin:0 auto;box-sizing:border-box;display:flex;flex-direction:column}
+  .cal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #eef2f7;padding-bottom:8px;margin-bottom:8px;flex-shrink:0}
+  .cal-head .cal-title{font-size:clamp(14px,1vw,16px);font-weight:800;color:#0f172a}
+  .cal-nav{display:flex;gap:6px;margin-left:auto}
+  .cal-nav button{height:28px;padding:0 10px;border:1px solid #d9dee7;border-radius:6px;background:linear-gradient(180deg,#fff,#f4f6f8);color:#475569;font-size:clamp(11px,0.7vw,12px);font-weight:600;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s}
+  .cal-nav button:hover{border-color:#94a3b8;color:#334155}
+  .cal-legend{display:flex;gap:14px;flex-wrap:wrap;margin:0;flex-shrink:0}
+  .legend-item{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#475569}
+  .legend-item i{width:10px;height:10px;border-radius:3px;border:1px solid}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:36px repeat(6,auto);gap:4px;width:100%;margin:0 auto}
+  .wd-head{height:36px;display:flex;align-items:center;justify-content:center;font-size:clamp(12px,0.8vw,14px);font-weight:700;color:#475569;background:linear-gradient(180deg,#f8fafc,#f1f5f9);border:1px solid #dde3ec;border-radius:6px}
+  .cal-day{min-height:0;border:1px solid #e7ecf3;border-radius:6px;padding:0 3px 2px;background:#fff;display:flex;flex-direction:column;gap:0;overflow:visible;transition:border-color .15s,box-shadow .15s}
+  .cal-day:hover{border-color:#cbd5e1}
+  .cal-day.other{background:#f8fafc}
+  .cal-day.today{border-color:#c7d2fe;box-shadow:0 0 0 1px #c7d2fe}
+  .cal-day .day-num{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;background:#f1f5f9;color:#334155;border-radius:6px;font-size:12px;font-weight:700;margin:2px 0 2px 2px;flex-shrink:0;text-align:center}
+  .cal-day.today .day-num{background:#e0e7ff;color:#4338ca}
+  .slot-row{display:flex;align-items:center;gap:3px;border-bottom:1px solid #f1f5f9;padding:0;min-height:15px}
+  .slot-row:last-child{border-bottom:none}
+  .slot-row:hover{background:#f8fafc;border-radius:3px}
+  .slot-label{min-width:36px;flex-shrink:0;margin:0;font-size:clamp(11px,0.7vw,13px);font-weight:400;color:#94a3b8;background:transparent;padding:0;line-height:1.3;text-align:right}
+  .slot-lessons{flex:1;min-width:0;overflow:hidden}
+  .cal-day .lesson-chip{font-size:clamp(10px,0.65vw,12px);padding:0 3px;margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;border-radius:4px;box-shadow:0 1px 1px rgba(15,23,42,.04)}
+  .cal-day .lesson-chip .chip-time{display:inline;font-weight:800;margin-right:2px;color:#1e3a8a}
+  .lesson-chip{display:block;padding:4px 6px;margin-bottom:4px;border:1px solid #dbeafe;border-radius:5px;background:#eff6ff;color:#1d4ed8;font-size:11px;cursor:pointer;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:transform .12s,box-shadow .12s}
+  .lesson-chip:hover{border-color:#94a3b8;background:#f1f5f9}
+  .lesson-chip.conflict{border-color:#fca5a5;background:#fef2f2;color:#b91c1c}
+  .lesson-chip--other{background:#f1f5f9!important;border:1px dashed #cbd5e1!important;color:#64748b!important;cursor:default}
+  .other-course-card h5{margin:0 0 4px;font-size:12px;font-weight:700;color:#0f172a}
+  .other-course-card p{margin:2px 0;font-size:11px;color:#475569;line-height:1.5}
+  .lesson-chip .chip-time{display:block;font-weight:700}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;align-items:center;justify-content:center}
+  .modal-overlay.open{display:flex}
+  .modal-box{background:#fff;border-radius:10px;padding:22px;width:420px;max-width:92vw;box-shadow:0 24px 64px rgba(0,0,0,.22)}
+  .modal-box h3{margin:0 0 14px;font-size:15px;font-weight:700;color:#0f172a}
+  .modal-box .field{margin-bottom:12px}
+  .modal-box .field label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:4px}
+  .modal-box .field input,.modal-box .field select{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit;box-sizing:border-box}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+  .modal-actions button{height:30px;padding:0 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+  .modal-actions .cancel{background:#fff;border:1px solid #cbd5e1;color:#64748b}
+  .modal-actions .save{background:#2563eb;border:none;color:#fff}
+  .modal-actions .delete{background:#fff;border:1px solid #fecaca;color:#dc2626;margin-right:auto}
+  @media(max-width:960px){.sched-layout{flex-direction:column}.rule-panel{width:100%}}
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="sched-body">
+  <div class="sched-shell">
+    <header class="teacher-topbar sched-topbar">
+      <div class="topbar-left">
+        <span class="sched-brand">承泽教育 · 排课系统</span>
+        <span class="sched-scope" id="schedScopeTitle"><%= scopePackageTitle %></span>
+      </div>
+      <div class="topbar-right">
+        <select id="courseSwitch" onchange="loadSchedulerCourse(this.value)" style="height:30px;padding:0 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;font-family:inherit;background:#fff;color:#334155;max-width:260px">
+          <% (packageCourses||[]).forEach(function(pc){ %>
+          <option value="<%= pc.id %>" <%= String(pc.id)===String(course.id)?'selected':'' %>><%= pc.category || pc.title %></option>
+          <% }); %>
+        </select>
+        <span id="schedStats" class="sched-stats"></span>
+        <button type="button" class="btn btn-primary" onclick="saveSchedule()">保存</button>
+      </div>
+    </header>
+    <div class="sched-layout">
+      <div class="rule-panel"><div id="ruleCards"></div></div>
+
+    <div class="calendar-panel">
+      <div class="cal-panel">
+        <div class="cal-head">
+          <span class="cal-title" id="calTitle"></span>
+          <div class="cal-legend" id="calLegend"></div>
+          <div class="cal-nav">
+            <button type="button" onclick="moveMonth(-1)">← 上月</button>
+            <button type="button" onclick="today()">本月</button>
+            <button type="button" onclick="moveMonth(1)">下月 →</button>
+          </div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="schedLoading" style="position:fixed;inset:0;background:rgba(15,23,42,.35);display:none;align-items:center;justify-content:center;z-index:400;color:#fff;font-size:14px">切换中...</div>
+
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <h3>编辑课时</h3>
+    <div class="field"><label>课程名称</label><input id="editName"></div>
+    <div class="field"><label>主题</label><input id="editTopic" placeholder="本次课讲的内容主题"></div>
+    <div class="field"><label>上课日期</label><input type="date" id="editDate"></div>
+    <div class="field"><label>上课时间</label><select id="editTime"></select></div>
+    <div class="field"><label>视频地址</label><input id="editVideo" placeholder="https://..."></div>
+    <div class="modal-actions">
+      <button class="delete" onclick="deleteLesson()">删除</button>
+      <button class="cancel" onclick="closeModal()">取消</button>
+      <button class="save" onclick="saveLesson()">保存</button>
+    </div>
+  </div>
+</div>
+
+<form method="POST" action="/admin/courses-manage/<%= course.id %>/plan" id="saveForm">
+  <input type="hidden" name="stage_data" id="stageData">
+</form>
+
+<script>
+var initialSavedLessons=<%- JSON.stringify((lessons||[]).map(function(l){return {id:l.id,title:l.title,time:l.schedule_time||'',video:l.video_url||'',stage:l.stage||'',duration:l.duration||7200,topic:l.description||'',start:l.stage_start_date||'',rule:l.stage_rule||'',times:l.stage_time||'',stageCount:l.stage_count||0,stageDuration:l.stage_duration||0};})) %>;
+var savedLessons=initialSavedLessons.slice();
+var conflictLessons=<%- JSON.stringify(conflictLessons||[]) %>;
+var currentCourseId=<%- course.id %>;
+var currentCourseTitle=<%- JSON.stringify(course.title||'') %>;
+var scopePackageId=<%- scopePackageId || 0 %>;
+var schedulerDataCache={};
+var stages=[];
+var currentRulePage=0;
+var currentYear, currentMonth;
+var editLesson=null, editStageIdx=-1;
+var TIME_SLOTS=[
+  {start:'08:00',end:'09:30',label:'8:00'},
+  {start:'10:00',end:'11:30',label:'10:00'},
+  {start:'14:00',end:'15:30',label:'14:00'},
+  {start:'16:00',end:'17:30',label:'16:00'},
+  {start:'19:00',end:'20:30',label:'19:00'}
+];
+var occupiedSlots={};
+var otherCourseInfo={};
+var otherLessonChips=[];
+function buildConflictData(){
+  occupiedSlots={};
+  otherCourseInfo={};
+  otherLessonChips=[];
+  conflictLessons.forEach(function(l){
+    var pt=parseTime(l.schedule_time);
+    if(pt.date && pt.time){
+      var key=pt.date+'|'+normalizeTime(pt.time);
+      if(!occupiedSlots[key]) occupiedSlots[key]=[];
+      occupiedSlots[key].push({course:l.course_title,lesson:l.lesson_title});
+    }
+    if(!otherCourseInfo[l.course_id]){
+      otherCourseInfo[l.course_id]={title:l.course_title,stage:l.stage||'阶段1',start:l.start_date||'',rule:l.rule||'',times:l.times||'',count:l.count||0,duration:l.duration||0};
+    }
+    if(pt.date && pt.time){
+      otherLessonChips.push({course_id:l.course_id,course:l.course_title,lesson:l.lesson_title,date:pt.date,time:normalizeTime(pt.time)});
+    }
+  });
+}
+buildConflictData();
+function slotLabel(t){var s=TIME_SLOTS.find(function(x){return x.start===t;});return s?s.label:t;}
+function slotOptions(v){var h='';TIME_SLOTS.forEach(function(s){h+='<option value="'+s.start+'"'+(s.start===v?' selected':'')+'>'+s.label+'</option>';});return h;}
+function countOptions(v){var h='';var val=Math.min(30,Math.max(1,parseInt(v)||30));for(var c=1;c<=30;c++){h+='<option value="'+c+'"'+(c===val?' selected':'')+'>'+c+'次</option>';}return h;}
+function durOptions(v){var h='';var val=[30,45,60,90,120].indexOf(parseInt(v))>-1?parseInt(v):90;[30,45,60,90,120].forEach(function(d){h+='<option value="'+d+'"'+(d===val?' selected':'')+'>'+d+'分钟</option>';});return h;}
+function lessonNo(t){var m=String(t||'').match(/第(\d+)讲/);return m?m[1]:'';}
+function lessonShort(t){return String(t||'').replace(/[-—]\s*第\d+讲\s*$/,'').trim();}
+function baseLessonName(l){
+  var short=lessonShort(l.title);
+  var st=stages[editStageIdx]?stages[editStageIdx].name:'';
+  return short===st?'':(short||l.title);
+}
+function extractBase(raw,si){
+  var v=String(raw||'').trim();
+  var st=stages[si]?stages[si].name:'';
+  var idx=st?v.indexOf(st):-1;
+  return idx>0?v.slice(0,idx).trim():v;
+}
+function displayLessonName(si,l,name){
+  var no=lessonNo(l.title);
+  var st=stages[si]?stages[si].name:'';
+  var base=extractBase(name===undefined?baseLessonName(l):name,si);
+  var parts=[base,st,no?('第'+no+'讲'):''].filter(Boolean);
+  return parts.join(' ')||'未命名';
+}
+var stageColors=[
+  {bg:'#eff6ff',border:'#93c5fd',text:'#1d4ed8'},
+  {bg:'#f0fdf4',border:'#86efac',text:'#15803d'},
+  {bg:'#fffbeb',border:'#fcd34d',text:'#b45309'},
+  {bg:'#f5f3ff',border:'#c4b5fd',text:'#6d28d9'},
+  {bg:'#fef2f2',border:'#fca5a5',text:'#b91c1c'},
+  {bg:'#f0fdfa',border:'#5eead4',text:'#0f766e'}
+];
+function stageColor(i){return stageColors[i%stageColors.length];}
+
+function pad(n){return (n<10?'0':'')+n;}
+function parseTime(v){
+  var m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?/);
+  if(!m) return {date:'',time:''};
+  return {date:m[1]+'-'+m[2]+'-'+m[3],time:m[4]?(m[4]+':'+m[5]):''};
+}
+function todayStr(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function initStages(){
+  var map={};
+  savedLessons.forEach(function(l){
+    var key=String(l.stage||'').trim();
+    if(!key){
+      var mt=String(l.title||'').match(/^(.*?)[-\s]*第\d+讲/);
+      key=(mt && mt[1] ? mt[1].trim() : '') || '阶段1';
+    }
+    if(!map[key]) map[key]={name:key,startDate:'',count:0,duration:90,entries:[],lessons:[]};
+    var pt=parseTime(l.time);
+    map[key].lessons.push({id:l.id,title:l.title,date:pt.date,time:pt.time,video:l.video||'',stage:l.stage||'',duration:l.duration||7200,topic:l.topic||'',start:l.start||'',rule:l.rule||'',times:l.times||'',stageCount:l.stageCount||0,stageDuration:l.stageDuration||0});
+  });
+  var keys=Object.keys(map);
+  if(!keys.length){
+    stages.push({name:'阶段1',startDate:todayStr(),count:30,duration:90,entries:[],lessons:[]});
+    return;
+  }
+  keys.forEach(function(key){
+    var st=map[key];
+    var first=st.lessons[0]||{};
+    st.count=parseInt(first.stageCount)||st.lessons.length;
+    st.duration=parseInt(first.stageDuration)||(first.duration?Math.round(first.duration/60):90)||90;
+    var savedRule=String(first.rule||'').trim();
+    if(savedRule){
+      var ruleArr=savedRule.split(',').filter(Boolean);
+      var timeArr=String(first.times||'').split(',').filter(Boolean);
+      st.entries=ruleArr.map(function(wd,i){ return {wd:parseInt(wd), time:timeArr[i]||'19:00'}; });
+    } else {
+      var seen={};
+      var entries=[];
+      st.lessons.forEach(function(l){
+        var pt=parseTime(l.time);
+        if(pt.date && pt.time){
+          var day=new Date(pt.date+'T00:00:00').getDay();
+          var time=normalizeTime(pt.time);
+          var key=day+'|'+time;
+          if(!seen[key]){ seen[key]=1; entries.push({wd:day,time:time}); }
+        }
+      });
+      if(!entries.length) entries=[];
+      st.entries=entries;
+    }
+    var dates=st.lessons.map(function(x){return x.date;}).filter(Boolean).sort();
+    st.startDate=first.start || dates[0] || todayStr();
+    st.lessons.sort(function(a,b){return (String(a.date)+' '+String(a.time)).localeCompare(String(b.date)+' '+String(b.time));});
+    stages.push(st);
+  });
+}
+
+function renderStats(){
+  var box=document.getElementById('schedStats');
+  if(!box) return;
+  var lessons=0, scheduled=0;
+  stages.forEach(function(st){
+    lessons+=st.lessons.length;
+    st.lessons.forEach(function(l){ if(l.date && l.time) scheduled++; });
+  });
+  box.innerHTML='阶段 <b>'+stages.length+'</b> · 课时 <b>'+lessons+'</b> · 已排 <b>'+scheduled+'</b>';
+}
+
+function renderRules(){
+  var box=document.getElementById('ruleCards');
+  box.innerHTML='';
+  stages.forEach(function(st,i){
+    var card=document.createElement('div');
+    card.className='rule-card';
+    var daysHtml='';
+    var names=['周一','周二','周三','周四','周五','周六','周日'];
+    for(var d=1;d<=7;d++){
+      var wd=d===7?0:d;
+      var entry=st.entries.find(function(e){return e.wd===wd;});
+      var defaultTime=(wd===6||wd===0)?'10:00':'19:00';
+      daysHtml+='<div class="day-row"><span class="day-label"><input type="checkbox" class="wd-check" data-wd="'+wd+'"'+(entry?' checked':'')+'>'+names[d-1]+'</span><select class="wd-time" data-wd="'+wd+'"'+(entry?'':' disabled')+'>'+slotOptions(entry?entry.time:defaultTime)+'</select></div>';
+    }
+    card.innerHTML='<div class="hd"><span class="rule-title">排课规则</span><div class="hd-actions"><button type="button" class="del-btn" title="删除阶段" onclick="removeStage('+i+')">×</button><button type="button" class="add-btn" title="新增阶段" onclick="addStage()">+</button></div></div><div class="stage-tabs stage-tabs-inner"></div>'+
+      '<div class="rule-fields"><label><span class="f-label">阶段名称</span><input class="r-name" value="'+esc(st.name)+'"></label><label><span class="f-label">开始日期</span><input type="date" class="r-start" value="'+st.startDate+'"></label><label><span class="f-label">课次</span><select class="r-count">'+countOptions(st.count)+'</select></label><label><span class="f-label">每次</span><select class="r-duration">'+durOptions(st.duration)+'</select></label></div>'+
+      '<div class="rule-days"><div class="tip">按星期排课，固定上课时间。</div>'+daysHtml+'</div>';
+    box.appendChild(card);
+  });
+  stages.forEach(function(st,i){ var card=box.children[i]; if(card) card.style.display=(i===currentRulePage?'':'none'); });
+  renderStageTabs();
+  renderStats();
+}
+function renderStageTabs(){
+  document.querySelectorAll('.rule-card').forEach(function(card,ci){
+    var box=card.querySelector('.stage-tabs-inner');
+    if(!box) return;
+    if(ci!==currentRulePage){ box.innerHTML=''; return; }
+    box.innerHTML='<div class="stage-tabs-nums"></div>';
+    var nums=box.querySelector('.stage-tabs-nums');
+    stages.forEach(function(st,i){
+      var b=document.createElement('button');
+      b.type='button';
+      b.className='stage-tab'+(i===currentRulePage?' active':'');
+      b.textContent=(i+1);
+      b.onclick=function(){ goRulePage(i); };
+      nums.appendChild(b);
+    });
+  });
+}
+
+function collectRules(){
+  document.querySelectorAll('.rule-card').forEach(function(card,i){
+    var st=stages[i];
+    if(!st) return;
+    var name=card.querySelector('.r-name'); if(name) st.name=name.value.trim()||('阶段'+(i+1));
+    var dur=card.querySelector('.r-duration'); if(dur) st.duration=parseInt(dur.value)||120;
+    var start=card.querySelector('.r-start'); if(start) st.startDate=start.value;
+    var cnt=card.querySelector('.r-count'); if(cnt) st.count=parseInt(cnt.value)||0;
+    st.entries=[];
+    card.querySelectorAll('.wd-check').forEach(function(cb){
+      if(cb.checked){
+        var wd=parseInt(cb.getAttribute('data-wd'));
+        var t=card.querySelector('.wd-time[data-wd="'+wd+'"]');
+        st.entries.push({wd:wd,time:t?t.value:'19:00'});
+      }
+    });
+  });
+}
+
+function scheduleAutoGenerate(){
+  var i=currentRulePage;
+  var st=stages[i];
+  if(!st) return;
+  collectRules();
+  if(!st.startDate || !st.entries.length || !(parseInt(st.count)>0)) return;
+  generateStage(i);
+}
+function generateStage(i){
+  collectRules();
+  var st=stages[i];
+  if(!st) return;
+  if(!st.startDate){alert('请先选择开始日期');return;}
+  if(!st.entries.length){alert('请至少勾选一个上课星期');return;}
+  var count=st.count||0;
+  if(count<=0){alert('课次数必须大于0');return;}
+  var existing=st.lessons.slice();
+  var lessons=[];
+  var d=new Date(st.startDate+'T00:00:00');
+  var idx=0, guard=0;
+  while(idx<count && guard<6000){
+    var wd=d.getDay();
+    var dayEntries=st.entries.filter(function(e){return e.wd===wd;});
+    dayEntries.forEach(function(e){
+      if(idx>=count) return;
+      var old=existing[idx]||{};
+      lessons.push({
+        id:old.id||'',
+        title:st.name+'-第'+(idx+1)+'讲',
+        topic:old.topic||'',
+        date:d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),
+        time:e.time,
+        video:old.video||'',
+        stage:st.name
+      });
+      idx++;
+    });
+    d.setDate(d.getDate()+1);
+    guard++;
+  }
+  st.lessons=lessons;
+  renderCalendar();
+}
+
+function clearStageDates(i){
+  collectRules();
+  stages[i].lessons.forEach(function(l){l.date='';l.time='';});
+  renderCalendar();
+}
+
+function removeStage(i){
+  if(stages.length<=1){alert('至少保留一个阶段');return;}
+  collectRules();
+  stages.splice(i,1);
+  if(currentRulePage>=stages.length) currentRulePage=stages.length-1;
+  renderRules();
+  renderCalendar();
+}
+
+function addStage(){
+  collectRules();
+  stages.push({name:'阶段'+(stages.length+1),startDate:todayStr(),count:30,duration:90,entries:[],lessons:[]});
+  currentRulePage=stages.length-1;
+  renderRules();
+  renderCalendar();
+}
+
+function goRulePage(p){
+  collectRules();
+  currentRulePage=Math.max(0,Math.min(stages.length-1,p));
+  renderRules();
+  renderCalendar();
+}
+
+function renderLegend(){
+  var box=document.getElementById('calLegend');
+  if(!box) return;
+  box.innerHTML='';
+  stages.forEach(function(st,i){
+    var color=stageColor(i);
+    var item=document.createElement('span');item.className='legend-item';
+    item.innerHTML='<i style="background:'+color.bg+';border-color:'+color.border+'"></i>'+esc(st.name);
+    box.appendChild(item);
+  });
+}
+
+function renderCalendar(){
+  if(currentYear===undefined){
+    var nd=new Date(); currentYear=nd.getFullYear(); currentMonth=nd.getMonth();
+  }
+  document.getElementById('calTitle').textContent=currentYear+'年'+(currentMonth+1)+'月';
+  renderLegend();
+  var grid=document.getElementById('calGrid');
+  grid.innerHTML='';
+  var wdNames=['周一','周二','周三','周四','周五','周六','周日'];
+  wdNames.forEach(function(name,i){
+    var head=document.createElement('div');head.className='wd-head';head.textContent=name;head.style.gridColumn=(i+1);head.style.gridRow='1';
+    grid.appendChild(head);
+  });
+  var first=new Date(currentYear,currentMonth,1);
+  var monday=new Date(first);
+  var offset=(first.getDay()+6)%7;
+  monday.setDate(first.getDate()-offset);
+  for(var i=0;i<42;i++){
+    var day=new Date(monday);
+    day.setDate(monday.getDate()+i);
+    var key=day.getFullYear()+'-'+pad(day.getMonth()+1)+'-'+pad(day.getDate());
+    var cell=document.createElement('div');
+    cell.className='cal-day'+(day.getMonth()!==currentMonth?' other':'')+(key===todayStr()?' today':'');
+    cell.style.gridColumn=((i%7)+1);cell.style.gridRow=(Math.floor(i/7)+2);
+    var num=document.createElement('div');num.className='day-num';num.textContent=day.getDate();
+    cell.appendChild(num);
+    if(day.getMonth()===currentMonth){
+      TIME_SLOTS.forEach(function(slot){
+        var row=document.createElement('div');row.className='slot-row';
+        var lab=document.createElement('span');lab.className='slot-label';lab.textContent=slot.start;
+        var body=document.createElement('div');body.className='slot-lessons';
+        var items=getLessonsBySlot(key,slot.start);
+        items.forEach(function(item){
+          var chip=document.createElement('div');
+          var color=stageColor(item.stageIdx);
+          var occupied=occupiedSlots[key+'|'+slot.start]||[];
+          var conflict=item.conflict || occupied.length>0;
+          chip.className='lesson-chip'+(conflict?' conflict':'');
+          chip.style.background=color.bg;
+          chip.style.borderColor=conflict?'#fca5a5':color.border;
+          chip.style.color=conflict?'#b91c1c':color.text;
+          var no=lessonNo(item.lesson.title);
+          chip.innerHTML=no?('第'+no+'讲'):item.lesson.title;
+          var occText=occupied.map(function(o){return '《'+o.course+'》';}).join('、');
+          chip.title=(conflict?(occText?'冲突 '+occText+' | ':'冲突 | '):'')+slotLabel(normalizeTime(item.lesson.time))+' · '+item.lesson.title;
+          chip.onclick=function(){openEdit(item.stageIdx,item.lesson);};
+          body.appendChild(chip);
+        });
+        otherLessonChips.filter(function(x){ return x.date===key && x.time===slot.start; }).forEach(function(oc){
+          var chip=document.createElement('div');
+          chip.className='lesson-chip lesson-chip--other';
+          chip.textContent='《'+oc.course+'》';
+          chip.title=oc.course+' · '+oc.lesson+' · '+slotLabel(oc.time);
+          body.appendChild(chip);
+        });
+        row.appendChild(lab);row.appendChild(body);cell.appendChild(row);
+      });
+    }
+    grid.appendChild(cell);
+  }
+  renderStats();
+}
+function normalizeTime(t){
+  var v=String(t||'');
+  var hit=TIME_SLOTS.find(function(s){return s.start===v;});
+  if(hit) return v;
+  hit=TIME_SLOTS.find(function(s){return v>=s.start && v<s.end;});
+  if(hit) return hit.start;
+  var h=String(v).split(':')[0];
+  hit=TIME_SLOTS.find(function(s){return s.start.split(':')[0]===h;});
+  return hit?hit.start:'19:00';
+}
+function getLessonsBySlot(date, slotStart){
+  var out=[], seen={};
+  stages.forEach(function(st,si){
+    st.lessons.forEach(function(l){
+      if(l.date===date&&l.time&&normalizeTime(l.time)===slotStart){
+        var key=date+' '+slotStart;
+        var conflict=!!seen[key];
+        seen[key]=1;
+        out.push({lesson:l,stageIdx:si,conflict:conflict});
+      }
+    });
+  });
+  return out;
+}
+
+function openEdit(si,l){
+  editStageIdx=si; editLesson=l;
+  var base=baseLessonName(l);
+  document.getElementById('editName').value=displayLessonName(si,l,base);
+  document.getElementById('editDate').value=l.date||'';
+  document.getElementById('editTime').innerHTML=slotOptions(normalizeTime(l.time));
+  document.getElementById('editVideo').value=l.video||'';
+  document.getElementById('editTopic').value=l.topic||'';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('editModal').classList.remove('open');}
+
+function saveLesson(){
+  if(!editLesson)return;
+  var si=editStageIdx;
+  var name=extractBase(document.getElementById('editName').value,si);
+  var date=document.getElementById('editDate').value;
+  var time=document.getElementById('editTime').value;
+  var video=document.getElementById('editVideo').value.trim();
+  var topic=document.getElementById('editTopic').value.trim();
+  editLesson.title=name||editLesson.title;
+  editLesson.date=date;
+  editLesson.time=time;
+  editLesson.video=video;
+  editLesson.topic=topic;
+  editLesson.stage=stages[si].name;
+  closeModal();
+  renderCalendar();
+}
+
+function deleteLesson(){
+  if(!editLesson)return;
+  var arr=stages[editStageIdx].lessons;
+  var i=arr.indexOf(editLesson);
+  if(i>-1) arr.splice(i,1);
+  closeModal();
+  renderCalendar();
+}
+
+function mapLessonData(l){
+  return {id:l.id,title:l.title,time:l.schedule_time||'',video:l.video_url||'',stage:l.stage||'',duration:l.duration||7200,topic:l.description||'',start:l.stage_start_date||'',rule:l.stage_rule||'',times:l.stage_time||'',stageCount:l.stage_count||0,stageDuration:l.stage_duration||0};
+}
+function loadSchedulerCourse(id){
+  id=parseInt(id)||0;
+  if(!id || id===currentCourseId) return;
+  function apply(d){
+    if(!d || !d.ok){ alert('加载课程失败'); return; }
+    currentCourseId=id;
+    currentCourseTitle=d.course ? d.course.title : '';
+    if(d.scopePackageId) scopePackageId=parseInt(d.scopePackageId);
+    savedLessons=(d.lessons||[]).map(mapLessonData);
+    conflictLessons=d.conflictLessons||[];
+    buildConflictData();
+    stages=[];
+    currentRulePage=0;
+    currentYear=undefined;
+    currentMonth=undefined;
+    initStages();
+    renderRules();
+    renderCalendar();
+    var sw=document.getElementById('courseSwitch'); if(sw) sw.value=String(id);
+    var scopeTitle=document.getElementById('schedScopeTitle'); if(scopeTitle) scopeTitle.textContent=d.scopePackageTitle||'';
+    document.getElementById('saveForm').action='/admin/courses-manage/'+id+'/plan';
+  }
+  if(schedulerDataCache[id]){ apply(schedulerDataCache[id]); return; }
+  var loading=document.getElementById('schedLoading');
+  if(loading) loading.style.display='flex';
+  fetch('/admin/courses-manage/'+id+'/scheduler-data?package_id='+scopePackageId).then(function(r){ return r.json(); }).then(function(d){
+    if(loading) loading.style.display='none';
+    schedulerDataCache[id]=d;
+    apply(d);
+  }).catch(function(){ if(loading) loading.style.display='none'; alert('加载课程失败'); });
+}
+function saveSchedule(){
+  collectRules();
+  var conflicts=[];
+  stages.forEach(function(st){
+    st.lessons.forEach(function(l){
+      if(l.date && l.time){
+        var ckey=l.date+'|'+normalizeTime(l.time);
+        var occ=occupiedSlots[ckey];
+        if(occ && occ.length){
+          conflicts.push({date:l.date,time:normalizeTime(l.time),course:occ[0].course,lesson:l.title});
+        }
+      }
+    });
+  });
+  if(conflicts.length){
+    alert('排课冲突，无法保存：\n'+conflicts.slice(0,6).map(function(c){return c.date+' '+c.time+' 与《'+c.course+'》冲突';}).join('\n'));
+    return;
+  }
+  var payload=[];
+  stages.forEach(function(st,si){
+    var lessons=st.lessons.slice().sort(function(a,b){
+      if(a.date!==b.date) return String(a.date).localeCompare(String(b.date));
+      return String(a.time).localeCompare(String(b.time));
+    });
+    lessons.forEach(function(l,idx){l.title=st.name+'-第'+(idx+1)+'讲';});
+    payload.push({
+      name:st.name,
+      count:lessons.length,
+      duration:(st.duration||90)*60,
+      start_date:st.startDate||'',
+      entries:st.entries||[],
+      lessons:lessons.map(function(l){return {id:l.id||'',name:l.title,time:l.date?(l.date+(l.time?' '+l.time:'')):'',video:l.video||'',topic:l.topic||''};})
+    });
+  });
+  document.getElementById('stageData').value=JSON.stringify(payload);
+  document.getElementById('saveForm').submit();
+}
+
+function moveMonth(d){currentMonth+=d;if(currentMonth<0){currentMonth=11;currentYear--;}if(currentMonth>11){currentMonth=0;currentYear++;}renderCalendar();}
+function today(){var nd=new Date();currentYear=nd.getFullYear();currentMonth=nd.getMonth();renderCalendar();}
+function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+document.getElementById('ruleCards').addEventListener('change',function(e){
+  if(e.target.classList.contains('wd-check')){
+    var card=e.target.closest('.rule-card');
+    var wd=e.target.getAttribute('data-wd');
+    var t=card.querySelector('.wd-time[data-wd="'+wd+'"]');
+    if(t) t.disabled=!e.target.checked;
+  }
+  scheduleAutoGenerate();
+});
+initStages();
+renderRules();
+renderCalendar();
+(function(){
+  var m=location.search.match(/lesson=(\d+)/);
+  if(m){
+    var id=parseInt(m[1]);
+    stages.forEach(function(st,si){
+      st.lessons.forEach(function(l){
+        if(String(l.id)===String(id)) openEdit(si,l);
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "chengze-online",
+  "version": "1.0.0",
+  "description": "承泽教育 — 专升本在线学习平台",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "dev:local": "node scripts/dev-local.js"
+  },
+  "dependencies": {
+    "@mediapipe/selfie_segmentation": "^0.1.1675465747",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.8.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "flv.js": "^1.6.2",
+    "hls.js": "^1.6.17",
+    "multer": "^2.2.0",
+    "socket.io": "^4.8.3",
+    "sql.js": "^1.10.3",
+    "tcplayer.js": "^5.3.4",
+    "tencentcloud-sdk-nodejs-vod": "^4.1.288",
+    "trtc-js-sdk": "^4.15.22",
+    "xlsx": "^0.18.5"
+  }
+}

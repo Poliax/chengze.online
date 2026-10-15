@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <% function fmtDT(v){ if(!v) return '-'; try{ return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); }catch(e){ return v; } } %>
+      <div class="stats">
+        <div class="stat"><span class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span><div class="stat-info"><strong id="countOrders"><%= total %></strong><span>订单总数</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span><div class="stat-info"><strong><%= paidOrders %></strong><span>已支付</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><div class="stat-info"><strong><%= pendingOrders %></strong><span>待支付</span></div></div>
+      </div>
+      <div class="list-header">
+        <h2>订单列表</h2>
+        <div class="list-tools">
+          <form method="GET" action="/admin/orders-manage" id="orderFilterForm" class="toolbar-form" data-client-filter="1">
+            <input name="q" id="oq" value="<%= q || '' %>" placeholder="搜索订单号/姓名/手机号" class="toolbar-input" style="width:190px">
+            <select name="status" id="ostatus" class="toolbar-select">
+              <option value="">全部状态</option>
+              <option value="pending" <%= status==='pending'?'selected':'' %>>待支付</option>
+              <option value="paid" <%= status==='paid'?'selected':'' %>>已支付</option>
+              <option value="refunded" <%= status==='refunded'?'selected':'' %>>已退款</option>
+              <option value="cancelled" <%= status==='cancelled'?'selected':'' %>>已取消</option>
+            </select>
+          </form>
+          <a href="/admin/orders-manage/new" class="btn-primary--sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            新建订单
+          </a>
+        </div>
+      </div>
+      <div class="user-table-wrap">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>订单号</th><th>UID</th><th>学员</th><th>手机号</th><th>课程</th><th>金额</th><th>支付方式</th><th>状态</th><th>下单时间</th>
+            </tr>
+          </thead>
+          <tbody id="orderTbody">
+            <% if (orders.length === 0) { %>
+              <tr><td colspan="9" style="text-align:center;padding:30px;color:#94a3b8">暂无订单</td></tr>
+              <% for(var fi=1;fi<10;fi++){ %><tr><td colspan="9">&nbsp;</td></tr><% } %>
+            <% } else { %>
+              <% orders.forEach(o => { %>
+                <tr>
+                  <td class="name-cell"><%= o.order_no %></td>
+                  <td><%= o.uid || 'UID' + String(o.student_id).padStart(6, '0') %></td>
+                  <td><%= o.student_name || '-' %></td>
+                  <td><%= o.student_phone || '-' %></td>
+                  <td><%= o.course_title || '-' %></td>
+                  <td class="money">¥<%= Number(o.amount || 0).toLocaleString('zh-CN', {minimumFractionDigits: 2}) %></td>
+                  <td><%= o.payment_method || '-' %></td>
+                  <td><span class="status-badge status-<%= o.status %>"><%= o.status==='pending'?'待支付':o.status==='paid'?'已支付':o.status==='refunded'?'已退款':'已取消' %></span></td>
+                  <td><%= fmtDT(o.created_at) %></td>
+                </tr>
+              <% }) %>
+              <% for(var fi=orders.length;fi<10;fi++){ %><tr><td colspan="9">&nbsp;</td></tr><% } %>
+            <% } %>
+          </tbody>
+        </table>
+        <%- include('partials/pagination', { id: 'orderPagination', pages: pages, current: page || 1, total: total, fn: 'loadOrders' }) %>
+      </div>
+    </div>
+  </div>
+<script>
+function escHtml(v){
+  return String(v == null ? '' : v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function fmtDate(v){ if(!v) return '-'; try { return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); } catch(e){ return v; } }
+function fmtMoney(v){ return '¥' + Number(v || 0).toLocaleString('zh-CN', {minimumFractionDigits: 2}); }
+function statusText(s){ return s==='pending'?'待支付':s==='paid'?'已支付':s==='refunded'?'已退款':'已取消'; }
+function fillRows(count,colspan){
+  var h='';
+  for(var i=0;i<Math.max(0,count);i++){h+='<tr><td colspan="'+colspan+'">&nbsp;</td></tr>';}
+  return h;
+}
+function loadOrders(page){
+  var params=new URLSearchParams({page:page||1});
+  var q=document.getElementById('oq');if(q&&q.value)params.set('q',q.value);
+  var st=document.getElementById('ostatus');if(st&&st.value)params.set('status',st.value);
+  fetch('/admin/api/orders?'+params).then(function(r){return r.json();}).then(function(data){
+    document.getElementById('countOrders').textContent=data.total;
+    var tb=document.getElementById('orderTbody');
+    if(data.rows.length===0){
+      tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:30px;color:#94a3b8">暂无订单</td></tr>'+fillRows(9,9);
+    }else{
+      tb.innerHTML=data.rows.map(function(o){
+        return '<tr><td class="name-cell">'+escHtml(o.order_no)+'</td><td>'+escHtml(o.uid || 'UID'+String(o.student_id).padStart(6,'0'))+'</td><td>'+escHtml(o.student_name||'-')+'</td><td>'+escHtml(o.student_phone||'-')+'</td><td>'+escHtml(o.course_title||'-')+'</td><td class="money">'+fmtMoney(o.amount)+'</td><td>'+escHtml(o.payment_method||'-')+'</td><td><span class="status-badge status-'+escHtml(o.status)+'">'+statusText(o.status)+'</span></td><td>'+fmtDate(o.created_at)+'</td></tr>';
+      }).join('')+fillRows(10-data.rows.length,9);
+    }
+    renderPagination('orderPagination',data.pages,data.page,data.total,'loadOrders');
+  });
+}
+function renderPagination(elId,totalPages,current,total,fn){
+  var el=document.getElementById(elId);if(!el)return;
+  if(totalPages<=1){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='';
+  var h='';
+  if(current>1){h+='<a href="javascript:void(0)" class="page-btn" onclick="'+fn+'('+(current-1)+')">‹ 上一页</a>';}
+  else{h+='<span class="page-btn disabled">‹ 上一页</span>';}
+  var start=Math.max(1,current-2),end=Math.min(totalPages,current+2);
+  if(start>1){h+='<a href="javascript:void(0)" onclick="'+fn+'(1)">1</a>';if(start>2)h+='<span class="dots">…</span>';}
+  for(var i=start;i<=end;i++){
+    if(i===current)h+='<span class="current">'+i+'</span>';
+    else h+='<a href="javascript:void(0)" onclick="'+fn+'('+i+')">'+i+'</a>';
+  }
+  if(end<totalPages){if(end<totalPages-1)h+='<span class="dots">…</span>';h+='<a href="javascript:void(0)" onclick="'+fn+'('+totalPages+')">'+totalPages+'</a>';}
+  if(current<totalPages){h+='<a href="javascript:void(0)" class="page-btn" onclick="'+fn+'('+(current+1)+')">下一页 ›</a>';}
+  else{h+='<span class="page-btn disabled">下一页 ›</span>';}
+  h+='<span class="info">共 '+total+' 条</span>';
+  h+='<span class="jump">跳至 <input type="number" min="1" max="'+totalPages+'" value="'+current+'" onkeydown="if(event.key===\'Enter\'){'+fn+'(this.value)}"> 页</span>';
+  el.innerHTML=h;
+}
+function clearOrders(){
+  ['oq','ostatus'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  loadOrders(1);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('orderFilterForm').addEventListener('submit',function(e){e.preventDefault();loadOrders(1);});
+  var _ordT;
+  ['oq','ostatus'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.addEventListener('input',function(){ clearTimeout(_ordT); _ordT=setTimeout(function(){ loadOrders(1); },250); });
+    if(el && el.tagName==='SELECT') el.addEventListener('change',function(){ loadOrders(1); });
+  });
+  loadOrders(<%= page || 1 %>);
+});
+</script>
+</body>
+</html>

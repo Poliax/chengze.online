@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/teacher.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %>
+<div class="teacher-main">
+<%- include('partials/header') %>
+<div class="teacher-content">
+  <div class="stats">
+    <div class="stat"><span class="stat-icon stat-icon--blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><div class="stat-info"><strong><%= provinces.length %></strong><span>省份总数</span></div></div>
+    <div class="stat"><span class="stat-icon stat-icon--green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span><div class="stat-info"><strong><%= provinces.reduce(function(s,p){return s+(p.subjectRows||[]).length;},0) %></strong><span>考试科目</span></div></div>
+    <div class="stat"><span class="stat-icon stat-icon--purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><div class="stat-info"><strong><%= provinces.reduce(function(s,p){return s+(p.scheduleRows||[]).length;},0) %></strong><span>日程节点</span></div></div>
+  </div>
+
+  <div class="list-header">
+    <h2>省份列表</h2>
+    <div class="list-tools">
+      <form method="GET" action="/admin/provinces-manage" class="toolbar-form" data-client-filter="1">
+        <input name="q" id="provinceSearch" value="<%= q || '' %>" placeholder="搜索省份/科目" class="toolbar-input" style="min-width:220px">
+      </form>
+      <a href="/admin/provinces-manage/new" class="btn-primary--sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        创建省份
+      </a>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>省份</th><th>考试时间</th><th>考试科目</th><th>操作</th></tr>
+      </thead>
+      <tbody id="provinceTbody">
+        <% if (provinces.length === 0) { %>
+          <tr><td colspan="4" class="empty">暂无省份</td></tr>
+        <% } %>
+        <% provinces.forEach(p => { %>
+        <tr>
+          <td>
+            <span class="link" style="white-space:nowrap;color:#111827"><%= p.name %></span>
+          </td>
+          <td>
+            <% if (p.examSchedule && p.examSchedule.length) { %>
+              <% p.examSchedule.forEach(x => { %><div style="margin:2px 0;white-space:nowrap"><%= x.year %>年：<%= x.exam_time||'待定' %></div><% }) %>
+            <% } else if (p.exam_time) { %>
+              <div style="white-space:nowrap">考试日期：<%= p.exam_time %></div>
+            <% } else { %>
+              <span style="color:#94a3b8">未设置</span>
+            <% } %>
+          </td>
+          <td>
+            <% if (!p.subjectRows || p.subjectRows.length === 0) { %><span style="color:#94a3b8">暂无考试科目</span><% } %>
+            <% (p.subjectRows||[]).forEach(s => { %>
+              <span class="badge badge-数学" style="margin:2px 4px 2px 0"><%= s.name %></span>
+            <% }) %>
+          </td>
+          <td>
+            <a href="/admin/provinces-manage/<%= p.id %>" class="btn-table">查看</a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<script>
+(function(){
+  var input=document.getElementById('provinceSearch');
+  if(!input) return;
+  var t;
+  input.addEventListener('input',function(){
+    clearTimeout(t);
+    t=setTimeout(function(){
+      var kw=input.value.trim().toLowerCase();
+      document.querySelectorAll('#provinceTbody tr').forEach(function(tr){
+        tr.style.display=tr.textContent.toLowerCase().indexOf(kw)>-1 ? '' : 'none';
+      });
+    },200);
+  });
+})();
+</script>
+</body>
+</html>

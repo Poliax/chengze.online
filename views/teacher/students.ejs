@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <% function fmtDT(v){ if(!v) return '-'; try{ return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); }catch(e){ return v; } } %>
+      <div class="stats">
+        <div class="stat"><span class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div class="stat-info"><strong id="countStudents"><%= studentTotal %></strong><span>学员总数</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><div class="stat-info"><strong><%= totalEnrollments %></strong><span>在学课程</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div class="stat-info"><strong><%= totalCompleted %></strong><span>完成课时</span></div></div>
+      </div>
+      <div class="list-header">
+        <h2>学员列表</h2>
+        <div class="list-tools">
+          <form method="GET" action="/admin/students-manage" id="studentFilterForm" class="toolbar-form" data-client-filter="1">
+            <input name="q" id="sq" value="<%= q || '' %>" placeholder="搜索姓名/手机号" class="toolbar-input" style="width:140px">
+            <input type="date" name="sdate" id="ssd" value="<%= sdate || '' %>" class="toolbar-date">
+            <span style="font-size:12px;color:#94a3b8">至</span>
+            <input type="date" name="edate" id="sed" value="<%= edate || '' %>" class="toolbar-date">
+          </form>
+          <a href="/admin/students-manage/new" class="btn-primary--sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            添加学员
+          </a>
+        </div>
+      </div>
+      <div class="user-table-wrap">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>姓名</th><th>手机号</th><th>考试省份</th><th>考试年份</th><th>下单时间</th><th>订购课程</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="studentTbody">
+            <% if (students.length === 0) { %>
+              <tr><td colspan="7" style="text-align:center;padding:30px;color:#94a3b8">暂无学员</td></tr>
+              <% for(var fi=1;fi<10;fi++){ %><tr><td colspan="7">&nbsp;</td></tr><% } %>
+            <% } else { %>
+              <% students.forEach(s => { %>
+                <tr>
+                  <td class="name-cell"><%= s.name %></td>
+                  <td><%= s.phone || '-' %></td>
+                  <td><%= s.exam_province || '-' %></td>
+                  <td><%= s.exam_year || '-' %></td>
+                  <td><%= fmtDT(s.order_time) %></td>
+                  <td>
+                    <% const titles = String(s.ordered_courses || '').split('；').filter(Boolean); %>
+                    <% if (titles.length) { %>
+                      <% titles.forEach(t => { %><span class="badge badge-英语" style="margin:2px 4px 2px 0"><%= t %></span><% }) %>
+                    <% } else { %>
+                      <span style="color:#94a3b8">-</span>
+                    <% } %>
+                  </td>
+                  <td><a href="/admin/students-manage/<%= s.id %>" class="btn-table">查看</a></td>
+                </tr>
+              <% }) %>
+              <% for(var fi=students.length;fi<10;fi++){ %><tr><td colspan="7">&nbsp;</td></tr><% } %>
+            <% } %>
+          </tbody>
+        </table>
+        <%- include('partials/pagination', { id: 'studentPagination', pages: studentPages, current: page || 1, total: studentTotal, fn: 'loadStudents' }) %>
+      </div>
+
+    </div>
+  </div>
+<script>
+function escHtml(v){
+  return String(v == null ? '' : v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function fmtDate(v){ if(!v) return '-'; try { return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); } catch(e){ return v; } }
+function fillRows(count,colspan){
+  var h='';
+  for(var i=0;i<Math.max(0,count);i++){h+='<tr><td colspan="'+colspan+'">&nbsp;</td></tr>';}
+  return h;
+}
+function loadStudents(page){
+  var params=new URLSearchParams({scope:'students',page:page||1});
+  var sq=document.getElementById('sq');if(sq&&sq.value)params.set('q',sq.value);
+  var ss=document.getElementById('ssd');if(ss&&ss.value)params.set('sdate',ss.value);
+  var se=document.getElementById('sed');if(se&&se.value)params.set('edate',se.value);
+  fetch('/admin/api/users?'+params).then(function(r){return r.json();}).then(function(data){
+    document.getElementById('countStudents').textContent=data.total;
+    var stb=document.getElementById('studentTbody');
+    if(data.rows.length===0){
+      stb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:30px;color:#94a3b8">暂无学员</td></tr>'+fillRows(9,7);
+    }else{
+      stb.innerHTML=data.rows.map(function(s){
+        var courseBadges = String(s.ordered_courses||'').split('；').filter(Boolean).map(function(t){return '<span class="badge badge-英语" style="margin:2px 4px 2px 0">'+escHtml(t)+'</span>';}).join('');
+        if (!courseBadges) courseBadges = '<span style="color:#94a3b8">-</span>';
+        return '<tr><td class="name-cell">'+escHtml(s.name)+'</td><td>'+escHtml(s.phone||'-')+'</td><td>'+escHtml(s.exam_province||'-')+'</td><td>'+escHtml(s.exam_year||'-')+'</td><td>'+fmtDate(s.order_time)+'</td><td>'+courseBadges+'</td><td><a href="/admin/students-manage/'+s.id+'" class="btn-table">查看</a></td></tr>';
+      }).join('')+fillRows(10-data.rows.length,7);
+    }
+    renderPagination('studentPagination',data.pages,data.page,data.total,'loadStudents');
+  });
+}
+function renderPagination(elId,totalPages,current,total,fn){
+  var el=document.getElementById(elId);if(!el)return;
+  if(totalPages<=1){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='';
+  var h='';
+  if(current>1){h+='<a href="javascript:void(0)" class="page-btn" onclick="'+fn+'('+(current-1)+')">‹ 上一页</a>';}
+  else{h+='<span class="page-btn disabled">‹ 上一页</span>';}
+  var start=Math.max(1,current-2),end=Math.min(totalPages,current+2);
+  if(start>1){h+='<a href="javascript:void(0)" onclick="'+fn+'(1)">1</a>';if(start>2)h+='<span class="dots">…</span>';}
+  for(var i=start;i<=end;i++){
+    if(i===current)h+='<span class="current">'+i+'</span>';
+    else h+='<a href="javascript:void(0)" onclick="'+fn+'('+i+')">'+i+'</a>';
+  }
+  if(end<totalPages){if(end<totalPages-1)h+='<span class="dots">…</span>';h+='<a href="javascript:void(0)" onclick="'+fn+'('+totalPages+')">'+totalPages+'</a>';}
+  if(current<totalPages){h+='<a href="javascript:void(0)" class="page-btn" onclick="'+fn+'('+(current+1)+')">下一页 ›</a>';}
+  else{h+='<span class="page-btn disabled">下一页 ›</span>';}
+  h+='<span class="info">共 '+total+' 条</span>';
+  h+='<span class="jump">跳至 <input type="number" min="1" max="'+totalPages+'" value="'+current+'" onkeydown="if(event.key===\'Enter\'){'+fn+'(this.value)}"> 页</span>';
+  el.innerHTML=h;
+}
+function clearStudents(){
+  ['sq','ssd','sed'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  loadStudents(1);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('studentFilterForm').addEventListener('submit',function(e){e.preventDefault();loadStudents(1);});
+  var _stuT;
+  ['sq','ssd','sed'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.addEventListener('input',function(){ clearTimeout(_stuT); _stuT=setTimeout(function(){ loadStudents(1); },250); });
+  });
+  loadStudents(<%= page || 1 %>);
+});
+</script>
+</body>
+</html>

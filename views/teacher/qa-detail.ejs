@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %>
+<div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<% function fmtDT(v){ if(!v) return '-'; try{ return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); }catch(e){ return v; } } %>
+<div class="course-detail-header">
+</div>
+
+<div class="form-card">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+<div>
+<h3 style="font-size:18px;margin-bottom:4px"><%= question.title %></h3>
+<div style="display:flex;gap:12px;font-size:13px;color:var(--muted)">
+<span><%= question.student_name||'未知学员' %></span>
+<span><%= question.course_title||'-' %></span>
+<span><%= fmtDT(question.created_at) %></span>
+<% if (question.priority === 'high') { %><span class="badge" style="background:#fef2f2;color:#dc2626">紧急</span><% } %>
+</div>
+</div>
+<span class="badge <%= question.status==='open'?'badge-数学':'badge-英语' %>" style="font-size:13px;padding:4px 12px">
+<%= question.status==='open'?'待回答':'已回答' %>
+</span>
+</div>
+<div style="padding:16px;background:#f8fafc;border-radius:8px;line-height:1.8;white-space:pre-wrap"><%= question.content %></div>
+</div>
+
+<% if (answers.length > 0) { %>
+<div class="form-card"><h3>回答记录（<%= answers.length %>条）</h3>
+<% answers.forEach(a => { %>
+<div style="padding:16px;background:<%= a.answerer_type==='teacher'?'#eff6ff':'#f0fdf4' %>;border-radius:8px;margin-bottom:12px">
+<div style="display:flex;gap:8px;margin-bottom:8px;font-size:13px;color:var(--muted)">
+<span style="font-weight:600;color:var(--text)"><%= a.answerer_type==='teacher'?teacherName:(a.answerer_name||'助教') %></span>
+<span><%= a.answerer_type==='teacher'?'教师':'助教' %></span>
+<span><%= fmtDT(a.created_at) %></span>
+</div>
+<div style="line-height:1.8;white-space:pre-wrap"><%= a.content %></div>
+</div>
+<% }) %>
+</div>
+<% } %>
+
+<% if (question.status === 'open') { %>
+<div class="form-card"><h3>提交回答</h3>
+<form method="POST" action="/admin/qa-manage/<%= question.id %>/answer">
+<div class="form-group">
+<textarea name="content" style="min-height:120px" placeholder="请输入您的回答..." required></textarea>
+</div>
+<div class="form-actions">
+<button type="submit" class="btn btn-primary">提交回答</button>
+</div>
+</form>
+</div>
+<% } %>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>
