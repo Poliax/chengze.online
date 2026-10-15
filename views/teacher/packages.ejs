@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<style>
+body{background:#f1f5f9;font-family:'Noto Sans SC',sans-serif}
+.pkg-card{background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;gap:16px;transition:box-shadow .15s}
+.pkg-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.pkg-info{flex:1}
+.pkg-title{font-size:15px;font-weight:600;margin-bottom:2px}
+.pkg-meta{font-size:12px;color:#94a3b8;display:flex;gap:10px;flex-wrap:wrap}
+.pkg-parent{font-size:12px;color:#2563eb;font-weight:600}
+.pkg-status{padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.pkg-status.published{background:#dcfce7;color:#16a34a}
+.pkg-status.draft{background:#f1f5f9;color:#64748b}
+</style><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body"><%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %>
+<div style="padding:24px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+
+<a href="/admin/packages-manage/new" class="btn-primary--sm">+ 新建课程包</a>
+</div>
+<% if (packages.length === 0) { %><div style="text-align:center;padding:40px;color:#94a3b8">暂无课程包</div><% } %>
+<% packages.forEach(p => { %>
+<div class="pkg-card" onclick="location.href='/admin/packages-manage/<%= p.id %>'" style="cursor:pointer">
+<div class="pkg-info">
+<div class="pkg-title"><%= p.title %></div>
+<div class="pkg-meta"><% if (p.parent_title) { %><span class="pkg-parent">上级：<%= p.parent_title %></span><% } %><span><%= p.year||'--' %>年</span><span><%= p.province||'--' %></span><span><%= p.class_type||'--' %></span><span><%= p.child_count > 0 ? p.child_count + '个二级课包' : p.course_count + '个科目课' %></span></div>
+</div>
+<span class="pkg-status <%= p.status %>"><%= p.status === 'published' ? '上架' : '下架' %></span>
+</div>
+<% }) %>
+</div></div></body></html>

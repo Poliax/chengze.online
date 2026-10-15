@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %>
+<div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<% function fmtDT(v){ if(!v) return '-'; try{ return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); }catch(e){ return v; } } %>
+<div class="course-detail-header">
+</div>
+
+<div class="stats">
+<div class="stat"><div class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div class="stat-info"><strong><%= enrolledCourses.length %></strong><span>在学课程</span></div></div>
+<div class="stat"><div class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="stat-info"><strong><%= completedLessons %></strong><span>已完成课时</span></div></div>
+<div class="stat"><div class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div class="stat-info"><strong><%= qaCount %></strong><span>提问次数</span></div></div>
+</div>
+
+<div class="card" style="margin-bottom:24px">
+<div class="card-body">
+<div style="display:flex;align-items:center;gap:16px">
+<div class="teacher-avatar" style="width:48px;height:48px;font-size:20px"><%= student.name ? student.name[0] : '学' %></div>
+<div><h3 style="font-size:18px;margin-bottom:2px"><%= student.name %></h3>
+<div style="font-size:13px;color:var(--muted)"><%= student.phone||'-' %> | <%= student.email||'-' %></div></div>
+</div>
+</div>
+</div>
+
+<div class="section-hd"><h3>在学课程与进度</h3></div>
+<% if (enrolledCourses.length === 0) { %><div class="empty-state" style="grid-column:1/-1"><p>暂未报名课程</p></div><% } %>
+<div class="table-wrap" style="margin-bottom:24px">
+<table><thead><tr><th>课程</th><th>课时总数</th><th>已完成</th><th>进度</th><th>报名时间</th></tr></thead>
+<tbody>
+<% enrolledCourses.forEach(ec => { %>
+<tr>
+<td><a href="/admin/courses-manage/<%= ec.course_id %>" class="link"><%= ec.course_title %></a></td>
+<td><%= ec.total_lessons||0 %></td>
+<td><%= ec.completed_lessons||0 %></td>
+<td>
+<% const pct = ec.total_lessons > 0 ? Math.round((ec.completed_lessons||0)/ec.total_lessons*100) : 0; %>
+<div style="display:flex;align-items:center;gap:8px">
+<div style="flex:1;height:6px;background:#e2e8f0;border-radius:3px;max-width:120px"><div style="width:<%= pct %>%" class="<%= pct===100?'bg-green-500':'bg-blue-500' %>" style="height:6px;border-radius:3px;background:<%= pct===100?'#10b981':'#2563eb' %>"></div></div>
+<span style="font-size:13px;color:var(--muted)"><%= pct %>%</span>
+</div>
+</td>
+<td style="color:var(--muted);font-size:13px"><%= fmtDT(ec.enrolled_at) %></td>
+</tr>
+<% }) %>
+</tbody></table></div>
+
+<div class="section-hd"><h3>提问记录</h3></div>
+<% if (qaRecords.length === 0) { %><p style="color:var(--muted)">暂无提问</p><% } %>
+<div class="table-wrap">
+<table><thead><tr><th>问题</th><th>课程</th><th>状态</th><th>提问时间</th><th>操作</th></tr></thead>
+<tbody>
+<% qaRecords.forEach(q => { %>
+<tr><td><a href="/admin/qa-manage/<%= q.id %>" class="link"><%= q.title %></a></td>
+<td><%= q.course_title||'-' %></td>
+<td><span class="status-dot status-<%= q.status==='open'?'draft':'published' %>"></span><%= q.status==='open'?'待回答':'已回答' %></td>
+<td style="color:var(--muted);font-size:13px"><%= fmtDT(q.created_at) %></td>
+<td><a href="/admin/qa-manage/<%= q.id %>" class="btn btn-outline btn-sm">查看</a></td>
+</tr>
+<% }) %>
+</tbody></table>
+</div>
+
+<div class="section-hd" style="margin-top:24px"><h3>物流记录</h3></div>
+<% if (logistics.length === 0) { %><p style="color:var(--muted)">暂无物流记录</p><% } %>
+<div class="table-wrap">
+<table><thead><tr><th>单号</th><th>类型</th><th>收件人</th><th>快递公司</th><th>运单号</th><th>状态</th><th>操作</th></tr></thead>
+<tbody>
+<% logistics.forEach(l => { %>
+<tr>
+<td><%= l.order_no||'-' %></td>
+<td><%= l.type==='material'?'讲义资料':l.type==='book'?'教材':l.type==='certificate'?'证书':'其他' %></td>
+<td><%= l.recipient_name %></td>
+<td><%= l.carrier||'-' %></td>
+<td><%= l.tracking_no||'-' %></td>
+<td><span class="status-dot status-<%= l.status==='delivered'?'published':l.status==='shipped'?'draft':'archived' %>"></span><%= l.status==='delivered'?'已签收':l.status==='shipped'?'已发货':'待发货' %></td>
+<td><a href="/admin/logistics-manage" class="btn btn-outline btn-sm">详情</a></td>
+</tr>
+<% }) %>
+</tbody></table>
+</div>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  :root {
+    --brand-gradient: linear-gradient(135deg,#6366f1 0%,#8b5cf6 55%,#a855f7 100%);
+    --brand-gradient-deep: linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);
+    --bg: #f4f5fb;
+    --surface: #ffffff;
+    --border: #eceef6;
+    --text-1: #1e293b;
+    --text-2: #64748b;
+    --text-3: #94a3b8;
+    --radius-lg: 14px;
+    --shadow-card: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
+    --shadow-hover: 0 4px 12px rgba(15,23,42,.06), 0 18px 44px rgba(99,102,241,.14);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  * { scrollbar-width:thin; scrollbar-color:rgba(100,116,139,.35) transparent; }
+  *::-webkit-scrollbar { width:8px; height:8px; }
+  *::-webkit-scrollbar-thumb { background:rgba(100,116,139,.35); border-radius:8px; }
+  body { background:var(--bg); color:var(--text-1); font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Arial,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased; }
+  a { text-decoration:none; color:inherit; }
+
+  .app { display:flex; min-height:100vh; }
+  .sidebar { width:200px; flex-shrink:0; background:#2B2F36; color:#fff; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; height:100vh; z-index:60; }
+  .logo { height:68px; display:flex; align-items:center; gap:10px; padding:0 20px; border-bottom:1px solid rgba(255,255,255,.06); }
+  .logo-tile { width:36px; height:36px; border-radius:11px; background:transparent; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#fff; box-shadow:none; }
+  .logo-tile svg { width:28px; height:28px; }
+  .logo-text { line-height:1.25; }
+  .logo-name { font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  .logo-sub { color:rgba(255,255,255,.45); font-size:11px; }
+
+  .menu-scroll { flex:1; overflow-y:auto; padding:8px 12px; }
+  .menu-group { color:rgba(255,255,255,.38); font-size:11px; letter-spacing:2px; padding:16px 14px 8px; display:flex; align-items:center; gap:6px; }
+  .group-dot { width:5px; height:5px; border-radius:50%; background:#818cf8; }
+  .menu-item { display:flex; align-items:center; gap:10px; color:rgba(255,255,255,.62); font-size:13px; padding:10px 12px; border-radius:8px; margin:2px 0; transition:all .18s; }
+  .menu-item svg { width:17px; height:17px; flex-shrink:0; }
+  .menu-item:hover { background:rgba(255,255,255,.07); color:#fff; transform:translateX(2px); }
+  .menu-item.on { background:rgba(99,102,241,.28); color:#fff; font-weight:600; }
+
+  .sidebar-foot { padding:14px 16px; border-top:1px solid rgba(255,255,255,.06); position:relative; overflow:hidden; }
+  .foot-glow { position:absolute; left:-20px; right:-20px; bottom:-30px; height:70px; background:radial-gradient(120px 50px at 50% 100%,rgba(139,92,246,.28),transparent); }
+  .foot-text { position:relative; text-align:center; color:rgba(255,255,255,.5); font-size:12px; }
+  .sidebar-foot .auth-btn { width:100%; background:var(--brand-gradient); color:#fff; border:none; border-radius:8px; padding:9px 0; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; box-shadow:0 6px 16px rgba(139,92,246,.4); }
+  .sidebar-user { display:flex; align-items:center; gap:10px; }
+  .sidebar-user .avatar { width:34px; height:34px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .sidebar-user .u-name { font-size:13px; }
+  .sidebar-user a { color:rgba(255,255,255,.6); font-size:12px; }
+
+  .main { flex:1; min-width:0; display:flex; flex-direction:column; margin-left:200px; }
+  .main-header { height:64px; background:rgba(255,255,255,.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 26px; position:sticky; top:0; z-index:50; }
+  .main-header h1 { font-size:17px; font-weight:800; color:var(--text-1); }
+  .main-header .header-sub { font-size:12px; color:var(--text-3); margin-left:10px; }
+  .header-right { display:flex; align-items:center; gap:14px; font-size:12px; color:var(--text-2); }
+  .user-chip { display:inline-flex; align-items:center; gap:8px; cursor:pointer; padding:5px 10px; border-radius:8px; border:1px solid var(--border); background:#fff; }
+  .user-chip .chip-avatar { width:26px; height:26px; border-radius:50%; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+
+  .content { padding:24px 26px 56px; max-width:1180px; width:100%; margin:0 auto; }
+
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 18px; display:flex; align-items:center; gap:14px; box-shadow:var(--shadow-card); }
+  .stat-icon { width:44px; height:44px; border-radius:12px; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; }
+  .stat-icon.green { background:linear-gradient(135deg,#10b981,#34d399); }
+  .stat-icon.amber { background:linear-gradient(135deg,#f59e0b,#fbbf24); }
+  .stat-info strong { display:block; font-size:22px; font-weight:800; color:var(--text-1); }
+  .stat-info span { font-size:12px; color:var(--text-3); }
+
+  .toolbar { display:flex; align-items:center; gap:14px; margin-bottom:24px; flex-wrap:wrap; }
+  .seg { display:flex; gap:4px; padding:4px; background:#e8edf5; border-radius:10px; }
+  .seg button { border:none; background:transparent; padding:7px 16px; border-radius:8px; font-size:13px; color:var(--text-2); cursor:pointer; font-family:inherit; font-weight:500; transition:all .18s ease; }
+  .seg button:hover { color:#6366f1; }
+  .seg button.active { background:#fff; color:#4f46e5; box-shadow:0 2px 8px rgba(15,23,42,.12); font-weight:600; }
+  .search { position:relative; margin-left:auto; }
+  .search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-3); pointer-events:none; }
+  .search input { width:220px; height:36px; border:1px solid #dbe3ef; background:#fff; border-radius:10px; padding:0 12px 0 36px; font-size:13px; font-family:inherit; color:var(--text-1); outline:none; transition:border .18s ease, box-shadow .18s ease; }
+  .search input:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.14); }
+
+  .section-title { display:flex; align-items:baseline; gap:10px; margin:30px 0 16px; }
+  .section-title h2 { font-size:17px; font-weight:800; color:var(--text-1); }
+  .section-title .en { font-size:12px; color:#b6c2d4; letter-spacing:2px; text-transform:uppercase; }
+
+  .pkg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .pkg-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow-card); transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+  .pkg-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-hover); border-color:#d8ddf2; }
+  .pkg-top { padding:18px 18px 16px; background:linear-gradient(135deg,#0f172a,#1e1b4b); color:#fff; }
+  .pkg-top .pkg-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .pkg-top .pkg-tags span { font-size:11px; padding:2px 8px; border-radius:5px; background:rgba(255,255,255,.14); color:rgba(255,255,255,.9); }
+  .pkg-top h3 { font-size:16px; font-weight:700; line-height:1.45; }
+  .pkg-body { padding:14px 18px; flex:1; }
+  .pkg-desc { font-size:13px; color:var(--text-2); line-height:1.7; min-height:44px; }
+  .pkg-price { display:flex; align-items:baseline; gap:8px; margin-top:10px; }
+  .pkg-price .now { font-size:18px; font-weight:800; color:#dc2626; }
+  .pkg-price .old { font-size:12px; color:var(--text-3); text-decoration:line-through; }
+  .pkg-price .none { font-size:13px; color:var(--text-3); }
+  .pkg-foot { display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-top:1px solid #f1f5f9; font-size:12px; color:var(--text-3); }
+  .pkg-foot .go { color:#6366f1; font-weight:600; }
+
+  .series-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
+  .series-card { position:relative; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow-card); transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+  .series-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-hover); border-color:#d8ddf2; }
+  .series-card.live { border-color:rgba(220,38,38,.35); }
+  .series-body { padding:16px; }
+  .series-hd { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .series-avatar { width:42px; height:42px; flex-shrink:0; border-radius:12px; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; }
+  .series-hd h4 { font-size:15px; font-weight:700; color:var(--text-1); line-height:1.4; }
+  .series-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .series-tags span { font-size:11px; padding:2px 8px; border-radius:5px; background:#f1f5f9; color:var(--text-2); }
+  .series-meta { display:flex; gap:12px; font-size:12px; color:var(--text-3); }
+  .series-foot { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-top:1px solid #f1f5f9; font-size:12px; color:var(--text-3); }
+  .series-foot .go { color:#6366f1; font-weight:600; }
+
+  .empty { text-align:center; padding:60px 20px; color:var(--text-3); }
+  .empty h3 { font-size:16px; color:var(--text-2); margin:10px 0 4px; }
+
+  .live-banner { display:none; align-items:center; gap:8px; max-width:1180px; margin:18px auto 0; padding:12px 18px; background:#dc2626; color:#fff; border-radius:10px; font-size:13px; font-weight:600; }
+  .live-banner:hover { background:#b91c1c; }
+
+  .footer { background:var(--surface); border-top:1px solid var(--border); margin-top:16px; }
+  .footer-inner { max-width:1180px; margin:0 auto; padding:26px 26px 18px; display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:30px; }
+  .footer h4 { font-size:13px; margin-bottom:10px; color:var(--text-1); }
+  .footer p, .footer li { font-size:12px; color:var(--text-3); line-height:1.9; }
+  .footer ul { list-style:none; }
+  .footer a:hover { color:#6366f1; }
+  .footer-bottom { max-width:1180px; margin:0 auto; padding:14px 26px; border-top:1px solid #f1f5f9; font-size:12px; color:#cbd5e1; }
+
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:200; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal-box { background:var(--surface); border-radius:var(--radius-lg); padding:22px; width:400px; max-width:92vw; box-shadow:0 24px 64px rgba(0,0,0,.22); box-sizing:border-box; }
+  .modal-box h3 { margin:0 0 14px; font-size:15px; font-weight:700; color:var(--text-1); }
+  .tabs { display:flex; gap:4px; margin-bottom:14px; }
+  .tabs button { flex:1; padding:8px 0; border:1px solid #d1d5db; background:#fff; border-radius:8px; font-size:13px; cursor:pointer; font-family:inherit; }
+  .tabs button.active { background:var(--brand-gradient); color:#fff; border-color:transparent; }
+  .field { margin-bottom:10px; }
+  .field label { display:block; font-size:12px; font-weight:600; color:var(--text-2); margin-bottom:4px; }
+  .field input { width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; font-size:13px; font-family:inherit; }
+  .code-row { display:flex; gap:8px; }
+  .code-row input { flex:1; }
+  .code-row button { flex-shrink:0; height:34px; padding:0 12px; border:1px solid #d1d5db; background:#fff; border-radius:8px; font-size:12px; cursor:pointer; font-family:inherit; }
+  .modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; }
+  .modal-actions button { height:32px; padding:0 14px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .modal-actions .cancel { background:#fff; border:1px solid #cbd5e1; color:var(--text-2); }
+  .modal-actions .primary { background:var(--brand-gradient); border:none; color:#fff; }
+  .auth-tip { font-size:12px; color:var(--text-3); margin-top:8px; min-height:16px; }
+
+  @media (max-width:960px) {
+    .app { flex-direction:column; }
+    .sidebar { width:100%; height:auto; position:static; flex-direction:row; align-items:center; padding:10px 14px; gap:8px; }
+    .main { margin-left:0; }
+    .logo { height:auto; border:none; padding:0; }
+    .logo-text { display:none; }
+    .menu-scroll { display:flex; gap:4px; overflow-x:auto; padding:0; }
+    .menu-group { display:none; }
+    .menu-item { padding:8px 10px; margin:0; white-space:nowrap; }
+    .sidebar-foot { border:none; padding:0; }
+    .sidebar-foot .auth-btn { width:auto; padding:8px 12px; }
+    .content { padding:18px 16px 40px; }
+    .stats { grid-template-columns:1fr; }
+    .footer-inner { grid-template-columns:1fr; }
+  }
+  @media (max-width:640px) {
+    .main-header { padding:0 14px; }
+    .content { padding:16px 12px 36px; }
+    .search { margin-left:0; width:100%; }
+    .search input { width:100%; }
+    .toolbar { align-items:flex-start; }
+    .seg { flex-wrap:wrap; }
+    .header-sub { display:none; }
+  }
+</style>
+<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+<%
+  var totalLessons = (courses || []).reduce(function(s, c){ return s + (c.lesson_count || 0); }, 0);
+%>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <img class="chengze-wordmark" src="/public/images/chengze-thicker-light.svg?v=20261015-green9" alt="承泽教育" style="width:176px;max-width:100%;height:auto;display:block;flex:none"><img class="chengze-mobile-mark" src="/public/images/chengze-thicker-mark.svg?v=20261015-green9" alt="承泽教育" style="width:32px;height:32px">
+    </div>
+    <div class="menu-scroll">
+      <div class="menu-group"><span class="group-dot"></span>学习中心</div>
+      <a href="/" class="menu-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        首页
+      </a>
+      <a href="/live/student" class="menu-item on">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        课程中心
+      </a>
+      <a href="/ai/" class="menu-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/></svg>
+        AI 助教
+      </a>
+      <a href="/materials/" class="menu-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        学习资料
+      </a>
+      <a href="/live/student/orders" class="menu-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        我的订单
+      </a>
+    </div>
+    <div class="sidebar-foot">
+      <div class="foot-glow"></div>
+      <% if (student) { %>
+        <div class="sidebar-user">
+          <span class="avatar"><%= (student.name || '学').charAt(0) %></span>
+          <span class="u-name"><%= student.name %></span>
+          <a href="javascript:;" onclick="logoutStudent()">退出</a>
+        </div>
+      <% } else { %>
+        <button type="button" class="auth-btn" onclick="openAuthModal()">登录 / 注册</button>
+      <% } %>
+      <div class="foot-text">📚 加油，上岸！</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="main-header">
+      <div>
+        <h1>课程中心</h1>
+        <span class="header-sub">专升本备考 · 直播 + 回放</span>
+      </div>
+      <div class="header-right">
+        <span><%= new Date().getMonth() + 1 %> 月 <%= new Date().getDate() %> 日</span>
+        <% if (student) { %>
+        <span class="user-chip"><span class="chip-avatar"><%= (student.name || '学').charAt(0) %></span><span><%= student.name %></span></span>
+        <% } %>
+      </div>
+    </header>
+
+    <a id="studentLiveBanner" class="live-banner" href="#"></a>
+
+    <div class="content">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-icon">包</div>
+          <div class="stat-info"><strong><%= (packages || []).length %></strong><span>课程包</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">课</div>
+          <div class="stat-info"><strong><%= (independentCourses || []).length %></strong><span>系列课</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon amber">时</div>
+          <div class="stat-info"><strong><%= totalLessons %></strong><span>课时</span></div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="seg" id="provinceFilter">
+          <button class="active" data-p="all">全部</button>
+          <% (typeof provinces !== 'undefined' ? provinces : []).forEach(p => { %>
+          <button data-p="<%= p.name %>"><%= p.name %></button>
+          <% }) %>
+        </div>
+        <div class="search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="courseSearch" type="text" placeholder="搜索课程名称">
+        </div>
+      </div>
+
+      <% if (packages && packages.length > 0) { %>
+      <div class="section-title"><h2>班课</h2><span class="en">Course Packages</span></div>
+      <div class="pkg-grid">
+        <% packages.forEach(p => { %>
+        <a href="/packages/s/<%= p.id %>" class="pkg-card" data-province="<%= p.province||'' %>" data-title="<%= p.title||'' %>">
+          <div class="pkg-top">
+            <div class="pkg-tags">
+              <span><%= p.province||'全国' %></span>
+              <span><%= p.year||'' %>年</span>
+              <span><%= p.class_type||'系统课' %></span>
+            </div>
+            <h3><%= p.title %></h3>
+          </div>
+          <div class="pkg-body">
+            <div class="pkg-desc"><%= p.description ? p.description.substring(0,70)+(p.description.length>70?'...':'') : '系统化课程包，多门系列课组合学习。' %></div>
+            <div class="pkg-price">
+              <% if (p.sale_price || p.price) { %>
+                <% if (p.sale_price && p.price && Number(p.sale_price) < Number(p.price)) { %>
+                  <span class="now">¥<%= Number(p.sale_price).toFixed(2) %></span><span class="old">¥<%= Number(p.price).toFixed(2) %></span>
+                <% } else { %>
+                  <span class="now">¥<%= Number(p.sale_price || p.price).toFixed(2) %></span>
+                <% } %>
+              <% } else { %>
+                <span class="none">价格面议</span>
+              <% } %>
+            </div>
+          </div>
+          <div class="pkg-foot">
+            <span><%= p.child_count > 0 ? p.child_count + " 个班课" : (p.course_count||0) + " 门科目课" %></span>
+            <span class="go">查看班课 →</span>
+          </div>
+        </a>
+        <% }) %>
+      </div>
+      <% } %>
+
+      <% if (independentCourses && independentCourses.length > 0) { %>
+      <div class="section-title"><h2>系列课</h2><span class="en">Course Series</span></div>
+      <div class="series-grid">
+        <% independentCourses.forEach(c => { %>
+        <a href="/live/student/courses/<%= c.id %>" class="series-card" data-province="<%= c.province||'' %>" data-title="<%= c.title||'' %>" data-course="<%= c.id %>">
+          <div class="series-body">
+            <div class="series-hd">
+              <span class="series-avatar"><%= (c.teacher_name||'师').charAt(0) %></span>
+              <h4><%= c.title %></h4>
+            </div>
+            <div class="series-tags">
+              <span><%= c.province||'全国' %></span>
+              <% if (c.year) { %><span><%= c.year %>年</span><% } %>
+              <% if (c.class_type) { %><span><%= c.class_type %></span><% } %>
+            </div>
+            <div class="series-meta">
+              <span><%= c.lesson_count||0 %> 课时</span>
+              <span><%= c.teacher_name %></span>
+              <span><%= c.student_count||0 %> 人学习</span>
+            </div>
+          </div>
+          <div class="series-foot">
+            <span><%= c.category||'系统课' %></span>
+            <span class="go">开始学习 →</span>
+          </div>
+        </a>
+        <% }) %>
+      </div>
+      <% } %>
+
+      <% if ((!packages || packages.length === 0) && (!independentCourses || independentCourses.length === 0)) { %>
+      <div class="empty">
+        <h3>暂无课程</h3>
+        <p>课程正在准备中，敬请期待</p>
+      </div>
+      <% } %>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <div>
+            <h4>承泽教育</h4>
+            <p>专注专升本在线教育，直播授课 + 课后回放，科学备考。</p>
+          </div>
+          <div>
+            <h4>快速链接</h4>
+            <ul>
+              <li><a href="/live/student">课程中心</a></li>
+              <li><a href="/ai/">AI 助教</a></li>
+              <li><a href="/materials/">学习资料</a></li>
+              <li><a href="/live/student/policy">服务协议</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>联系我们</h4>
+            <ul>
+              <li>service@chengze.online</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 承泽教育 · 鲁ICP备2026044624号-1 · <a href="https://beian.mps.gov.cn/#/query/webSearch?code=37082902370912" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">鲁公网安备37082902370912号</a></div>
+      </footer>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <h3>登录 / 注册</h3>
+    <div class="tabs">
+      <button type="button" id="tabLogin" class="active" onclick="switchAuth('login')">登录</button>
+      <button type="button" id="tabRegister" onclick="switchAuth('register')">注册</button>
+    </div>
+    <div id="authLogin">
+      <div class="field"><label>手机号</label><input id="loginPhone" placeholder="请输入手机号"></div>
+      <div class="field"><label>密码</label><input id="loginPassword" type="password" placeholder="请输入密码"></div>
+      <div class="modal-actions"><button class="cancel" onclick="closeAuthModal()">取消</button><button class="primary" onclick="doLogin()">登录</button></div>
+      <div class="auth-tip" id="authMsg"></div>
+    </div>
+    <div id="authRegister" style="display:none">
+      <div class="field"><label>手机号</label><input id="regPhone" placeholder="请输入手机号"></div>
+      <div class="field"><label>验证码</label><div class="code-row"><input id="regCode" placeholder="请输入验证码"><button onclick="sendCode()">获取验证码</button></div></div>
+      <div class="modal-actions"><button class="cancel" onclick="closeAuthModal()">取消</button><button class="primary" onclick="doRegister()">注册</button></div>
+      <div class="auth-tip" id="authMsg2"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var bar = document.getElementById('provinceFilter');
+  var search = document.getElementById('courseSearch');
+  var cards = document.querySelectorAll('.pkg-card, .series-card');
+  var province = 'all';
+  var keyword = '';
+  function applyFilter() {
+    cards.forEach(function(card) {
+      var cp = card.getAttribute('data-province') || '';
+      var title = (card.getAttribute('data-title') || '').toLowerCase();
+      var okP = province === 'all' || cp === province;
+      var okK = !keyword || title.indexOf(keyword) > -1;
+      card.style.display = (okP && okK) ? '' : 'none';
+    });
+  }
+  if (bar) bar.addEventListener('click', function(e) {
+    var btn = e.target.closest('button[data-p]');
+    if (!btn) return;
+    bar.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    province = btn.dataset.p;
+    applyFilter();
+  });
+  if (search) search.addEventListener('input', function() {
+    keyword = search.value.trim().toLowerCase();
+    applyFilter();
+  });
+  applyFilter();
+})();
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+(function() {
+  var banner = document.getElementById('studentLiveBanner');
+  function checkLive() {
+    fetch('/api/live/courses').then(function(r) { return r.json(); }).then(function(d) {
+      var live = (d && d.live) || [];
+      if (!banner) return;
+      var liveIds = {};
+      live.forEach(function(x){ liveIds[String(x.course_id)] = x; });
+      document.querySelectorAll('.series-card').forEach(function(card) {
+        var cid = card.getAttribute('data-course');
+        var old = card.querySelector('.live-badge');
+        if (old) old.remove();
+        card.classList.remove('live');
+        if (cid && liveIds[cid]) {
+          card.classList.add('live');
+          card.setAttribute('href', '/live/student/live-watch/' + cid);
+          var badge = document.createElement('span');
+          badge.className = 'live-badge';
+          badge.textContent = '直播中';
+          badge.style.cssText = 'position:absolute;top:10px;right:10px;font-size:11px;padding:2px 8px;border-radius:6px;background:#dc2626;color:#fff;font-weight:600;';
+          card.appendChild(badge);
+        }
+      });
+      if (live.length) {
+        banner.style.display = 'flex';
+        banner.innerHTML = '';
+        var dot = document.createElement('span');
+        dot.style.cssText = 'width:8px;height:8px;border-radius:50%;background:#fff;';
+        var txt = document.createElement('span');
+        txt.textContent = '正在直播 · ' + (live[0].title || '课程') + ' → 进入课堂';
+        banner.appendChild(dot);
+        banner.appendChild(txt);
+        banner.setAttribute('href', '/live/student/live-watch/' + live[0].course_id);
+      } else {
+        banner.style.display = 'none';
+      }
+    }).catch(function() {});
+  }
+  setInterval(checkLive, 5000);
+  checkLive();
+  try {
+    var sock = io();
+    if (sock) sock.on('live:status', checkLive);
+  } catch(e) {}
+})();
+</script>
+<script>
+  function openAuthModal(){ document.getElementById('authModal').classList.add('open'); }
+  function closeAuthModal(){ document.getElementById('authModal').classList.remove('open'); }
+  function switchAuth(mode){
+    document.getElementById('authLogin').style.display = mode === 'login' ? '' : 'none';
+    document.getElementById('authRegister').style.display = mode === 'register' ? '' : 'none';
+    document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+    document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
+    document.getElementById('authMsg').textContent = '';
+    document.getElementById('authMsg2').textContent = '';
+  }
+  function sendCode(){
+    var phone = document.getElementById('regPhone').value.trim();
+    if (!phone) { alert('请输入手机号'); return; }
+    fetch('/api/auth/send-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (!d.success) { alert(d.error || '发送失败'); return; }
+      if (d.devCode) alert('开发模式验证码：' + d.devCode);
+      else alert('验证码已发送');
+    }).catch(function(){ alert('发送失败'); });
+  }
+  function doRegister(){
+    var phone = document.getElementById('regPhone').value.trim();
+    var code = document.getElementById('regCode').value.trim();
+    fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone, code: code })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (!d.success) { document.getElementById('authMsg2').textContent = d.error || '注册失败'; return; }
+      location.reload();
+    }).catch(function(){ document.getElementById('authMsg2').textContent = '注册失败'; });
+  }
+  function doLogin(){
+    var phone = document.getElementById('loginPhone').value.trim();
+    var password = document.getElementById('loginPassword').value;
+    fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone, password: password })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (!d.success) { document.getElementById('authMsg').textContent = d.error || '登录失败'; return; }
+      location.reload();
+    }).catch(function(){ document.getElementById('authMsg').textContent = '登录失败'; });
+  }
+  function logoutStudent(){
+    fetch('/api/auth/logout', { method: 'POST' }).then(function(){ location.reload(); }).catch(function(){ location.reload(); });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= course.title %> · 课程排课</title>
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<style>
+.plan-main{flex:1;padding:0 28px 60px;min-width:0}
+.plan-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.plan-head h1{font-size:20px;font-weight:800;color:#0f172a}
+.course-badge{background:#eff6ff;color:#2563eb;font-size:12px;padding:4px 12px;border-radius:12px;font-weight:600;white-space:nowrap}
+.intro{margin-bottom:20px}
+.intro h1{font-size:22px;font-weight:800;color:#0f172a;margin-bottom:6px}
+.intro p{font-size:13px;color:#64748b}
+.setup-card{background:white;border:1px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.setup-title{font-size:14px;font-weight:700;color:#0f172a;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.setup-title .num{width:22px;height:22px;background:#2563eb;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.setup-row{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:600;color:#475569}
+.field select,.field input{padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;background:white;min-width:100px;outline:none;transition:border-color .2s}
+.field select:focus,.field input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.confirm-btn{padding:9px 24px;background:#2563eb;color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
+.confirm-btn:hover{background:#1d4ed8}
+.confirm-btn.green{background:#10b981}
+.confirm-btn.green:hover{background:#059669}
+.batch-card .hint{width:100%;font-size:12px;color:#94a3b8;margin-top:4px}
+.week-days{display:flex;gap:6px;flex-wrap:wrap}
+.week-btn{padding:7px 12px;border:1px solid #cbd5e1;border-radius:7px;background:#f8fafc;color:#475569;font-size:13px;cursor:pointer;transition:all .18s;font-family:inherit}
+.week-btn:hover{border-color:#2563eb;color:#2563eb}
+.week-btn.active{background:#2563eb;border-color:#2563eb;color:#fff}
+.stages{display:flex;flex-direction:column;gap:16px;margin-bottom:24px}
+.stage-card{background:white;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.stage-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+.stage-head .name{font-size:15px;font-weight:700;color:#2563eb}
+.stage-head .hint{font-size:11px;color:#94a3b8}
+.stage-body{padding:16px 18px}
+.stage-fields{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.stage-fields .field{flex:1;min-width:130px}
+.stage-fields .field input,.stage-fields .field select{padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;width:100%}
+.lessons{display:flex;flex-wrap:wrap;gap:6px}
+.lesson-chip{position:relative;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;color:#475569;cursor:pointer;transition:all .2s;user-select:none;max-width:100%}
+.lesson-chip:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.lesson-chip.has-date{border-color:#f59e0b;color:#b45309;background:#fffbeb}
+.lesson-chip .date-tag{display:block;color:#f59e0b;font-size:11px;margin-top:3px;white-space:nowrap}
+.lesson-chip .edit-ico{font-size:10px;color:#94a3b8;margin-left:3px}
+.action-bar{position:sticky;bottom:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-top:1px solid #e2e8f0;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;z-index:40}
+.action-bar .summary{font-size:13px;color:#64748b}
+.action-bar .summary strong{color:#2563eb}
+.action-bar .save-btn{padding:10px 32px;background:#10b981;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;font-family:inherit}
+.action-bar .save-btn:hover{background:#059669}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:white;border-radius:10px;padding:24px;width:420px;max-width:92vw;box-shadow:0 24px 64px rgba(0,0,0,0.22)}
+.modal-box h3{font-size:16px;font-weight:700;margin-bottom:16px;color:#0f172a}
+.modal-box .field{margin-bottom:13px}
+.modal-box .field input,.modal-box .field select{padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;width:100%;outline:none;font-family:inherit}
+.modal-box .field input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.modal-row{display:flex;gap:12px}
+.modal-row .field{flex:1}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.modal-actions button{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.modal-actions .cancel{background:white;border:1px solid #cbd5e1;color:#64748b}
+.modal-actions .save{background:#2563eb;border:none;color:white}
+@media(max-width:760px){.plan-main{padding:0 14px 60px}.action-bar{padding:12px 14px}}
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %>
+<div class="teacher-main">
+<%- include('partials/header') %>
+<div class="plan-main">
+  <div class="plan-head">
+    <h1>课程规划</h1>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="/admin/courses-manage/<%= course.id %>/scheduler" class="btn btn-primary">新版排课</a>
+      <span class="course-badge"><%= course.title %> · <%= course.year||'' %> <%= course.province||'' %></span>
+    </div>
+  </div>
+  <div class="intro">
+    <h1>课程规划</h1>
+    <p>设置课程阶段自动生成课表；支持按周批量排课；点击课时可编辑名称、日期、时间和视频地址。</p>
+  </div>
+
+  <div class="setup-card">
+    <div class="setup-title"><span class="num">1</span>设置课程阶段</div>
+    <div class="setup-row">
+      <div class="field"><label>阶段数量</label>
+        <select id="stageCount" onchange="buildStages()">
+          <option value="1">1 个阶段</option>
+          <option value="2" selected>2 个阶段</option>
+          <option value="3">3 个阶段</option>
+          <option value="4">4 个阶段</option>
+          <option value="5">5 个阶段</option>
+          <option value="6">6 个阶段</option>
+        </select>
+      </div>
+      <button type="button" class="confirm-btn" onclick="buildStages()">生成阶段</button>
+    </div>
+  </div>
+
+  <div class="setup-card batch-card">
+    <div class="setup-title"><span class="num">2</span>批量排课</div>
+    <div class="setup-row">
+      <div class="field"><label>开课日期</label><input type="date" id="batchDate"></div>
+      <div class="field"><label>上课时间</label><input type="time" id="batchTime" value="19:30"></div>
+      <div class="field"><label>每周上课</label>
+        <div class="week-days" id="weekDays">
+          <button type="button" class="week-btn" data-wd="1">周一</button>
+          <button type="button" class="week-btn" data-wd="2">周二</button>
+          <button type="button" class="week-btn" data-wd="3">周三</button>
+          <button type="button" class="week-btn" data-wd="4">周四</button>
+          <button type="button" class="week-btn" data-wd="5">周五</button>
+          <button type="button" class="week-btn" data-wd="6">周六</button>
+          <button type="button" class="week-btn" data-wd="0">周日</button>
+        </div>
+      </div>
+      <button type="button" class="confirm-btn green" onclick="batchSchedule()">应用到全部课次</button>
+    </div>
+    <p class="hint">按课次顺序自动填充全部上课日期，未排日期的课次仍可单独编辑。</p>
+  </div>
+
+  <div id="stageArea" class="stages"></div>
+
+  <div class="action-bar">
+    <div class="summary" id="summaryText">共 <strong>0</strong> 节课</div>
+    <form method="POST" action="/admin/courses-manage/<%= course.id %>/plan" id="planForm">
+      <input type="hidden" name="stage_data" id="stageData">
+      <button type="submit" class="save-btn">保存排课</button>
+    </form>
+  </div>
+</div>
+</div>
+
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <h3>编辑课时</h3>
+    <div class="field"><label>课程名称</label><input id="editName" placeholder="如: 函数极限"></div>
+    <div class="modal-row">
+      <div class="field"><label>上课日期</label><input type="date" id="editDate"></div>
+      <div class="field"><label>上课时间</label><input type="time" id="editTime" value="19:30"></div>
+    </div>
+    <div class="field"><label>视频地址</label><input id="editVideo" placeholder="https://... 云点播或录制回放地址"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal()">取消</button>
+      <button class="save" onclick="saveLesson()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var savedLessons=<%- JSON.stringify((lessons||[]).map(function(l){return {id:l.id,title:l.title,time:l.schedule_time||'',video:l.video_url||'',stage:l.stage||'',duration:l.duration||0};})) %>;
+var stageLabels=['第一阶段','第二阶段','第三阶段','第四阶段','第五阶段','第六阶段'];
+var stageNames=['基础','强化','冲刺','突破','实战','模拟'];
+var editBox=null;
+var stagesBuilt=false;
+var savedStages=[];
+(function(){
+  var last=null;
+  savedLessons.forEach(function(l){
+    if(!last || last.name!==l.stage){
+      last={name:l.stage||'基础',count:0,duration:Math.round(l.duration/60)||120};
+      savedStages.push(last);
+    }
+    last.count++;
+  });
+})();
+
+function pad(n){return (n<10?'0':'')+n;}
+function fmtCN(v){
+  if(!v) return '';
+  var m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?/);
+  if(!m) return v;
+  var s=(parseInt(m[4])>0?' '+m[4]+':'+m[5]:'');
+  return parseInt(m[1])+'年'+parseInt(m[2])+'月'+parseInt(m[3])+'日'+s;
+}
+function splitTime(v){
+  var m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?/);
+  if(!m) return {date:'',time:'19:30'};
+  return {date:m[1]+'-'+m[2]+'-'+m[3],time:(m[4]?m[4]+':'+m[5]:'19:30')};
+}
+
+function buildStages(){
+  var n=parseInt(document.getElementById('stageCount').value)||1;
+  var area=document.getElementById('stageArea');
+  if(area.children.length===n && stagesBuilt){refreshLessons();return;}
+  area.innerHTML='';
+  for(var i=0;i<n;i++){
+    var card=document.createElement('div');
+    card.className='stage-card';
+    card.innerHTML='<div class="stage-head"><span class="name">'+stageLabels[i]+'</span><span class="hint">填写阶段名称、课次、每次课分钟</span></div><div class="stage-body"><div class="stage-fields"><div class="field"><label>阶段名称</label><input id="sn_'+i+'" placeholder="如: 基础" value="'+stageNames[i]+'" oninput="refreshLessons()"></div><div class="field"><label>课次</label><input id="sc_'+i+'" type="number" placeholder="30" value="30" min="1" max="30" oninput="refreshLessons()"></div><div class="field"><label>每次课(分钟)</label><select id="sd_'+i+'" onchange="refreshLessons()"><option value="30">30分钟</option><option value="45">45分钟</option><option value="60" selected>60分钟</option><option value="90">90分钟</option><option value="120">120分钟</option></select></div></div><div class="lessons" id="ls_'+i+'"></div></div>';
+    area.appendChild(card);
+  }
+  savedStages.forEach(function(st,i){
+    if(i>=n)return;
+    var sn=document.getElementById('sn_'+i);if(sn)sn.value=st.name||'基础';
+    var sc=document.getElementById('sc_'+i);if(sc)sc.value=Math.min(30,st.count||30);
+    var sd=document.getElementById('sd_'+i);if(sd){var dur=Math.min(120,Math.max(30,st.duration||120));if([30,45,60,90,120].indexOf(dur)===-1)dur=120;sd.value=dur;}
+  });
+  stagesBuilt=true;
+  refreshLessons();
+}
+
+function refreshLessons(){
+  var n=parseInt(document.getElementById('stageCount').value)||1;
+  var idx=1;
+  var total=0;
+  for(var i=0;i<n;i++){
+    var ls=document.getElementById('ls_'+i);if(!ls)continue;
+    var sc=document.getElementById('sc_'+i);
+    var cnt=parseInt(sc?sc.value:0)||0;
+    total+=cnt;
+    ls.innerHTML='';
+    for(var j=0;j<cnt;j++){
+      (function(lessonNum){
+        var saved=savedLessons[idx-1]||{};
+        var chip=document.createElement('div');
+        chip.className='lesson-chip';
+        chip.dataset.id=saved.id||'';
+        chip.dataset.video=saved.video||'';
+        chip.dataset.time=saved.time||'';
+        var chipTitle=saved.title||('第'+lessonNum+'讲');
+        var inner='<span class="chip-title">'+chipTitle+'</span>';
+        if(saved.time) inner+='<span class="date-tag">'+fmtCN(saved.time)+'</span>';
+        inner+=' <span class="edit-ico">编辑</span>';
+        chip.innerHTML=inner;
+        if(saved.time) chip.classList.add('has-date');
+        chip.onclick=function(){openEdit(chip,lessonNum);};
+        ls.appendChild(chip);
+      })(idx);
+      idx++;
+    }
+  }
+  document.getElementById('summaryText').innerHTML='共 <strong>'+total+'</strong> 节课';
+}
+
+function openEdit(chip,num){
+  editBox=chip;
+  var nameEl=chip.querySelector('.chip-title');
+  var name=nameEl?nameEl.textContent.trim():'第'+num+'讲';
+  document.getElementById('editName').value=name;
+  var st=splitTime(chip.dataset.time||'');
+  document.getElementById('editDate').value=st.date||'';
+  document.getElementById('editTime').value=st.time||'';
+  document.getElementById('editVideo').value=chip.dataset.video||'';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function saveLesson(){
+  if(!editBox)return;
+  var name=document.getElementById('editName').value;
+  var date=document.getElementById('editDate').value;
+  var time=document.getElementById('editTime').value;
+  var video=document.getElementById('editVideo').value.trim();
+  var timeStr=date ? date+(time?' '+time:'') : '';
+  editBox.dataset.time=timeStr;
+  editBox.dataset.video=video;
+  editBox.innerHTML='<span class="chip-title">'+name+'</span>';
+  if(timeStr){
+    var tag=document.createElement('span');
+    tag.className='date-tag';
+    tag.textContent=fmtCN(timeStr);
+    editBox.appendChild(tag);
+    editBox.classList.add('has-date');
+  }else{
+    editBox.classList.remove('has-date');
+  }
+  editBox.innerHTML+=' <span class="edit-ico">编辑</span>';
+  closeModal();
+}
+
+function closeModal(){
+  document.getElementById('editModal').classList.remove('open');
+}
+
+document.getElementById('weekDays').addEventListener('click',function(e){
+  var btn=e.target.closest('.week-btn');
+  if(!btn)return;
+  btn.classList.toggle('active');
+});
+
+function batchSchedule(){
+  var startDate=document.getElementById('batchDate').value;
+  var time=document.getElementById('batchTime').value||'19:30';
+  if(!startDate){
+    alert('请先选择开课日期');
+    return;
+  }
+  var days=[];
+  document.querySelectorAll('#weekDays .week-btn.active').forEach(function(b){
+    days.push(parseInt(b.getAttribute('data-wd')));
+  });
+  if(!days.length){
+    alert('请至少选择一个每周上课星期');
+    return;
+  }
+  var chips=document.querySelectorAll('.lesson-chip');
+  if(!chips.length){
+    alert('请先生成课程阶段');
+    return;
+  }
+  var d=new Date(startDate+'T00:00:00');
+  var idx=0;
+  var guard=0;
+  while(idx<chips.length && guard<6000){
+    var wd=d.getDay();
+    if(days.indexOf(wd)>-1){
+      chips[idx].dataset.time=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+time;
+      idx++;
+    }
+    d.setDate(d.getDate()+1);
+    guard++;
+  }
+  refreshLessons();
+}
+
+document.getElementById('planForm').addEventListener('submit',function(e){
+  var n=parseInt(document.getElementById('stageCount').value)||1;
+  var stages=[];
+  var total=0;
+  for(var i=0;i<n;i++){
+    var sn=document.getElementById('sn_'+i);
+    var sc=document.getElementById('sc_'+i);
+    var sd=document.getElementById('sd_'+i);
+    if(!sn||!sc)continue;
+    var cnt=parseInt(sc.value)||0;
+    total+=cnt;
+    var lessons=[];
+    var chips=document.querySelectorAll('#ls_'+i+' .lesson-chip');
+    chips.forEach(function(chip){
+      var nameEl=chip.querySelector('.chip-title');
+      lessons.push({id:chip.dataset.id||'',name:nameEl?nameEl.textContent.trim():'',time:chip.dataset.time||'',video:chip.dataset.video||''});
+    });
+    stages.push({name:sn.value.trim()||('阶段'+(i+1)),count:cnt,duration:(parseInt(sd.value)||120)*60,lessons:lessons});
+  }
+  if(!total){
+    e.preventDefault();
+    alert('请至少填写一个课次');
+    return;
+  }
+  document.getElementById('stageData').value=JSON.stringify(stages);
+});
+
+(function(){
+  var nd=new Date();
+  function setv(id,v){ var el=document.getElementById(id); if(el) el.value=v; }
+  setv('batchDate',nd.getFullYear()+'-'+pad(nd.getMonth()+1)+'-'+pad(nd.getDate()));
+  setv('batchTime','19:30');
+})();
+
+setTimeout(buildStages,100);
+</script>
+</body>
+</html>

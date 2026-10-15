@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<style>
+.item-card{background:#fbfcfe;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;margin-bottom:10px}
+.item-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.item-index{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:6px;background:linear-gradient(180deg,#2563eb,#4f46e5);color:#fff;font-size:11px;font-weight:700}
+.item-title{font-size:13px;font-weight:700;color:#0f172a}
+.item-actions{display:flex;gap:6px;margin-left:auto;flex-shrink:0}
+.row-move{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:1px solid #d9dee7;background:linear-gradient(180deg,#ffffff,#f4f6f8);color:#111827;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;line-height:1;box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9)}
+.row-move:hover{background:linear-gradient(180deg,#f8fafc,#e9edf2);border-color:#c3cad4;color:#000000;transform:translateY(-1px)}
+.row-move:disabled{opacity:.38;cursor:not-allowed;transform:none}
+.row-del{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:1px solid #fecaca;background:linear-gradient(180deg,#ffffff,#fef2f2);color:#dc2626;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(220,38,38,.06), inset 0 1px 0 rgba(255,255,255,.9)}
+.row-del:hover{background:linear-gradient(180deg,#fff7f7,#fee2e2);border-color:#fca5a5;color:#b91c1c;transform:translateY(-1px)}
+.add-row{display:flex;justify-content:flex-end;margin-top:6px}
+.add-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;background:linear-gradient(180deg,#ffffff,#f4f6f8);color:#111827;border:1px solid #d9dee7;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9)}
+.add-btn:hover{background:linear-gradient(180deg,#f8fafc,#e9edf2);border-color:#c3cad4;color:#000000;transform:translateY(-1px)}
+.item-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.item-fields .field{display:flex;align-items:center;gap:6px;min-width:0}
+.item-fields .field span{flex-shrink:0;font-size:11px;font-weight:600;color:#475569;white-space:nowrap}
+.item-fields input{flex:1;min-width:0;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;background:#fff;font-family:inherit;outline:none}
+@media(max-width:640px){.item-fields{grid-template-columns:1fr}}
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<div class="course-detail-header">
+<h2><%= lg ? '编辑发货单' : '新建发货单' %></h2>
+</div>
+<% if (typeof error !== 'undefined' && error) { %><div style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:14px"><%= error %></div><% } %>
+<form method="POST" action="/admin/logistics-manage/<%= lg ? lg.id : 'create' %>">
+<div class="form-card"><h3>收货信息</h3>
+<div class="form-grid">
+<div class="form-group"><label>收件人</label><input name="recipient_name" value="<%= lg ? lg.recipient_name : '' %>" required></div>
+<div class="form-group"><label>收件人电话</label><input name="recipient_phone" value="<%= lg ? lg.recipient_phone : '' %>" required></div>
+<div class="form-group full-width"><label>收件地址</label><input name="recipient_address" value="<%= lg ? lg.recipient_address : '' %>" required></div>
+</div></div>
+
+<div class="form-card"><h3>发货信息</h3>
+<div class="form-grid">
+<div class="form-group"><label>发货类型</label><select name="type">
+<option value="material" <%= lg&&lg.type==='material'?'selected':'' %>>讲义资料</option>
+<option value="book" <%= lg&&lg.type==='book'?'selected':'' %>>教材</option>
+<option value="certificate" <%= lg&&lg.type==='certificate'?'selected':'' %>>证书</option>
+<option value="other" <%= lg&&lg.type==='other'?'selected':'' %>>其他</option>
+</select></div>
+<div class="form-group"><label>关联学员</label>
+<select name="student_id"><option value="">不关联</option>
+<% students.forEach(s => { %><option value="<%= s.id %>" <%= lg&&lg.student_id==s.id?'selected':'' %>><%= s.name %></option><% }) %>
+</select></div>
+<div class="form-group"><label>关联课程</label>
+<select name="course_id"><option value="">不关联</option>
+<% courses.forEach(c => { %><option value="<%= c.id %>" <%= lg&&lg.course_id==c.id?'selected':'' %>><%= c.title %></option><% }) %>
+</select></div>
+<div class="form-group"><label>快递公司</label><input name="carrier" value="<%= lg ? lg.carrier : '' %>" placeholder="如：顺丰速运"></div>
+<div class="form-group"><label>运单号</label><input name="tracking_no" value="<%= lg ? lg.tracking_no : '' %>"></div>
+<div class="form-group full-width"><label>备注</label><textarea name="remark"><%= lg ? lg.remark : '' %></textarea></div>
+</div></div>
+
+<div class="form-card"><h3>物品清单</h3>
+<div id="itemsContainer">
+<% if (lg && items) { items.forEach((item, idx) => { %>
+<div class="item-card">
+  <div class="item-head">
+    <span class="item-index"><%= idx + 1 %></span>
+    <span class="item-title">物品 <%= idx + 1 %></span>
+    <div class="item-actions">
+      <button type="button" class="row-move" title="上移" onclick="moveItem(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
+      <button type="button" class="row-move" title="下移" onclick="moveItem(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>
+      <button type="button" class="row-del" title="删除" onclick="this.closest('.item-card').remove(); refreshItemIndexes()">×</button>
+    </div>
+  </div>
+  <div class="item-fields">
+    <label class="field"><span>物品名称</span><input name="item_name[]" value="<%= item.name %>" required></label>
+    <label class="field"><span>数量</span><input name="item_qty[]" type="number" value="<%= item.quantity %>" min="1"></label>
+    <label class="field"><span>单位</span><input name="item_unit[]" value="<%= item.unit %>"></label>
+  </div>
+</div>
+<% }) } else { %>
+<div class="item-card">
+  <div class="item-head">
+    <span class="item-index">1</span>
+    <span class="item-title">物品 1</span>
+    <div class="item-actions">
+      <button type="button" class="row-move" title="上移" onclick="moveItem(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
+      <button type="button" class="row-move" title="下移" onclick="moveItem(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>
+      <button type="button" class="row-del" title="删除" onclick="this.closest('.item-card').remove(); refreshItemIndexes()">×</button>
+    </div>
+  </div>
+  <div class="item-fields">
+    <label class="field"><span>物品名称</span><input name="item_name[]" required></label>
+    <label class="field"><span>数量</span><input name="item_qty[]" type="number" value="1" min="1"></label>
+    <label class="field"><span>单位</span><input name="item_unit[]" value="份"></label>
+  </div>
+</div>
+<% } %>
+</div>
+<div class="add-row"><button type="button" class="add-btn" onclick="addItem()">+</button></div>
+</div>
+
+<div class="form-actions">
+<a href="/admin/logistics-manage" class="btn btn-outline">取消</a>
+<button type="submit" class="btn btn-primary">保存</button>
+</div>
+</form>
+</div></div>
+<script>
+document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});
+function itemCardHtml(){
+  var idx=document.querySelectorAll('#itemsContainer .item-card').length+1;
+  return '<div class="item-card"><div class="item-head"><span class="item-index">'+idx+'</span><span class="item-title">物品 '+idx+'</span><div class="item-actions"><button type="button" class="row-move" title="上移" onclick="moveItem(this,-1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button><button type="button" class="row-move" title="下移" onclick="moveItem(this,1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button><button type="button" class="row-del" title="删除" onclick="this.closest(\'.item-card\').remove(); refreshItemIndexes()">×</button></div></div><div class="item-fields"><label class="field"><span>物品名称</span><input name="item_name[]" required></label><label class="field"><span>数量</span><input name="item_qty[]" type="number" value="1" min="1"></label><label class="field"><span>单位</span><input name="item_unit[]" value="份"></label></div></div>';
+}
+function addItem(){
+  document.getElementById('itemsContainer').insertAdjacentHTML('beforeend',itemCardHtml());
+  refreshItemIndexes();
+}
+function moveItem(btn,dir){
+  var card=btn.closest('.item-card');
+  var box=card.parentElement;
+  var cards=Array.prototype.filter.call(box.children,function(el){return el.classList.contains('item-card');});
+  var idx=cards.indexOf(card);
+  var target=idx+dir;
+  if(target<0||target>=cards.length) return;
+  box.insertBefore(card,target>idx?cards[target+1]:cards[target]);
+  refreshItemIndexes();
+}
+function refreshItemIndexes(){
+  var cards=document.querySelectorAll('#itemsContainer .item-card');
+  cards.forEach(function(card,i){
+    var idx=card.querySelector('.item-index'); if(idx) idx.textContent=i+1;
+    var title=card.querySelector('.item-title'); if(title) title.textContent='物品 '+(i+1);
+    var ups=card.querySelectorAll('.row-move');
+    if(ups.length>=2){
+      ups[0].disabled=(i===0);
+      ups[1].disabled=(i===cards.length-1);
+    }
+  });
+}
+</script>
+</body></html>

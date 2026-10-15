@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    .status-live{color:#16a34a;font-weight:700}
+    .status-off{color:#94a3b8}
+    .code-box{font-family:Menlo,Consolas,monospace;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;padding:3px 6px;word-break:break-all}
+    .code-wrap{display:inline-flex;align-items:center;gap:4px;max-width:210px;min-width:0}
+    .code-wrap .code-box{flex:1;min-width:0;max-width:178px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .code-link{flex:1;min-width:0;max-width:178px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#2563eb;text-decoration:none;font-size:12px}
+    .code-link:hover{text-decoration:underline}
+    .copy-btn{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;padding:0;border:1px solid #d9dee7;background:#fff;color:#475569;border-radius:5px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+    .copy-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+    .copy-btn.copied{color:#16a34a;border-color:#bbf7d0;background:#f0fdf4}
+    .table-wrap{overflow-x:auto}
+    .table-wrap table{width:auto;min-width:100%;border-collapse:collapse}
+    .table-wrap th,.table-wrap td{white-space:nowrap}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:300;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#fff;border-radius:10px;padding:22px;width:560px;max-width:94vw;box-shadow:0 24px 64px rgba(0,0,0,.22);box-sizing:border-box;max-height:92vh;overflow-y:auto}
+    .modal-box h3{margin:0 0 14px;font-size:15px;font-weight:700;color:#0f172a}
+    .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .modal-field{display:flex;flex-direction:column;gap:4px}
+    .modal-field.full{grid-column:1/-1}
+    .modal-field label{font-size:12px;font-weight:600;color:#475569}
+    .modal-field input,.modal-field select{width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit}
+    .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+    .modal-actions button{height:32px;padding:0 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+    .modal-actions .cancel{background:#fff;border:1px solid #cbd5e1;color:#64748b}
+    .modal-actions .primary{background:#2563eb;border:none;color:#fff}
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <div class="stats">
+        <div class="stat"><span class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span><div class="stat-info"><strong><%= streams.length %></strong><span>直播配置</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></span><div class="stat-info"><strong><%= streams.filter(function(s){return s.status==='live';}).length %></strong><span>直播中</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><div class="stat-info"><strong><%= (replays || []).length %></strong><span>回放</span></div></div>
+      </div>
+
+      <div class="list-header">
+        <h2>直播列表</h2>
+        <div class="list-tools">
+          <form method="GET" action="/admin/live-manage" class="toolbar-form" data-client-filter="1">
+            <input name="q" id="liveSearch" value="<%= q || '' %>" placeholder="搜索课程/流名称/拉流地址" class="toolbar-input" style="min-width:220px">
+          </form>
+          <button type="button" class="btn-primary--sm" onclick="openLiveModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            添加直播配置
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>课程</th><th>流名称</th><th>推流服务器</th><th>推流码</th><th>拉流地址</th><th>授课地址</th><th>看课地址</th><th>状态</th><th>操作</th></tr>
+          </thead>
+          <tbody id="liveStreamsTbody">
+            <% if (streams.length === 0) { %>
+              <tr><td colspan="9" class="empty">暂无直播配置</td></tr>
+            <% } %>
+            <% streams.forEach(s => { %>
+            <tr>
+              <td><%= s.course_title || ('课程 #' + s.course_id) %></td>
+              <td><span class="code-wrap"><span class="code-box"><%= s.stream_name || '-' %></span><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><span class="code-wrap"><span class="code-box"><%= s.push_server || '-' %></span><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><span class="code-wrap"><span class="code-box"><%= s.stream_key || '-' %></span><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><span class="code-wrap"><% if (s.play_url) { %><a class="code-link" href="<%= signMediaUrl(s.play_url) %>" target="_blank" rel="noopener"><%= signMediaUrl(s.play_url) %></a><% } else { %><span class="code-box">-</span><% } %><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><span class="code-wrap"><a class="code-link" href="/teach/live/<%= s.course_id %>" target="_blank" rel="noopener">https://chengze.online/teach/live/<%= s.course_id %></a><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><span class="code-wrap"><a class="code-link" href="/live/student/live-watch/<%= s.course_id %>" target="_blank" rel="noopener">https://chengze.online/live/student/live-watch/<%= s.course_id %></a><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><span class="<%= s.status === 'live' ? 'status-live' : 'status-off' %>"><%= s.status === 'live' ? '● 直播中' : '未直播' %></span></td>
+              <td>
+                <button type="button" class="btn-table" onclick="openLiveModal(<%= s.id %>)">编辑</button>
+                <form method="POST" action="/admin/live-manage/<%= s.id %>/delete" style="display:inline" onsubmit="return confirm('确认删除该直播配置？')">
+                  <button type="submit" class="btn-table btn-table-danger">删除</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var input=document.getElementById('liveSearch'), t;
+      if(!input) return;
+      input.addEventListener('input',function(){
+        clearTimeout(t);
+        t=setTimeout(function(){
+          var kw=input.value.trim().toLowerCase();
+          document.querySelectorAll('#liveStreamsTbody tr').forEach(function(tr){
+            tr.style.display=tr.textContent.toLowerCase().indexOf(kw)>-1 ? '' : 'none';
+          });
+        },200);
+      });
+    })();
+    ['menuToggle','sidebarToggle'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open');});
+    });
+    function copyText(btn, txt){
+      function done(){ btn.classList.add('copied'); var t=btn.getAttribute('title'); btn.setAttribute('title','已复制'); setTimeout(function(){ btn.classList.remove('copied'); btn.setAttribute('title',t); },1200); }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(done).catch(function(){ fallbackCopy(txt, done); });
+      } else { fallbackCopy(txt, done); }
+    }
+    function fallbackCopy(txt, done){
+      var ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} ta.remove();
+    }
+  </script>
+
+  <div class="modal-overlay" id="liveModal">
+    <div class="modal-box">
+      <h3 id="liveModalTitle">添加直播配置</h3>
+      <div class="modal-grid">
+        <div class="modal-field full">
+          <label>选择课程</label>
+          <select id="lmCourse">
+            <option value="">请选择课程</option>
+            <% (courses || []).forEach(c => { %><option value="<%= c.id %>"><%= c.title %></option><% }) %>
+          </select>
+        </div>
+        <div class="modal-field full"><label>流名称</label><input id="lmName" placeholder="如 cz49_6381"></div>
+        <div class="modal-field full"><label>推流服务器</label><input id="lmPush" placeholder="rtmp://push.chengze.online/live/"></div>
+        <div class="modal-field full"><label>推流码</label><input id="lmKey" placeholder="流名称?txSecret=xxx&txTime=xxx"></div>
+        <div class="modal-field full"><label>播放地址</label><input id="lmPlay" placeholder="https://play.chengze.online/live/xxx.flv"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="cancel" onclick="closeLiveModal()">取消</button>
+        <button type="button" class="primary" id="lmAutoBtn" onclick="autoGenLive()">一键生成</button>
+        <button type="button" class="primary" onclick="saveLive()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var _liveStreams = <%- JSON.stringify(streams || []) %>;
+    var _editLiveId = 0;
+    function openLiveModal(id) {
+      _editLiveId = id || 0;
+      document.getElementById('lmCourse').value = '';
+      document.getElementById('lmName').value = '';
+      document.getElementById('lmPush').value = '';
+      document.getElementById('lmKey').value = '';
+      document.getElementById('lmPlay').value = '';
+      var autoBtn = document.getElementById('lmAutoBtn');
+      if (_editLiveId) {
+        var s = null;
+        for (var i = 0; i < _liveStreams.length; i++) { if (String(_liveStreams[i].id) === String(_editLiveId)) { s = _liveStreams[i]; break; } }
+        if (!s) return;
+        document.getElementById('lmCourse').value = s.course_id;
+        document.getElementById('lmName').value = s.stream_name || '';
+        document.getElementById('lmPush').value = s.push_server || '';
+        document.getElementById('lmKey').value = s.stream_key || '';
+        document.getElementById('lmPlay').value = s.play_url || '';
+        document.getElementById('liveModalTitle').textContent = '编辑直播配置';
+        autoBtn.style.display = 'none';
+      } else {
+        document.getElementById('liveModalTitle').textContent = '添加直播配置';
+        autoBtn.style.display = '';
+      }
+      document.getElementById('liveModal').classList.add('open');
+    }
+    function closeLiveModal() {
+      document.getElementById('liveModal').classList.remove('open');
+    }
+    function saveLive() {
+      var fd = new FormData();
+      fd.append('course_id', document.getElementById('lmCourse').value);
+      fd.append('stream_name', document.getElementById('lmName').value.trim());
+      fd.append('push_server', document.getElementById('lmPush').value.trim());
+      fd.append('stream_key', document.getElementById('lmKey').value.trim());
+      fd.append('play_url', document.getElementById('lmPlay').value.trim());
+      if (!fd.get('course_id')) { alert('请选择课程'); return; }
+      fetch('/admin/live-manage/save', { method: 'POST', body: fd })
+        .then(function() { location.reload(); })
+        .catch(function() { alert('保存失败'); });
+    }
+    function autoGenLive() {
+      var courseId = document.getElementById('lmCourse').value;
+      if (!courseId) { alert('请选择课程'); return; }
+      var fd = new FormData();
+      fd.append('course_id', courseId);
+      fetch('/admin/live-manage/autogen', { method: 'POST', body: fd })
+        .then(function() { location.reload(); })
+        .catch(function() { alert('生成失败'); });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#f4f6fb; font-family:'Noto Sans SC','PingFang SC',sans-serif; color:#0f172a; min-height:100vh; }
+  .container { max-width:860px; margin:0 auto; padding:28px 22px 60px; }
+  .back { display:inline-block; margin-bottom:16px; color:#64748b; text-decoration:none; font-size:13px; }
+  .back:hover { color:#2563eb; }
+  .hd { margin-bottom:24px; }
+  .hd h1 { font-size:24px; font-weight:800; margin-bottom:6px; }
+  .hd p { color:#64748b; font-size:14px; }
+  .exam-time { display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #dbeafe; border-radius:10px; padding:14px 18px; margin-bottom:24px; }
+  .exam-time .et-label { font-size:13px; color:#2563eb; font-weight:700; }
+  .exam-time .et-value { font-size:16px; font-weight:800; color:#1e40af; }
+  .section { margin-bottom:28px; }
+  .section h3 { font-size:15px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .section h3::before { content:""; width:4px; height:16px; border-radius:2px; background:#2563eb; }
+  .subs { display:flex; gap:8px; flex-wrap:wrap; }
+  .sub { background:#eff6ff; color:#2563eb; padding:7px 14px; border-radius:20px; font-size:13px; font-weight:600; border:1px solid #dbeafe; }
+  .docs { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
+  .doc { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 16px; text-decoration:none; color:inherit; transition:box-shadow .2s, transform .2s; }
+  .doc:hover { box-shadow:0 8px 20px rgba(15,23,42,.08); transform:translateY(-2px); }
+  .doc .doc-name { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .doc .doc-type { font-size:12px; color:#94a3b8; }
+  .doc .doc-type b { color:#2563eb; font-weight:600; }
+  .timeline { position:relative; padding-left:20px; }
+  .timeline::before { content:""; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:#e2e8f0; }
+  .tl-item { position:relative; margin-bottom:16px; }
+  .tl-item::before { content:""; position:absolute; left:-20px; top:5px; width:10px; height:10px; border-radius:50%; background:#2563eb; border:2px solid #fff; box-shadow:0 0 0 2px #dbeafe; }
+  .tl-month { font-size:12px; font-weight:700; color:#2563eb; }
+  .tl-event { font-size:14px; font-weight:600; color:#0f172a; margin:2px 0; }
+  .tl-desc { font-size:13px; color:#64748b; line-height:1.6; }
+  .empty { text-align:center; padding:34px 20px; color:#94a3b8; background:#fff; border:1px dashed #e2e8f0; border-radius:8px; }
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+<div class="container">
+  <a href="/live/student" class="back">&larr; 返回课程中心</a>
+  <div class="hd">
+    <h1><%= prov.name %>专升本</h1>
+    <p>考试科目、备考资料与考试日程</p>
+  </div>
+
+  <% if (examSchedule && examSchedule.length) { %>
+  <div class="exam-time" style="flex-wrap:wrap">
+    <% examSchedule.forEach(x => { %>
+    <span style="display:inline-flex;gap:8px;align-items:center;background:#fff;border:1px solid #dbeafe;border-radius:8px;padding:8px 12px">
+      <span class="et-label"><%= x.year %>年考试日期</span>
+      <span class="et-value" style="font-size:14px"><%= x.exam_time||'待定' %></span>
+    </span>
+    <% }) %>
+  </div>
+  <% } else if (prov.exam_time) { %>
+  <div class="exam-time">
+    <span class="et-label">考试日期</span>
+    <span class="et-value"><%= prov.exam_time %></span>
+  </div>
+  <% } %>
+
+  <% if (docs && docs.length > 0) { %>
+  <div class="section">
+    <h3>官方文件</h3>
+    <div class="docs">
+      <% docs.forEach(d => { %>
+      <a href="<%= d.url||'#' %>" target="_blank" class="doc"><div class="doc-name"><%= d.title %></div><div class="doc-type"><b>文件</b> · 点击查看</div></a>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="section">
+    <h3>考试科目</h3>
+    <% if (categories && categories.length && subjectRows && subjectRows.length) { %>
+      <% var publicSubs = subjectRows.filter(function(s){ return s.type === '公共课'; }); %>
+      <% if (publicSubs.length) { %>
+      <div style="font-size:12px;font-weight:700;color:#475569;margin:8px 0 6px">公共课（所有专科专业）</div>
+      <div class="subs"><% publicSubs.forEach(s => { %><span class="sub"><%= s.name %></span><% }) %></div>
+      <% } %>
+      <% categories.filter(function(c){ return c.kind === 'junior'; }).forEach(c => { %>
+        <% var catSubs = subjectRows.filter(function(s){ return s.type === '专业课' && c.subject_ids.indexOf(Number(s.id)) > -1; }); %>
+        <div style="font-size:12px;font-weight:700;color:#475569;margin:10px 0 6px"><%= c.name %></div>
+        <div class="subs">
+          <% if (catSubs.length) { catSubs.forEach(s => { %><span class="sub" style="background:#f0f9ff;color:#0369a1;border-color:#bae6fd"><%= s.name %></span><% }) } else { %>
+          <span class="empty" style="width:100%">暂未配置专业课</span>
+          <% } %>
+        </div>
+      <% }) %>
+    <% } else { %>
+    <div class="subs">
+      <% if ((subjectRows && subjectRows.length) || subjects.length) { %>
+        <% (subjectRows && subjectRows.length ? subjectRows : subjects).forEach(s => { %>
+        <span class="sub"><%= s.name || s %><% if (s.type) { %> · <%= s.type %><% } %></span>
+        <% }) %>
+      <% } else { %>
+        <span class="empty" style="width:100%">科目信息整理中</span>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+
+  <% if (categories && categories.length) { %>
+  <div class="section">
+    <h3>专科专业</h3>
+    <div class="subs">
+      <% categories.filter(function(c){ return c.kind === 'junior'; }).forEach(c => { %>
+      <span class="sub" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0">
+        <%= c.name %><% if (c.majors && c.majors.length) { %>：<%= c.majors.join('、') %><% } %><% if (c.link_category_name) { %> → <%= c.link_category_name %><% } %>
+      </span>
+      <% }) %>
+    </div>
+  </div>
+  <div class="section">
+    <h3>本科专业</h3>
+    <div class="subs">
+      <% categories.filter(function(c){ return c.kind === 'undergrad'; }).forEach(c => { %>
+      <span class="sub"><%= c.name %><% if (c.majors && c.majors.length) { %>：<%= c.majors.join('、') %><% } %></span>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="section">
+    <h3>备考资料</h3>
+    <div class="docs">
+      <% if (prov.outline_file) { %>
+      <a href="<%= prov.outline_file %>" target="_blank" class="doc"><div class="doc-name">考试大纲</div><div class="doc-type"><b>PDF</b> · 点击查看或下载</div></a>
+      <% } %>
+      <% if (prov.papers_file) { %>
+      <a href="<%= prov.papers_file %>" target="_blank" class="doc"><div class="doc-name">历年真题</div><div class="doc-type"><b>PDF</b> · 点击查看或下载</div></a>
+      <% } %>
+      <% if (!prov.outline_file && !prov.papers_file) { %>
+      <div class="empty" style="grid-column:1/-1">资料正在整理中</div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>考试日程</h3>
+    <% if (!scheduleRows || scheduleRows.length === 0) { %>
+    <div class="empty">日程信息整理中</div>
+    <% } else { %>
+    <div class="timeline">
+      <% scheduleRows.forEach(s => { %>
+      <div class="tl-item">
+        <div class="tl-month"><%= s.month||'' %></div>
+        <div class="tl-event"><%= s.event||'' %></div>
+        <% if (s.date) { %><div class="tl-desc" style="color:#2563eb;font-weight:600"><%= s.date %></div><% } %>
+        <% if (s.desc) { %><div class="tl-desc"><%= s.desc %></div><% } %>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+
+  <% if ((juniorList && juniorList.length) || (undergradList && undergradList.length)) { %>
+  <div class="section">
+    <h3>院校信息</h3>
+    <div class="subs">
+      <% (juniorList||[]).forEach(n => { %><span class="sub" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0"><%= n %></span><% }) %>
+      <% (undergradList||[]).forEach(n => { %><span class="sub"><%= n %></span><% }) %>
+    </div>
+  </div>
+  <% } %>
+
+  <% if (admissionRows && admissionRows.length > 0) { %>
+  <div class="section">
+    <h3>录取情况 / 投档线</h3>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#f8fafc;color:#475569;text-align:left">
+          <th style="padding:10px 14px">年份</th><th style="padding:10px 14px">院校</th><th style="padding:10px 14px">专业</th><th style="padding:10px 14px">招生人数</th><th style="padding:10px 14px">投档线</th>
+        </tr></thead>
+        <tbody>
+          <% admissionRows.forEach(a => { %>
+          <tr style="border-top:1px solid #f1f5f9">
+            <td style="padding:9px 14px;color:#2563eb;font-weight:600"><%= a.year %></td>
+            <td style="padding:9px 14px"><%= a.university %></td>
+            <td style="padding:9px 14px"><%= a.major %></td>
+            <td style="padding:9px 14px"><%= a.plan %></td>
+            <td style="padding:9px 14px"><%= a.score %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <% } %>
+</div>
+</body>
+</html>

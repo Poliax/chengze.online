@@ -30,13 +30,148 @@ document.addEventListener('DOMContentLoaded', function() {
   if (profileOverlay) profileOverlay.addEventListener('click', closeProfile);
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeProfile(); });
 
+  // ── Auth: 注册/登录（Session + HttpOnly Cookie）──
+  (function() {
+    var authSection = document.getElementById('authSection');
+    var userSection = document.getElementById('userSection');
+    var authMsg = document.getElementById('authMsg');
+    function msg(text, ok) { if (authMsg) { authMsg.textContent = text; authMsg.className = 'auth-msg ' + (ok ? 'success' : 'error'); } }
+    function showUser(u) {
+      if (authSection) authSection.style.display = 'none';
+      if (userSection) userSection.style.display = '';
+      if (u) {
+        var n = document.getElementById('userName'); if (n) n.textContent = u.name || '\u5B66\u5458';
+        var uid = document.getElementById('userUid'); if (uid) uid.textContent = 'UID: ' + (u.uid || '');
+        var w = document.getElementById('userWechat'); if (w) w.textContent = u.wechat_nickname || '\u672A\u7ED1\u5B9A';
+        var c = document.getElementById('userAvatarCircle'); if (c) c.textContent = (u.name || '\u5B66')[0];
+        var en = document.getElementById('editName'); if (en) en.value = u.name || '';
+        var ew = document.getElementById('editWechat'); if (ew) ew.value = u.wechat_nickname || '';
+      }
+    }
+    function showAuth() {
+      if (authSection) authSection.style.display = '';
+      if (userSection) userSection.style.display = 'none';
+    }
+
+
+
+    // Send SMS code
+    var sendBtn = document.getElementById('sendCodeBtn');
+    if (sendBtn) sendBtn.addEventListener('click', function() {
+      var phone = (document.getElementById('regPhone') || {}).value || '';
+      if (!phone) return msg('\u8BF7\u5148\u8F93\u5165\u624B\u673A\u53F7');
+      var btn = this, count = 60;
+      btn.disabled = true; btn.textContent = count + 's';
+      var timer = setInterval(function(){ count--; btn.textContent = count + 's'; if (count <= 0) { clearInterval(timer); btn.disabled = false; btn.textContent = '\u83B7\u53D6\u9A8C\u8BC1\u7801'; } }, 1000);
+      fetch('/api/auth/send-code', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ phone: phone }) })
+        .then(function(r){ return r.json(); }).then(function(d) {
+          if (d.success) { msg('\u9A8C\u8BC1\u7801\u5DF2\u53D1\u9001' + (d.devCode ? '\uFF08\u6D4B\u8BD5\uFF1A' + d.devCode + '\uFF09' : ''), true); }
+          else { msg(d.error || '\u53D1\u9001\u5931\u8D25'); btn.disabled = false; btn.textContent = '\u83B7\u53D6\u9A8C\u8BC1\u7801'; clearInterval(timer); }
+        }).catch(function(){ msg('\u7F51\u7EDC\u5F02\u5E38'); btn.disabled = false; btn.textContent = '\u83B7\u53D6\u9A8C\u8BC1\u7801'; clearInterval(timer); });
+    });
+    // Send login SMS code
+    var sendLoginBtn = document.getElementById('sendLoginCodeBtn');
+    if (sendLoginBtn) sendLoginBtn.addEventListener('click', function() {
+      var phone = (document.getElementById('codeLoginPhone') || {}).value || '';
+      if (!phone) return msg('\u8BF7\u5148\u8F93\u5165\u624B\u673A\u53F7');
+      var btn = this, count = 60;
+      btn.disabled = true; btn.textContent = count + 's';
+      var timer = setInterval(function(){ count--; btn.textContent = count + 's'; if (count <= 0) { clearInterval(timer); btn.disabled = false; btn.textContent = '\u83B7\u53D6\u9A8C\u8BC1\u7801'; } }, 1000);
+      fetch('/api/auth/send-code', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ phone: phone }) })
+        .then(function(r){ return r.json(); }).then(function(d) {
+          if (d.success) msg('\u9A8C\u8BC1\u7801\u5DF2\u53D1\u9001' + (d.devCode ? '\uFF08\u6D4B\u8BD5\uFF1A' + d.devCode + '\uFF09' : ''), true);
+          else { msg(d.error || '\u53D1\u9001\u5931\u8D25'); btn.disabled = false; btn.textContent = '\u83B7\u53D6\u9A8C\u8BC1\u7801'; clearInterval(timer); }
+        }).catch(function(){ msg('\u7F51\u7EDC\u5F02\u5E38'); btn.disabled = false; btn.textContent = '\u83B7\u53D6\u9A8C\u8BC1\u7801'; clearInterval(timer); });
+    });
+    // Code login
+    var codeLoginBtn = document.getElementById('codeLoginBtn');
+    if (codeLoginBtn) codeLoginBtn.addEventListener('click', function() {
+      var phone = (document.getElementById('codeLoginPhone') || {}).value || '';
+      var code = (document.getElementById('codeLoginCode') || {}).value || '';
+      if (!phone || !code) return msg('\u8BF7\u8F93\u5165\u624B\u673A\u53F7\u548C\u9A8C\u8BC1\u7801');
+      msg('\u767B\u5F55\u4E2D...');
+      fetch('/api/auth/login-code', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ phone: phone, code: code }) })
+        .then(function(r){ return r.json(); }).then(function(d) {
+          if (d.success) { showUser(d.user); msg('\u767B\u5F55\u6210\u529F', true); }
+          else msg(d.error || '\u767B\u5F55\u5931\u8D25');
+        }).catch(function(){ msg('\u7F51\u7EDC\u5F02\u5E38'); });
+    });
+    // WeChat login
+    var wechatLoginBtn = document.getElementById('wechatLoginBtn');
+    if (wechatLoginBtn) wechatLoginBtn.addEventListener('click', function() {
+      var wechat = (document.getElementById('wechatLoginInput') || {}).value || '';
+      if (!wechat) return msg('\u8BF7\u8F93\u5165\u5FAE\u4FE1\u6635\u79F0 / \u53F7');
+      fetch('/api/auth/login-wechat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ wechat: wechat }) })
+        .then(function(r){ return r.json(); }).then(function(d) {
+          if (d.success) { showUser(d.user); msg('\u5FAE\u4FE1\u767B\u5F55\u6210\u529F', true); }
+          else msg(d.error || '\u767B\u5F55\u5931\u8D25');
+        }).catch(function(){ msg('\u7F51\u7EDC\u5F02\u5E38'); });
+    });
+    // WeChat register
+    var regWechatBtn = document.getElementById('registerWechatBtn');
+    if (regWechatBtn) regWechatBtn.addEventListener('click', function() {
+      var wechat = (document.getElementById('regWechatName') || {}).value || '';
+      if (!wechat) return msg('\u8BF7\u8F93\u5165\u5FAE\u4FE1\u6635\u79F0 / \u53F7');
+      fetch('/api/auth/register-wechat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ wechat: wechat }) })
+        .then(function(r){ return r.json(); }).then(function(d) {
+          if (d.success) { showUser(d.user); msg('\u5FAE\u4FE1\u6CE8\u518C\u6210\u529F', true); }
+          else msg(d.error || '\u6CE8\u518C\u5931\u8D25');
+        }).catch(function(){ msg('\u7F51\u7EDC\u5F02\u5E38'); });
+    });
+    // Logout
+    var logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', function() {
+      fetch('/api/auth/logout', { method: 'POST' }).then(function(){ showAuth(); if (authMsg) authMsg.textContent = ''; }).catch(function(){ showAuth(); });
+    });
+    // Init: 检查Session
+    fetch('/api/auth/me').then(function(r){ return r.json(); }).then(function(d) {
+      if (d.success && d.user) showUser(d.user); else showAuth();
+    }).catch(function(){ showAuth(); });
+  })();
+
   // ── Province Selector ──
   var selProvince = document.getElementById('selProvince');
   var selYear = document.getElementById('selYear');
   var LS_KEY = 'cz_province_pref';
+  var PROV_CODE_MAP = {
+    '33':'zhejiang','37':'shandong','41':'henan','44':'guangdong','32':'jiangsu',
+    '51':'sichuan','35':'fujian','43':'hunan','34':'anhui','61':'shaanxi','42':'hubei','36':'jiangxi'
+  };
+  function provKey(pid){ return PROV_CODE_MAP[String(pid)] || String(pid); }
+  var CZ_PROVINCE_DATA = {};
+  function getProvData(pid){
+    if (CZ_PROVINCE_DATA[String(pid)]) return CZ_PROVINCE_DATA[String(pid)];
+    if (typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[provKey(pid)]) return PROVINCE_DATA[provKey(pid)];
+    return null;
+  }
   function loadSaved() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) { return {}; } }
+  function loadProvinceData() {
+    var pid = selProvince.value;
+    fetch('/provinces/api/' + pid).then(function(r){return r.json();}).then(function(data){
+      if(!data) return;
+      // Update syllabus tab
+      var syl=document.getElementById('resSyllabus');
+      if(syl){
+        if(data.outline_file){
+          syl.innerHTML='<div class="res-list"><a href="'+data.outline_file+'" target="_blank" class="res-file"><div class="res-file__icon">PDF</div><div class="res-file__info"><strong>'+data.name+' 专升本考试大纲</strong><span>点击查看或下载</span></div><span class="res-file__action">查看 →</span></a></div>';
+        }else{
+          syl.innerHTML='<div class="res-empty">考纲上传中</div>';
+        }
+      }
+      // Update papers tab
+      var pap=document.getElementById('resPapers');
+      if(pap){
+        if(data.papers_file){
+          pap.innerHTML='<div class="res-list"><a href="'+data.papers_file+'" target="_blank" class="res-file"><div class="res-file__icon">PDF</div><div class="res-file__info"><strong>'+data.name+' 历年真题</strong><span>点击查看或下载</span></div><span class="res-file__action">查看 →</span></a></div>';
+        }else{
+          pap.innerHTML='<div class="res-empty">历年真题持续更新中</div>';
+        }
+      }
+    });
+  }
+
   function savePref() { localStorage.setItem(LS_KEY, JSON.stringify({ province: selProvince.value, year: selYear.value })); }
-  selProvince.addEventListener('change', function() { savePref(); loadScheduleBar(); updateAdmissionSummary(); buildCourseCards(); buildAssistants(); buildAITutors(); });
+  selProvince.addEventListener('change', function() { savePref(); loadScheduleBar(); updateAdmissionSummary(); buildCourseCards(); buildAssistants(); buildAITutors(); loadProvinceData(); });
   selYear.addEventListener('change', function() { savePref(); loadScheduleBar(); buildCourseCards(); });
 
   // Init year
@@ -46,12 +181,65 @@ document.addEventListener('DOMContentLoaded', function() {
   for (var i = 0; i < 3; i++) { var y = startYear + i; var opt = document.createElement('option'); opt.value = String(y); opt.textContent = y + '\u5E74'; selYear.appendChild(opt); }
   var saved = loadSaved();
   if (saved.year && [...selYear.options].some(function(o) { return o.value === saved.year; })) selYear.value = saved.year;
-  if (saved.province && typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[saved.province]) selProvince.value = saved.province;
+  if (saved.province && getProvData(saved.province)) selProvince.value = saved.province;
+  else {
+    // 首次访问：根据IP定位自动选择省份
+    var regionMap = {
+      '33': ['Zhejiang', '浙江'], '37': ['Shandong', '山东'], '41': ['Henan', '河南'],
+      '44': ['Guangdong', '广东'], '32': ['Jiangsu', '江苏'], '51': ['Sichuan', '四川'],
+      '35': ['Fujian', '福建'], '43': ['Hunan', '湖南'], '34': ['Anhui', '安徽'],
+      '61': ['Shaanxi', '陕西'], '42': ['Hubei', '湖北'], '36': ['Jiangxi', '江西']
+    };
+    function matchRegion(text) {
+      if (!text) return null;
+      for (var key in regionMap) {
+        var names = regionMap[key];
+        for (var i = 0; i < names.length; i++) {
+          if (text.indexOf(names[i]) >= 0) return key;
+        }
+      }
+      return null;
+    }
+    function applyDetected(pid) {
+      if (pid && getProvData(pid)) {
+        selProvince.value = pid;
+        savePref(); loadScheduleBar(); updateAdmissionSummary(); buildCourseCards(); buildAssistants(); buildAITutors(); loadProvinceData();
+      }
+    }
+    try {
+      fetch('https://ipapi.co/json/').then(function(r){ return r.json(); }).then(function(d){
+        var pid = matchRegion(d.region || d.country_name || '');
+        if (pid) applyDetected(pid);
+      }).catch(function(){});
+    } catch(e) {}
+  }
+
+  // 官网省份只显示后台已创建的省份
+  fetch('/provinces/api').then(function(r){ return r.json(); }).then(function(d){
+    var list = (d && d.provinces) || [];
+    CZ_PROVINCE_DATA = {};
+    var codes = [];
+    list.forEach(function(p){ CZ_PROVINCE_DATA[String(p.code)] = p; codes.push(String(p.code)); });
+    selProvince.innerHTML = '';
+    if (!codes.length) { selProvince.innerHTML = '<option value="">暂无省份</option>'; return; }
+    codes.forEach(function(code){
+      var p = CZ_PROVINCE_DATA[code];
+      var o = document.createElement('option');
+      o.value = code;
+      o.textContent = (p.name || '') + '省';
+      selProvince.appendChild(o);
+    });
+    var saved2 = loadSaved();
+    var chosen = saved2.province && codes.indexOf(String(saved2.province)) >= 0 ? String(saved2.province) : codes[0];
+    selProvince.value = chosen;
+    savePref();
+    loadScheduleBar(); updateAdmissionSummary(); buildCourseCards(); buildAssistants(); buildAITutors(); loadProvinceData();
+  }).catch(function(){});
 
   // ── Build Course Cards ──
   function buildCourseCards() {
     var provinceId = selProvince.value;
-    var provinceName = (typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[provinceId]?.name) || '\u6D59\u6C5F';
+    var provinceName = (getProvData(provinceId) || {}).name || '\u6D59\u6C5F';
     var year = selYear.value || '2027';
     fetch('/api/courses/' + provinceId).then(function(r) { return r.json(); }).then(function(data) {
       var pubGrid = document.getElementById('publicGrid');
@@ -75,18 +263,55 @@ document.addEventListener('DOMContentLoaded', function() {
           card.href = '#'; card.className = 'course-card';
           var badgeText = cls.mode === 'offline' ? '\u7EBF\u4E0B' : '\u7EBF\u4E0A';
 var badgeBg = cls.mode === 'offline' ? '#6d28d9' : '#2563eb';
-var cardColor = cls.tagColor || 'var(--color-primary)';
+var cardColor = cls.tagColor || '#1e4755';
           card.style.setProperty('--card-color', cardColor);
           card.innerHTML = '<div class="course-card__head" style="background:' + cardColor + ';"><span class="course-card__head-badge" style="background:' + badgeBg + ';">' + badgeText + '</span><span class="course-card__head-tag">' + cls.tag + '</span></div><div class="course-card__body"><h3>' + year + '\u5E74 ' + provinceName + '\u4E13\u5347\u672C</h3><div class="course-card__meta">' + (cls.teacher || '\u540D\u5E08\u56E2\u961F') + ' \u00B7 ' + (cls.startDate || '\u5F00\u5B66') + '</div><div class="course-card__info"><span>' + cls.duration + ' \u00B7 ' + cls.sessions + '\u8BFE\u65F6</span><span>' + cls.price + '</span></div><span class="course-card__btn">\u67E5\u770B\u8BE6\u60C5</span></div>';
           card.addEventListener('click', function(e) { e.preventDefault(); openCourseDetail(cls, year, provinceName); });
           grid.appendChild(card);
         });
       }
-    }).catch(function() {});
+    }).catch(function() {}).then(function() { renderPackagesFromCenter(); });
+  }
+
+  function escHtml(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function normProv(s){ return String(s||'').replace('省',''); }
+  function renderPackagesFromCenter(){
+    fetch('/api/packages').then(function(r){ return r.json(); }).then(function(d){
+      var list=(d && d.packages) || [];
+      var pid=document.getElementById('selProvince').value;
+      var provName=(getProvData(pid) && getProvData(pid).name) || '';
+      var year=document.getElementById('selYear').value || '2027';
+      var grid=document.getElementById('coursesGrid');
+      var pub=document.getElementById('publicGrid');
+      var topPkgs=list.filter(function(p){ return !p.parent_id && String(p.year||'')===String(year) && normProv(p.province)===normProv(provName); });
+      var publicPkgs=list.filter(function(p){ return p.parent_id && p.class_type==='公开课' && String(p.parent_year||'')===String(year) && normProv(p.parent_province)===normProv(provName); });
+      if(grid && topPkgs.length){
+        grid.innerHTML='';
+        topPkgs.forEach(function(p){
+          var card=document.createElement('a');
+          card.href='/packages/s/'+p.id; card.target='_blank'; card.rel='noopener'; card.className='course-card';
+          card.style.setProperty('--card-color', '#1e4755');
+          card.innerHTML='<div class="course-card__head" style="background:#1e4755;"><span class="course-card__head-badge" style="background:#2563eb;">线上</span><span class="course-card__head-tag">'+(p.class_type||'班课')+'</span></div><div class="course-card__body"><h3>'+escHtml(p.title)+'</h3><div class="course-card__meta">'+p.year+'年 · '+p.province+' · '+(p.child_count||0)+'个班课</div><div class="course-card__info"><span>'+(p.course_count||0)+'门课程</span><span>'+(p.price||'面议')+'</span></div><span class="course-card__btn">查看详情</span></div>';
+          grid.appendChild(card);
+        });
+      }
+      if(pub && publicPkgs.length){
+        pub.innerHTML='';
+        publicPkgs.forEach(function(p){
+          var card=document.createElement('a');
+          card.href='/packages/s/'+p.id; card.target='_blank'; card.rel='noopener'; card.className='public-card';
+          card.style.setProperty('--card-color', '#4a7c6f');
+          card.innerHTML='<div class="public-card__head" style="background:#4a7c6f;"><h3 class="public-card__head-title">'+escHtml(p.title)+'</h3></div><div class="public-card__body"><div class="public-card__desc">'+(p.parent_title||'')+'</div><div class="public-card__meta"><span>'+(p.course_count||0)+'门课程</span></div><span class="public-card__btn">查看详情</span></div>';
+          pub.appendChild(card);
+        });
+      }
+    }).catch(function(){});
   }
 
   // ── Schedule Bar ──
   var scheduleBar = document.getElementById('scheduleBar');
+  loadProvinceData();
+
   window.loadScheduleBar = function() {
     if (!scheduleBar) return;
     fetch('/api/schedule/' + selProvince.value).then(function(r) { return r.json(); }).then(function(data) {
@@ -100,12 +325,12 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
         
         // Exam dates by province (month/day)
         var examDates = {
-          zhejiang: { m: 3, d: 20 }, shandong: { m: 3, d: 30 },
-          henan: { m: 3, d: 20 }, guangdong: { m: 3, d: 25 },
-          jiangsu: { m: 3, d: 22 }, sichuan: { m: 3, d: 18 },
-          fujian: { m: 3, d: 20 }, hunan: { m: 4, d: 10 },
-          anhui: { m: 3, d: 20 }, shaanxi: { m: 3, d: 15 },
-          hubei: { m: 4, d: 20 }, jiangxi: { m: 3, d: 20 },
+          '33': { m: 3, d: 20 }, '37': { m: 3, d: 30 },
+          '41': { m: 3, d: 20 }, '44': { m: 3, d: 25 },
+          '32': { m: 3, d: 22 }, '51': { m: 3, d: 18 },
+          '35': { m: 3, d: 20 }, '43': { m: 4, d: 10 },
+          '34': { m: 3, d: 20 }, '61': { m: 3, d: 15 },
+          '42': { m: 4, d: 20 }, '36': { m: 3, d: 20 },
         };
         var pid = document.getElementById('selProvince').value;
         var ed = examDates[pid] || { m: 3, d: 20 };
@@ -116,7 +341,10 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
         var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         var daysText = diffDays > 0 ? diffDays + '天' : (diffDays === 0 ? '今天考试' : '已过期');
 
-        scheduleBar.innerHTML = '<div class="schedule-header"><div class="countdown-card"><div class="countdown-card__num">' + daysText + '</div><div class="countdown-card__label">距离考试</div></div></div>';
+        var nowDate = new Date();
+        var weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+        var dateStr = nowDate.getFullYear() + '年' + (nowDate.getMonth() + 1) + '月' + nowDate.getDate() + '日 周' + weekDays[nowDate.getDay()];
+        scheduleBar.innerHTML = '<div class="schedule-header"><div class="countdown-card"><div class="countdown-card__date">' + dateStr + '</div><div class="countdown-card__num">' + daysText + '</div></div></div>';
         monthKeys.forEach(function(month) {
           var div = document.createElement('div'); div.className = 'tl-month-group';
           var html = '<div class="tl-month__label">' + month + '</div><div class="tl-month__events">';
@@ -135,7 +363,7 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
   window.updateAdmissionSummary = function() {
     var s = document.getElementById('admissionSummary');
     if (!s) return;
-    var pid = selProvince.value; var pn = (typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[pid]?.name) || '\u5C71\u4E1C';
+    var pid = selProvince.value; var pn = (getProvData(pid) || {}).name || '\u5C71\u4E1C';
     fetch('/api/admission/' + pid).then(function(r) { return r.json(); }).then(function(d) { s.textContent = pn + ' ' + (d.year || '2026') + ' \u5E74 \u6700\u65B0\u62DB\u5F55\u6570\u636E'; }).catch(function() {});
   };
 
@@ -170,7 +398,7 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
     var astGrid = document.getElementById('assistantGrid');
     if (!astGrid) return;
     var pid = document.getElementById('selProvince').value;
-    var provData = typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[pid];
+    var provData = getProvData(pid);
     var subjects = provData && provData.subjects ? provData.subjects : ['\u5927\u5B66\u82F1\u8BED', '\u9AD8\u7B49\u6570\u5B66', '\u5927\u5B66\u8BED\u6587', '\u8BA1\u7B97\u673A\u57FA\u7840'];
     var allAsts = {
       '\u5927\u5B66\u82F1\u8BED': { n: '\u5468\u8001\u5E08', img: '/public/images/teachers/teacher-zhou.svg', c: '#4F6EF7' },
@@ -183,7 +411,7 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
       var a = allAsts[sub];
       if (!a) return;
       var card = document.createElement('a');
-      card.href = 'https://chengze.online/live/teacher'; card.target = '_blank'; card.rel = 'noopener';
+      card.href = 'https://chengze.online/admin'; card.target = '_blank'; card.rel = 'noopener';
       card.className = 'assistant-card';
       card.innerHTML = '<div class="assistant-card__avatar" style="background:' + a.c + ';"><img src="' + a.img + '" alt="' + a.n + '" style="width:100%;height:100%;border-radius:12px;object-fit:cover;"></div><div class="assistant-card__body"><div class="assistant-card__top"><h3>' + a.n + '</h3><span class="assistant-card__label">' + sub + '</span></div><span class="assistant-card__action">\u54A8\u8BE2</span></div>';
       astGrid.appendChild(card);
@@ -196,7 +424,7 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
     var aiGrid = document.getElementById('aiTutorGrid');
     if (!aiGrid) return;
     var pid = document.getElementById('selProvince').value;
-    var provData = typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[pid];
+    var provData = getProvData(pid);
     var subjects = provData && provData.subjects ? provData.subjects : ['\u5927\u5B66\u82F1\u8BED', '\u9AD8\u7B49\u6570\u5B66', '\u5927\u5B66\u8BED\u6587', '\u8BA1\u7B97\u673A\u57FA\u7840'];
     var allAI = {
       '\u5927\u5B66\u82F1\u8BED': { n: '\u82F1\u8BED AI', c: '#2563eb', d: '\u8BCD\u6C47\u3001\u8BED\u6CD5\u3001\u9605\u8BFB\u3001\u5199\u4F5C\u5168\u65B9\u4F4D\u8F85\u5BFC' },
@@ -221,7 +449,7 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
   var feed = document.getElementById('soulFeed');
   if (feed) {
     var posts = [
-      { a:'\u5C0F', c:'#2d5f6e', n:'\u5C0F\u9648\u540C\u5B66', b:'\u5DF2\u4E0A\u5CB8', m:'\u6D59\u6C5F\u7406\u5DE5\u5927\u5B66', t:'\u7EC8\u4E8E\u4E0A\u5CB8\u4E86\uff01\u611F\u8C22\u5404\u4F4D\u8001\u5E08\u548CAI\u52A9\u6559\uff01', tg:['\u4E0A\u5CB8\u559C\u62A5'], lk:128, cm:34 },
+      { a:'\u5C0F', c:'#1e4755', n:'\u5C0F\u9648\u540C\u5B66', b:'\u5DF2\u4E0A\u5CB8', m:'\u6D59\u6C5F\u7406\u5DE5\u5927\u5B66', t:'\u7EC8\u4E8E\u4E0A\u5CB8\u4E86\uff01\u611F\u8C22\u5404\u4F4D\u8001\u5E08\u548CAI\u52A9\u6559\uff01', tg:['\u4E0A\u5CB8\u559C\u62A5'], lk:128, cm:34 },
       { a:'\u674E', c:'#7c3aed', n:'\u5C0F\u674E\u540C\u5B66', b:'\u5907\u8003\u4E2D', m:'\u76EE\u6807: \u676D\u5DDE\u7535\u5B50\u79D1\u6280', t:'\u4ECA\u65E5\u5B66\u4E60\u6253\u5361\u2705 \u82F1\u8BED\u9605\u8BFB+\u9AD8\u6570\u590D\u4E60', tg:['\u5B66\u4E60\u6253\u5361'], lk:45, cm:12 },
       { a:'\u738B', c:'#059669', n:'\u5C0F\u738B\u540C\u5B66', b:'\u5907\u8003\u4E2D', m:'\u6D59\u6C5F\u8D22\u7ECF\u5927\u5B66', t:'\u5206\u4EAB\u82F1\u8BED\u4F5C\u6587\u6A21\u677F\uff0c\u8003\u573A\u76F4\u63A5\u5957\u7528\uff01', tg:['\u8D44\u6599\u5206\u4EAB'], lk:89, cm:23 },
       { a:'\u5F20', c:'#f59e0b', n:'\u5F20\u5B66\u957F', b:'\u5DF2\u4E0A\u5CB8', m:'\u6D59\u6C5F\u5546\u5DE5\u5927\u5B66', t:'\u9AD8\u6570\u57FA\u7840\u4E00\u5B9A\u8981\u7262\uff01', tg:['\u9AD8\u6570','\u5907\u8003\u5EFA\u8BAE'], lk:203, cm:56 },
@@ -299,7 +527,7 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
     if (!modal || !overlay) return;
     var pid = selProvince.value;
     var pname = '山东';
-    try { if (typeof PROVINCE_DATA !== 'undefined') pname = (PROVINCE_DATA[pid] || {}).name || '山东'; } catch(e) {}
+    try { pname = (getProvData(pid) || {}).name || '山东'; } catch(e) {}
     fetch('/api/admission/' + pid).then(function(r){return r.json();}).then(function(d){
       var list = d.plan || [];
       if (pLabel) pLabel.textContent = pname + ' \u00B7 ' + (d.year || '2026') + ' \u5E74';
@@ -354,11 +582,11 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
 
     function getProvinceId() {
       var sel = document.getElementById('selProvince');
-      return sel ? sel.value : 'shandong';
+      return sel ? sel.value : '37';
     }
     function getProvinceName() {
       var pid = getProvinceId();
-      return (typeof PROVINCE_DATA !== 'undefined' && PROVINCE_DATA[pid]?.name) || '山东';
+      return (getProvData(pid) || {}).name || '山东';
     }
 
     function loadTabContent(tabId) {
@@ -372,7 +600,7 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
       // Syllabus
       if (syllabus) {
         fetch('/api/syllabus/' + pid).then(function(r){return r.json();}).then(function(syl){
-          var pdf = '/data/2026-' + pid + '-syllabus.pdf';
+          var pdf = '/data/2026-' + provKey(pid) + '-syllabus.pdf';
           var html = '<div class="res-list">';
           html += '<div class="res-file"><div class="res-file__icon">PDF</div><div class="res-file__info"><strong>' + pname + '省 2026 年专升本考试大纲</strong><span>' + (syl.authority || '官方文件') + ' ' + (syl.date || '') + '</span></div><div style="display:flex;gap:8px;flex-shrink:0;"><a href="' + pdf + '" target="_blank" class="res-action">查看</a><a href="' + pdf + '" download class="res-action res-action--dl">下载</a></div></div>';
           html += '</div>';
@@ -381,7 +609,7 @@ var cardColor = cls.tagColor || 'var(--color-primary)';
       }      // Papers
       if (papers) {
         var html = '<div class="res-list">';
-        if (pid === 'shandong') {
+        if (provKey(pid) === 'shandong') {
           var items = [
             { file: '2024-shandong-english.pdf', name: '大学英语 真题', year: '2024' },
             { file: '2024-shandong-chinese.pdf', name: '大学语文 真题', year: '2024' },

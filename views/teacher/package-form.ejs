@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<style>
+body{background:#f1f5f9;font-family:'Noto Sans SC',sans-serif}
+.form-card{background:white;border:1px solid #e2e8f0;border-radius:10px;padding:24px;max-width:600px;margin:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:#374151}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-family:inherit}
+.form-group textarea{height:80px;resize:vertical}
+.btn-primary{padding:8px 20px;background:#2563eb;color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px}
+.btn-secondary{padding:8px 20px;background:white;color:#475569;border:1px solid #d1d5db;border-radius:6px;text-decoration:none;font-size:14px;margin-left:8px}
+.error{color:#dc2626;font-size:13px;margin-bottom:12px}
+</style><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body"><%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %>
+<div class="form-card">
+<h2 style="font-size:18px;margin-bottom:16px"><%= pkg ? '编辑课程包' : '新建课程包' %></h2>
+<% if (error) { %><div class="error"><%= error %></div><% } %>
+<form method="POST" action="/admin/packages-manage<%= pkg ? '/'+pkg.id : '' %>">
+<div class="form-group"><label>课程包名称</label><input name="title" value="<%= pkg ? pkg.title : '' %>" required></div>
+<div class="form-group"><label>上级课程包</label>
+<select name="parent_id">
+<option value="0">无（一级课程包）</option>
+<% (parents || []).forEach(p => { %><option value="<%= p.id %>" <%= String(parentId || 0) === String(p.id) ? 'selected' : '' %>><%= p.title %></option><% }) %>
+</select></div>
+<div class="form-group"><label>描述</label><textarea name="description"><%= pkg ? pkg.description : '' %></textarea></div>
+<div style="display:flex;gap:12px">
+<div class="form-group" style="flex:1"><label>年份</label><input name="year" value="<%= pkg ? pkg.year : '2026' %>"></div>
+<div class="form-group" style="flex:1"><label>省份</label><input name="province" value="<%= pkg ? pkg.province : '' %>"></div>
+<div class="form-group" style="flex:1"><label>班型</label><input name="class_type" value="<%= pkg ? pkg.class_type : '' %>"></div>
+</div>
+<div style="display:flex;gap:12px">
+<div class="form-group" style="flex:1"><label>价格</label><input name="price" value="<%= pkg ? pkg.price : '0' %>"></div>
+<div class="form-group" style="flex:1"><label>状态</label>
+<select name="status"><option value="archived" <%= !pkg || pkg.status==='archived'?'selected':'' %>>下架</option><option value="published" <%= pkg && pkg.status==='published'?'selected':'' %>>上架</option></select></div>
+</div>
+<button type="submit" class="btn-primary">保存</button>
+<a href="/admin/packages-manage" class="btn-secondary">取消</a>
+</form>
+</div></div></body></html>

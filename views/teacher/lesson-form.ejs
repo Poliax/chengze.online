@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<style>
+body{background:#f1f5f9;font-family:'Noto Sans SC',sans-serif}
+.form-wrap{max-width:500px;margin:24px;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:24px}
+.step-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:16px}
+.step-title{font-size:13px;font-weight:700;color:#2563eb;margin-bottom:10px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:3px;color:#374151}
+.form-group input,.form-group select{width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:5px;font-size:13px}
+.btn-primary{padding:8px 20px;background:#2563eb;color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px}
+.btn-secondary{padding:8px 20px;background:white;color:#475569;border:1px solid #d1d5db;border-radius:6px;text-decoration:none;font-size:14px;margin-left:8px}
+</style><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body"><%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %>
+<div class="form-wrap">
+<h2 style="font-size:16px;font-weight:700;margin-bottom:16px">新建一节课</h2>
+<% if (typeof error !== 'undefined' && error) { %><div style="color:#dc2626;font-size:13px;margin-bottom:12px"><%= error %></div><% } %>
+<form method="POST" action="/admin/lessons/create">
+<div class="step-box">
+<div class="step-title">选择所属系列课</div>
+<div class="form-group">
+<label>系列课</label>
+<select name="course_id" required>
+<option value="">请选择</option>
+<% courses.forEach(c => { %>
+<option value="<%= c.id %>"><%= c.title %></option>
+<% }) %>
+</select>
+</div>
+</div>
+<div class="step-box">
+<div class="step-title">课时信息</div>
+<div class="form-group">
+<label>课时名称</label>
+<input name="title" required>
+</div>
+<div class="form-group">
+<label>时长（分钟）</label>
+<input name="duration" type="number" value="45">
+</div>
+<div class="form-group">
+<label>视频地址（云点播/录制回放 URL）</label>
+<input name="video_url" placeholder="https://... 视频地址">
+</div>
+</div>
+<div style="display:flex;gap:8px;margin-top:16px">
+<a href="/admin/courses-manage" class="btn-secondary">取消</a>
+<button type="submit" class="btn-primary">保存</button>
+</div>
+</form>
+</div></div></body></html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>官网课程 · 承泽教育</title>
+
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    .cc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+    .cc-card { padding: 20px; border-radius: 10px; background: #fff; border: 1px solid #e5ddd5; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .cc-card:hover { border-color: #2d5f6e; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+    .cc-card.active { border-color: #2d5f6e; background: rgba(45,95,110,0.04); }
+    .cc-card h4 { font-size: 15px; margin-bottom: 4px; }
+    .cc-card p { font-size: 12px; color: #6b6763; }
+    .cc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .cc-table th { background: #f2eee9; padding: 10px 12px; text-align: left; border: 1px solid #e0d8d0; font-weight: 600; }
+    .cc-table td { padding: 8px 12px; border: 1px solid #e0d8d0; }
+    .cc-table input[type="text"] { width: 100%; padding: 6px 8px; border: 1px solid #e0d8d0; border-radius: 4px; font-size: 13px; outline: none; }
+    .cc-table input[type="text"]:focus { border-color: #2d5f6e; }
+    .cc-actions { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+    .msg { font-size: 13px; color: #2d5f6e; }
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <div class="page-header">
+        <p style="font-size:13px;color:#6b6763;">管理官网「课程」页面显示的班型及价格</p>
+      </div>
+
+      <!-- Province tabs -->
+      <div style="display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap;">
+        <% provinces.forEach(function(p) { %>
+          <button class="cc-province-btn" data-province="<%= p.id %>" style="padding:8px 20px;border-radius:6px;border:1px solid #e0d8d0;background:#fff;cursor:pointer;font-size:13px;font-family:inherit;transition:all 0.2s;"><%= p.name %></button>
+        <% }); %>
+      </div>
+
+      <!-- Editor -->
+      <div id="ccEditor" style="background:#fff;border-radius:10px;border:1px solid #e5ddd5;padding:24px;">
+        <p style="font-size:13px;color:#6b6763;margin-bottom:14px;">选择左侧省份开始编辑</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/teacher-catalog.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="20" fill="#E8A040"/>
+  <!-- Hair (curly) -->
+  <path d="M46 82 Q46 12 100 8 Q154 12 154 82 Q160 52 142 32 Q122 14 100 10 Q78 14 58 32 Q40 52 46 82Z" fill="#1A1A1A"/>
+  <circle cx="62" cy="38" r="7" fill="#1A1A1A"/>
+  <circle cx="138" cy="38" r="7" fill="#1A1A1A"/>
+  <circle cx="100" cy="22" r="7" fill="#1A1A1A"/>
+  <circle cx="80" cy="28" r="6" fill="#1A1A1A"/>
+  <circle cx="120" cy="28" r="6" fill="#1A1A1A"/>
+  <!-- Face -->
+  <ellipse cx="100" cy="90" rx="45" ry="46" fill="#FCE4D6"/>
+  <!-- Eyes -->
+  <ellipse cx="80" cy="88" rx="13" ry="14" fill="#fff"/>
+  <ellipse cx="120" cy="88" rx="13" ry="14" fill="#fff"/>
+  <ellipse cx="80" cy="88" rx="9" ry="11" fill="#4A4A4A"/>
+  <ellipse cx="120" cy="88" rx="9" ry="11" fill="#4A4A4A"/>
+  <ellipse cx="80" cy="86" rx="5" ry="7" fill="#1A1A1A"/>
+  <ellipse cx="120" cy="86" rx="5" ry="7" fill="#1A1A1A"/>
+  <!-- Eye shine -->
+  <ellipse cx="84" cy="83" rx="3" ry="3" fill="#fff" opacity="0.8"/>
+  <ellipse cx="124" cy="83" rx="3" ry="3" fill="#fff" opacity="0.8"/>
+  <circle cx="78" cy="92" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="118" cy="92" r="1.5" fill="#fff" opacity="0.5"/>
+  <!-- Eyebrows -->
+  <path d="M66 72 Q80 66 94 72" fill="none" stroke="#1A1A1A" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M106 72 Q120 66 134 72" fill="none" stroke="#1A1A1A" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- Nose -->
+  <path d="M100 100 Q103 105 99 107" fill="none" stroke="#E8B890" stroke-width="2" stroke-linecap="round"/>
+  <!-- Smile -->
+  <path d="M88 115 Q100 123 112 115" fill="none" stroke="#E07070" stroke-width="2" stroke-linecap="round"/>
+  <!-- Goatee -->
+  <ellipse cx="100" cy="122" rx="10" ry="5" fill="#D4A88A" opacity="0.4"/>
+</svg>

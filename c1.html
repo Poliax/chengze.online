@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大学英语精讲班 · 承泽教育</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { background: #f8fafc; font-family: 'Noto Sans SC', 'PingFang SC', 'Inter', sans-serif; color: #0f172a; }
+    .course-portal { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .course-portal-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 0; border-bottom: 1px solid #e2e8f0; margin-bottom: 24px;
+    }
+    .course-portal-nav .logo { font-size: 18px; font-weight: 700; color: #0f172a; text-decoration: none; }
+    .course-portal-nav a { color: #64748b; text-decoration: none; font-size: 14px; }
+    .course-portal-nav a:hover { color: #2563eb; }
+
+    .course-detail-header { display: flex; gap: 32px; margin-bottom: 32px; align-items: flex-start; }
+    .course-detail-cover {
+      width: 320px; min-width: 320px; height: 180px; border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.15); font-size: 48px;
+    }
+    .course-detail-info h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+    .course-detail-info p { font-size: 14px; color: #64748b; line-height: 1.7; margin-bottom: 16px; }
+    .course-detail-meta { display: flex; gap: 20px; font-size: 13px; color: #94a3b8; margin-bottom: 16px; flex-wrap: wrap; }
+    .course-detail-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .lesson-section h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .lesson-list { list-style: none; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: white; }
+    .lesson-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s;
+    }
+    .lesson-item:last-child { border-bottom: none; }
+    .lesson-item:hover { background: #f8fafc; }
+    .lesson-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #eff6ff; color: #2563eb;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+    }
+    .lesson-item.completed .lesson-num { background: #10b981; color: white; }
+    .lesson-info { flex: 1; min-width: 0; }
+    .lesson-info .lesson-title { font-size: 15px; font-weight: 500; }
+    .lesson-info .lesson-meta { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .lesson-status { font-size: 12px; font-weight: 500; }
+    .lesson-status.completed { color: #10b981; }
+    .lesson-status.in-progress { color: #2563eb; }
+    .lesson-watch-btn {
+      padding: 6px 14px; background: #2563eb; color: white;
+      border-radius: 8px; font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .lesson-watch-btn:hover { background: #1d4ed8; }
+    .lesson-watch-btn.completed { background: #10b981; }
+
+    @media (max-width: 768px) {
+      .course-detail-header { flex-direction: column; }
+      .course-detail-cover { width: 100%; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="course-portal">
+    <div class="course-portal-nav">
+      <a href="/" class="logo">&#9650; 承泽教育</a>
+      <a href="/live/student">← 返回课程列表</a>
+    </div>
+
+    <div class="course-detail-header">
+      <div class="course-detail-cover">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div class="course-detail-info">
+        <h1>大学英语精讲班</h1>
+        <p>系统讲解专升本英语考试核心知识点，涵盖语法、阅读、写作、翻译四大模块。</p>
+        <div class="course-detail-meta">
+          <span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            刘老师
+          </span>
+          <span>5 课时</span>
+          <span>2876 人学习</span>
+        </div>
+        &lt;p style=&#34;font-size:13px;color:#94a3b8&#34;&gt;资深专升本英语讲师，10年教学经验&lt;/p&gt;
+        
+        <!-- Live status -->
+        
+          <div style="margin:12px 0;padding:12px 16px;background:#fee2e2;border:1px solid #fecaca;border-radius:10px;display:flex;align-items:center;gap:10px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;animation:pulse 1.5s infinite;flex-shrink:0"></span>
+            <div>
+              <div style="font-weight:600;font-size:14px;color:#dc2626;">正在直播中</div>
+              <div style="font-size:12px;color:#ef4444;">老师正在上课，点击进入课堂</div>
+            </div>
+            <a href="/live/student/live-watch/1" style="margin-left:auto;padding:6px 16px;background:#dc2626;color:white;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;flex-shrink:0;">进入课堂 →</a>
+          </div>
+        
+        
+        <!-- Replays -->
+        
+      </div>
+    </div>
+
+    <style>
+      @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    </style>
+
+    <div class="lesson-section">
+      <h2>课程目录</h2>
+      <ul class="lesson-list">
+        
+          
+          <li class="lesson-item ">
+            <div class="lesson-num">1</div>
+            <div class="lesson-info">
+              <div class="lesson-title">虚拟语气基础概念</div>
+              <div class="lesson-meta">
+                42分30秒
+                 · 了解虚拟语气的定义和基本用法
+              </div>
+            </div>
+            <div>
+              
+            </div>
+            <a href="/live/student/watch/1" class="lesson-watch-btn ">
+              开始学习
+            </a>
+          </li>
+        
+          
+          <li class="lesson-item ">
+            <div class="lesson-num">2</div>
+            <div class="lesson-info">
+              <div class="lesson-title">条件句中的虚拟语气</div>
+              <div class="lesson-meta">
+                38分15秒
+                 · 学习条件状语从句中的虚拟语气用法
+              </div>
+            </div>
+            <div>
+              
+            </div>
+            <a href="/live/student/watch/2" class="lesson-watch-btn ">
+              开始学习
+            </a>
+          </li>
+        
+          
+          <li class="lesson-item ">
+            <div class="lesson-num">3</div>
+            <div class="lesson-info">
+              <div class="lesson-title">名词性从句中的虚拟语气</div>
+              <div class="lesson-meta">
+                45分0秒
+                 · 掌握suggest等动词后的虚拟语气用法
+              </div>
+            </div>
+            <div>
+              
+            </div>
+            <a href="/live/student/watch/3" class="lesson-watch-btn ">
+              开始学习
+            </a>
+          </li>
+        
+          
+          <li class="lesson-item ">
+            <div class="lesson-num">4</div>
+            <div class="lesson-info">
+              <div class="lesson-title">虚拟语气的特殊用法</div>
+              <div class="lesson-meta">
+                35分40秒
+                 · wish, as if, it is time 等特殊句型
+              </div>
+            </div>
+            <div>
+              
+            </div>
+            <a href="/live/student/watch/4" class="lesson-watch-btn ">
+              开始学习
+            </a>
+          </li>
+        
+          
+          <li class="lesson-item ">
+            <div class="lesson-num">5</div>
+            <div class="lesson-info">
+              <div class="lesson-title">真题演练与解析（一）</div>
+              <div class="lesson-meta">
+                50分20秒
+                 · 专升本考试真题实战
+              </div>
+            </div>
+            <div>
+              
+            </div>
+            <a href="/live/student/watch/5" class="lesson-watch-btn ">
+              开始学习
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  <footer class="footer" style="margin-top: 48px;">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__col"><h4><span class="logo__icon">&#9650;</span>承泽教育</h4><p>专注专升本在线教育</p></div>
+        <div class="footer__col"><h4>快速链接</h4><ul><li><a href="/live/student">课程中心</a></li><li><a href="/ai-tutor.html">AI 助教</a></li></ul></div>
+        <div class="footer__col"><h4>联系我们</h4><ul><li>service@chengze.online</li></ul></div>
+      </div>
+      <div class="footer__bottom"><p>&copy; 2026 承泽教育. All rights reserved.</p></div>
+    </div>
+  </footer>
+</body>
+</html>

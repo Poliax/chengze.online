@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    .tabs { display:flex; gap:0; margin-bottom:24px; border-bottom:2px solid var(--border); }
+    .tab { padding:10px 20px; font-size:14px; font-weight:600; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all 0.2s; background:none; border-top:none;border-left:none;border-right:none;font-family:inherit; }
+    .tab:hover { color:var(--text); }
+    .tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <div class="stats">
+        <div class="stat"><span class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><div class="stat-info"><strong><%= plans.length %></strong><span>教学计划</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div class="stat-info"><strong><%= activities.length %></strong><span>教研活动</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span><div class="stat-info"><strong><%= materials.length %></strong><span>教研资料</span></div></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="plans">教研计划</button>
+        <button class="tab" data-tab="activities">教研活动</button>
+        <button class="tab" data-tab="materials">教研资料</button>
+      </div>
+
+      <!-- Plans -->
+      <div class="tab-panel active" id="tab-plans">
+        <div class="section-hd"><h3>教学计划</h3><a href="/admin/research-manage/plan/new" class="btn btn-primary btn-sm">新建计划</a></div>
+        <% if (plans.length === 0) { %><div class="empty-state"><p>暂无教学计划</p></div><% } %>
+        <div class="card-grid">
+          <% plans.forEach(p => { %>
+          <div class="card">
+            <div class="card-body">
+              <h3><%= p.title %></h3>
+              <p><%= p.content ? p.content.substring(0,80)+(p.content.length>80?'...':'') : '' %></p>
+              <div class="card-meta">
+                <span><%= p.course_title||'所有课程' %></span>
+                <span>计划日期: <%= p.plan_date||'-' %></span>
+                <span class="badge <%= p.status==='published'?'badge-英语':'badge-数学' %>"><%= p.status==='published'?'已发布':p.status==='draft'?'草稿':'已归档' %></span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="/admin/research-manage/plan/<%= p.id %>" class="btn btn-outline btn-sm">查看</a>
+              <form method="POST" action="/admin/research-manage/plan/<%= p.id %>/delete" style="display:inline"><button class="btn btn-danger btn-sm" onclick="return confirm('确定删除？')">删除</button></form>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Activities -->
+      <div class="tab-panel" id="tab-activities">
+        <div class="section-hd"><h3>教研活动</h3><a href="/admin/research-manage/activity/new" class="btn btn-primary btn-sm">新建活动</a></div>
+        <% if (activities.length === 0) { %><div class="empty-state"><p>暂无教研活动</p></div><% } %>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>活动名称</th><th>类型</th><th>日期</th><th>时长</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <% activities.forEach(a => { %>
+              <tr>
+                <td><a href="/admin/research-manage/activity/<%= a.id %>" class="link"><%= a.title %></a></td>
+                <td><span class="badge <%= a.activity_type==='meeting'?'badge-英语':a.activity_type==='training'?'badge-计算机':'badge-数学' %>"><%= a.activity_type==='meeting'?'研讨会':a.activity_type==='training'?'培训':'其他' %></span></td>
+                <td><%= a.activity_date||'-' %></td>
+                <td><%= a.duration ? a.duration+'分钟' : '-' %></td>
+                <td><span class="status-dot status-<%= a.status==='completed'?'published':a.status==='scheduled'?'draft':'archived' %>"></span><%= a.status==='completed'?'已完成':a.status==='scheduled'?'待进行':'已取消' %></td>
+                <td><a href="/admin/research-manage/activity/<%= a.id %>" class="btn-table">详情</a></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Materials -->
+      <div class="tab-panel" id="tab-materials">
+        <div class="section-hd"><h3>教研资料</h3><a href="/admin/research-manage/material/new" class="btn btn-primary btn-sm">上传资料</a></div>
+        <% if (materials.length === 0) { %><div class="empty-state"><p>暂无教研资料</p></div><% } %>
+        <div class="card-grid">
+          <% materials.forEach(m => { %>
+          <div class="card">
+            <div class="card-body">
+              <h3><%= m.title %></h3>
+              <p><%= m.description||'' %></p>
+              <div class="card-meta">
+                <span><%= m.material_type==='document'?'文档':m.material_type==='video'?'视频':'其他' %></span>
+                <span><%= m.course_title||'通用' %></span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <form method="POST" action="/admin/research-manage/material/<%= m.id %>/delete" style="display:inline"><button class="btn btn-danger btn-sm" onclick="return confirm('确定删除？')">删除</button></form>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    .level-tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600}
+    .pkg-list-row.selected td{background:#eff6ff}
+    .table-wrap td:nth-child(2){white-space:nowrap;font-size:12px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+    #pkgList tr{height:46px}
+    #pkgTableHead th{height:40px}
+    #pkgList{min-height:460px}
+    #pkgModal{width:560px!important;max-height:96vh!important;min-height:560px!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+    #pkgModal .course-detail-modal__body{overflow-y:auto!important;flex:1!important;padding:16px 20px!important}
+    .add-btn{display:inline-flex;align-items:center;justify-content:center;gap:0;width:24px;height:24px;padding:0;background:linear-gradient(180deg,#ffffff,#f4f6f8);color:#111827;border:1px solid #d9dee7;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;margin-top:6px;box-shadow:0 1px 2px rgba(15,23,42,.05), inset 0 1px 0 rgba(255,255,255,.9)}
+    .add-btn:hover{background:linear-gradient(180deg,#f8fafc,#e9edf2);border-color:#c3cad4;color:#000000;transform:translateY(-1px);box-shadow:0 2px 6px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.9)}
+    .del-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:1px solid #fecaca;background:linear-gradient(180deg,#ffffff,#fef2f2);color:#dc2626;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(220,38,38,.06), inset 0 1px 0 rgba(255,255,255,.9)}
+    .del-btn:hover{background:linear-gradient(180deg,#fff7f7,#fee2e2);border-color:#fca5a5;color:#b91c1c;transform:translateY(-1px)}
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <div class="stats">
+        <div class="stat"><span class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><div class="stat-info"><strong><%= totalCourses %></strong><span>课程总数</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><div class="stat-info"><strong><%= publishedCourses %></strong><span>上架</span></div></div>
+        <div class="stat"><span class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div class="stat-info"><strong><%= pendingCourses.length %></strong><span>待排课</span></div></div>
+      </div>
+
+      <div class="list-header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <h2 id="listTitle">课程列表</h2>
+          <span id="listSubtitle" style="font-size:13px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw"></span>
+        </div>
+        <div class="list-tools">
+          <span id="pkgBackWrap"></span>
+          <form method="GET" action="/admin/courses-manage" class="toolbar-form" onsubmit="return false">
+            <input id="pkgSearch" value="<%= q || '' %>" placeholder="搜索课程包/省份/班型" class="toolbar-input" style="min-width:220px">
+            <select id="pkgStatusFilter" class="toolbar-select">
+              <option value="">全部状态</option>
+              <option value="published">上架</option>
+              <option value="archived">下架</option>
+            </select>
+          </form>
+          <button type="button" id="newPkgBtn" class="btn-primary--sm" onclick="handleNewClick()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            新建课程
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead id="pkgTableHead">
+            <tr><th>层级</th><th>名称</th><th>年份/省份/考试</th><th>状态</th><th>优先级</th><th>操作</th></tr>
+          </thead>
+          <tbody id="pkgList"></tbody>
+        </table>
+        <div id="pkgPagination" class="pagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="pkgOverlay" style="display:none"></div>
+  <div class="course-detail-modal" id="pkgModal" style="max-height:90vh;overflow:hidden;display:flex;flex-direction:column">
+    <div class="course-detail-modal__header">
+      <div>
+        <h3 class="course-detail-modal__title" id="pkgModalTitle">新建课程包</h3>
+        <p class="course-detail-modal__sub" id="pkgModalSub"></p>
+      </div>
+      <button class="course-detail-modal__close" onclick="closePkgModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="course-detail-modal__body" style="overflow-y:auto;flex:1;padding:16px 20px">
+      <input type="hidden" id="pkgFormId" value="0">
+      <div style="display:flex;gap:10px;margin-bottom:8px">
+        <div class="field" style="flex:1;display:none" id="pkgLevelWrap">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">课程包层级</label>
+          <select id="pkgFormLevel" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+            <option value="1">一级</option>
+            <option value="2">二级</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1;display:none" id="pkgParentWrap">
+          <label id="pkgFormParentLabel" style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">所属一级课程包</label>
+          <select id="pkgFormParent" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box"></select>
+          <input type="text" id="pkgFormParentText" readonly style="display:none;width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:8px">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">名称</label>
+        <input id="pkgFormTitle" placeholder="如：2027山东专升本卓越班" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+      </div>
+      <div class="field" style="margin-bottom:8px" id="pkgDescWrap">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">课程介绍</label>
+        <textarea id="pkgFormDescription" rows="2" placeholder="介绍该课程包，将展示在官网" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:8px">
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">招考省份</label>
+          <select id="pkgFormProvince" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+            <option value="">选择省份</option>
+            <% (provinceOptions || []).forEach(p => { %><option value="<%= p.name %>"><%= p.name %></option><% }) %>
+          </select>
+          <input type="text" id="pkgFormProvinceText" readonly style="display:none;width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">考试年份</label>
+          <select id="pkgFormYear" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+            <option value="">选择年份</option>
+            <% for(var _y=2026;_y<=2035;_y++){ %><option value="<%= _y %>"><%= _y %>年</option><% } %>
+          </select>
+          <input type="text" id="pkgFormYearText" readonly style="display:none;width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:8px">
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">考试类型</label>
+          <select id="pkgFormExamType" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+            <option value="专升本">专升本</option>
+          </select>
+          <input type="text" id="pkgFormExamTypeText" readonly style="display:none;width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">课程类型</label>
+          <select id="pkgFormClassType" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+            <option value="班课">系统学习</option>
+            <option value="专项集训课">专项集训</option>
+            <option value="押题密训课">冲刺密训</option>
+            <option value="公开课">公开课（免费课）</option>
+          </select>
+          <input type="text" id="pkgFormClassTypeText" readonly style="display:none;width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:8px">
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">开课时间</label>
+          <input type="date" id="pkgFormStartDate" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">下架时间</label>
+          <input type="date" id="pkgFormEndDate" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:8px">
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">定价</label>
+          <input id="pkgFormPrice" type="text" placeholder="元" value="" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">优惠价格</label>
+          <input id="pkgFormSalePrice" type="text" placeholder="元" value="" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:8px">
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">实际报课人数</label>
+          <input id="pkgFormActualCount" type="text" readonly placeholder="系统自动统计" value="" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;background:#f1f5f9;color:#64748b">
+        </div>
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">填写报课人数</label>
+          <input id="pkgFormStudentCount" type="text" placeholder="填写报课人数" value="" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">优先级</label>
+          <input id="pkgFormSort" type="text" placeholder="数字" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+        </div>
+        <div class="field" style="flex:1">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">状态</label>
+          <select id="pkgFormStatus" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box">
+            <option value="published">上架</option>
+            <option value="archived">下架</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding:16px 24px;border-top:1px solid #e2e8f0;flex-shrink:0">
+      <button onclick="closePkgModal()" class="btn btn-outline">取消</button>
+      <button onclick="savePkgForm()" class="btn btn-primary">保存</button>
+    </div>
+  </div>
+
+  <script>
+    var _pkgData = <%- JSON.stringify(packages || []) %>;
+    var _page = 1;
+    var _pageSize = 10;
+    var _viewParentId = 0;
+    var _viewCourseId = 0;
+    var _courseCache = {};
+    function esc(v){ return String(v==null?'':v).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function statusText(s){ return s==='published'?'<span class="badge badge-active">上架</span>':'<span class="badge badge-disabled">下架</span>'; }
+    function pkgTypeText(t){ return (t==='公开课'||t==='免费课'||t==='公共课') ? '公开课（免费课）' : (t==='专项集训课' ? '专项集训' : (t==='押题密训课' ? '冲刺密训' : '系统学习')); }
+    function typeText(p){ var c=p.class_type||''; return (c==='公开课'||c==='免费课'||c==='公共课')?'公开课':(c==='专项集训课'?'专项集训课':(c==='押题密训课'?'押题密训课':'班课')); }
+
+    function filteredPkgs(){
+      var kw=(document.getElementById('pkgSearch').value||'').trim().toLowerCase();
+      var st=document.getElementById('pkgStatusFilter').value||'';
+      if(_viewCourseId){
+        var courses=_courseCache[_viewCourseId]||[];
+        return courses.filter(function(c){
+          if(st==='scheduled' && !((parseInt(c.lesson_count)||0)>0)) return false;
+          if(st==='unscheduled' && (parseInt(c.lesson_count)||0)>0) return false;
+          if(!kw) return true;
+          return String(c.title||'').toLowerCase().indexOf(kw)>-1 ||
+            String(c.category||'').toLowerCase().indexOf(kw)>-1 ||
+            String(c.teacher_name||'').toLowerCase().indexOf(kw)>-1;
+        });
+      }
+      var list=_pkgData.filter(function(p){
+        if(_viewParentId===0) return !(parseInt(p.parent_id)||0);
+        return parseInt(p.parent_id)===_viewParentId;
+      });
+      if(st) list=list.filter(function(p){ return p.status===st; });
+      if(kw){
+        list=list.filter(function(p){
+          return String(p.title||'').toLowerCase().indexOf(kw)>-1 ||
+            String(p.province||'').toLowerCase().indexOf(kw)>-1 ||
+            String(p.class_type||'').toLowerCase().indexOf(kw)>-1 ||
+            String(p.parent_title||'').toLowerCase().indexOf(kw)>-1;
+        });
+      }
+      return list.sort(function(a,b){ return String(a.title||'').localeCompare(String(b.title||''), 'zh-Hans-CN') || a.id-b.id; });
+    }
+
+    function renderPkgList(){
+      var body=document.getElementById('pkgList');
+      if(!body) return;
+      renderViewBar();
+      var head=document.getElementById('pkgTableHead');
+      if(head && !_viewCourseId){ var nameLabel=_viewParentId===0?'班型名称':'班级名称'; head.innerHTML='<tr><th>层级</th><th>年份/省份/考试</th><th>课程类型</th><th>'+nameLabel+'</th><th>创建时间</th><th>状态</th><th>优先级</th><th>操作</th></tr>'; }
+      var list=filteredPkgs();
+      if(_viewCourseId){ renderCourseRows(list); return; }
+      var total=list.length;
+      var totalPages=Math.max(1, Math.ceil(total/_pageSize));
+      if(_page>totalPages) _page=totalPages;
+      var rows=list.slice((_page-1)*_pageSize, _page*_pageSize);
+      body.innerHTML='';
+      if(!rows.length){
+        for(var e=0;e<10;e++){
+          var tr=document.createElement('tr');
+          tr.className='pkg-empty-row';
+          if(e===0 && !_viewParentId){
+            tr.innerHTML='<td style="color:#94a3b8">暂无课程包</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
+          } else {
+            tr.innerHTML='<td colspan="8" style="height:46px"></td>';
+          }
+          body.appendChild(tr);
+        }
+        renderPagination(0,1);
+        return;
+      }
+      rows.forEach(function(p){
+        var tr=document.createElement('tr');
+        tr.className='pkg-list-row';
+        tr.setAttribute('data-id', p.id);
+        var lv=parseInt(p.parent_id)||0;
+        tr.innerHTML='<td><span class="level-tag '+(lv?'l2':'l1')+'">'+(lv?'二级':'一级')+'</span></td>'+
+          '<td>'+esc(p.year||'--')+' / '+esc(p.province||'--')+' / '+esc(p.exam_type||'专升本')+'</td>'+
+          '<td>'+pkgTypeText(p.class_type)+'</td>'+
+          '<td style="font-weight:600">'+esc(p.title)+'</td>'+
+          '<td>'+fmtSeriesTime(p.created_at)+'</td>'+
+          '<td>'+statusText(p.status)+'</td>'+
+          '<td>'+(parseInt(p.sort_order)||0)+'</td>'+
+          '<td>'+
+          (_viewParentId===0 ? '<button type="button" class="btn-table" data-action="children" data-id="'+p.id+'">查看</button> ' : '')+
+          (lv ? '<button type="button" class="btn-table" data-action="courses" data-id="'+p.id+'">查看</button> ' : '')+
+          '<button type="button" class="btn-table" data-action="edit" data-id="'+p.id+'">编辑</button> '+
+          '<button type="button" class="btn-table btn-table-danger" data-action="delete" data-id="'+p.id+'">删除</button></td>';
+        body.appendChild(tr);
+      });
+      for(var k=rows.length;k<10;k++){
+        var empty=document.createElement('tr');
+        empty.className='pkg-empty-row';
+        empty.innerHTML='<td colspan="7" style="height:46px"></td>';
+        body.appendChild(empty);
+      }
+      renderPagination(total,totalPages);
+    }
+
+    function renderCourseRows(list){
+      var head=document.getElementById('pkgTableHead');
+      if(head) head.innerHTML='<tr><th>层级</th><th>年份/省份/考试</th><th>科目名称</th><th>授课教师</th><th>创建时间</th><th>状态</th><th>操作</th></tr>';
+      var body=document.getElementById('pkgList');
+      if(!body) return;
+      var total=list.length;
+      var totalPages=Math.max(1, Math.ceil(total/_pageSize));
+      if(_page>totalPages) _page=totalPages;
+      var start=(_page-1)*_pageSize;
+      var rows=list.slice(start, start+_pageSize);
+      body.innerHTML='';
+      if(!rows.length){
+        for(var e=0;e<10;e++){
+          var tr=document.createElement('tr');
+          tr.className='pkg-empty-row';
+          if(e===0){
+            tr.innerHTML='<td style="color:#94a3b8">暂无课程</td><td></td><td></td><td></td><td></td><td></td><td></td>';
+          } else {
+            tr.innerHTML='<td colspan="8" style="height:46px"></td>';
+          }
+          body.appendChild(tr);
+        }
+        renderPagination(0,1);
+        return;
+      }
+      rows.forEach(function(c, idx){
+        var tr=document.createElement('tr');
+        var scheduled=(parseInt(c.lesson_count)||0)>0 ? '已排课' : '未排课';
+        tr.innerHTML='<td><span class="level-tag l3">课程</span></td>'+
+          '<td>'+esc((c.year||'--')+' / '+(c.province||'--')+' / '+(c.exam_type||'专升本'))+'</td>'+
+          '<td>'+esc(c.category||'-')+'</td>'+
+          '<td>'+esc(c.teacher_name||'-')+'</td>'+
+          '<td>'+fmtSeriesTime(c.created_at)+'</td>'+
+          '<td><span class="badge '+(scheduled==='已排课'?'badge-active':'badge-disabled')+'">'+scheduled+'</span></td>'+
+          '<td><a class="btn-table" href="/admin/courses-manage/'+c.id+'/scheduler?package_id='+_viewCourseId+'" target="_blank">排课</a> <button type="button" class="btn-table" onclick="openSeriesEdit('+c.id+')">编辑</button> <button type="button" class="btn-table btn-table-danger" onclick="deleteCourse('+c.id+')">删除</button></td>';
+        body.appendChild(tr);
+      });
+      for(var k=rows.length;k<10;k++){
+        var empty=document.createElement('tr');
+        empty.className='pkg-empty-row';
+        empty.innerHTML='<td colspan="7" style="height:46px"></td>';
+        body.appendChild(empty);
+      }
+      renderPagination(total,totalPages);
+    }
+
+    function deleteCourse(id){
+      if(!confirm('确认删除该系列课？')) return;
+      fetch('/admin/courses-manage/'+id+'/delete', { method:'POST' })
+        .then(function(){
+          if(_courseCache && _viewCourseId) delete _courseCache[_viewCourseId];
+          loadCourses(_viewCourseId);
+        })
+        .catch(function(){ alert('删除失败，请重试'); });
+    }
+    function fmtSeriesTime(v){
+      if(!v) return '-';
+      var s=String(v).trim();
+      var d=new Date(s.indexOf('T')>=0 ? s : s.replace(' ','T') + (s.indexOf('Z')>=0 ? '' : 'Z'));
+      if(isNaN(d.getTime())) return s;
+      d=new Date(d.getTime()+8*3600*1000);
+      function p(n){ return String(n).padStart(2,'0'); }
+      return d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())+' '+p(d.getUTCHours())+':'+p(d.getUTCMinutes())+':'+p(d.getUTCSeconds());
+    }
+    function showCourseView(c){
+      if(!c){ alert('课程不存在'); return; }
+      var rows=[
+        ['课程名称', c.title||'-'],
+        ['关联课程', c.package_titles||'-'],
+        ['考试科目', c.category||'-'],
+        ['创建时间', fmtSeriesTime(c.created_at)],
+        ['授课教师', c.teacher_name||'-'],
+        ['招考省份', c.province||'-'],
+        ['考试年份', c.year||'-'],
+        ['课程类型', (c.class_type==='公开课'||c.class_type==='免费课'||c.class_type==='公共课') ? '公开课（免费课）' : (c.class_type==='专项集训课' ? '专项集训' : (c.class_type==='押题密训课' ? '冲刺密训' : '系统学习'))]
+      ];
+      var html='';
+      rows.forEach(function(r){ html+='<div class="form-group"><label>'+r[0]+'</label><input type="text" readonly value="'+esc(r[1])+'"></div>'; });
+      document.getElementById('courseViewBody').innerHTML=html;
+      document.getElementById('courseViewOverlay').style.display='flex';
+      document.getElementById('courseViewOverlay').classList.add('open');
+      document.getElementById('courseViewModal').style.display='flex';
+      document.getElementById('courseViewModal').classList.add('open');
+    }
+    function openCourseView(id){
+      var pid=_viewCourseId;
+      if(!pid){
+        var list=_courseCache[pid]||[];
+        var c=null;
+        for(var i=0;i<list.length;i++){ if(parseInt(list[i].id)===parseInt(id)){ c=list[i]; break; } }
+        showCourseView(c);
+        return;
+      }
+      fetch('/admin/packages-manage/api/courses/'+pid).then(function(r){ return r.json(); }).then(function(d){
+        _courseCache[pid]=(d && d.courses) || [];
+        var c=null;
+        for(var i=0;i<_courseCache[pid].length;i++){ if(parseInt(_courseCache[pid][i].id)===parseInt(id)){ c=_courseCache[pid][i]; break; } }
+        showCourseView(c);
+      }).catch(function(){
+        var list=_courseCache[pid]||[];
+        var c=null;
+        for(var i=0;i<list.length;i++){ if(parseInt(list[i].id)===parseInt(id)){ c=list[i]; break; } }
+        showCourseView(c);
+      });
+    }
+    function closeCourseView(){
+      var overlay=document.getElementById('courseViewOverlay');
+      var modal=document.getElementById('courseViewModal');
+      if(overlay){ overlay.classList.remove('open'); overlay.style.display='none'; }
+      if(modal){ modal.classList.remove('open'); modal.style.display='none'; }
+    }
+
+    function renderViewBar(){
+      var wrap=document.getElementById('pkgBackWrap');
+      if(!wrap) return;
+      var search=document.getElementById('pkgSearch');
+      var status=document.getElementById('pkgStatusFilter');
+      var prev=status ? status.value : '';
+      if(_viewCourseId){
+        if(search) search.placeholder='搜索科目/教师';
+        if(status){
+          status.innerHTML='<option value="">全部状态</option><option value="scheduled">已排课</option><option value="unscheduled">未排课</option>';
+          if(prev==='scheduled'||prev==='unscheduled') status.value=prev; else status.value='';
+        }
+      } else {
+        if(search) search.placeholder='搜索课程包/省份/班型';
+        if(status){
+          status.innerHTML='<option value="">全部状态</option><option value="published">上架</option><option value="archived">下架</option>';
+          if(prev==='published'||prev==='archived') status.value=prev; else status.value='';
+        }
+      }
+      var sub=document.getElementById('listSubtitle');
+      if(sub) sub.textContent='';
+      wrap.style.display='none';
+      if(_viewCourseId){
+        var pkg=null;
+        for(var j=0;j<_pkgData.length;j++){ if(parseInt(_pkgData[j].id)===_viewCourseId){ pkg=_pkgData[j]; break; } }
+        wrap.style.display='flex';
+        if(sub && pkg) sub.textContent=pkg.title;
+        wrap.innerHTML='<button type="button" class="btn btn-outline btn-sm" data-action="backCourse">← 返回上级</button>';
+        return;
+      }
+      if(_viewParentId===0){ wrap.innerHTML=''; return; }
+      var parent=null;
+      for(var i=0;i<_pkgData.length;i++){ if(parseInt(_pkgData[i].id)===_viewParentId){ parent=_pkgData[i]; break; } }
+      wrap.style.display='flex';
+      if(sub && parent) sub.textContent=parent.title;
+      wrap.innerHTML='<button type="button" class="btn btn-outline btn-sm" data-action="back">← 返回上级</button>';
+    }
+
+    function renderPagination(total,totalPages){
+      var box=document.getElementById('pkgPagination');
+      if(!box) return;
+      var h='<button type="button" class="page-btn" data-page="'+(Math.max(1,_page-1))+'" '+( _page<=1?'disabled':'')+'>上一页</button>';
+      for(var i=1;i<=totalPages;i++) h+='<button type="button" class="'+(i===_page?'current':'page-btn')+'" data-page="'+i+'">'+i+'</button>';
+      h+='<button type="button" class="page-btn" data-page="'+(Math.min(totalPages,_page+1))+'" '+( _page>=totalPages?'disabled':'')+'>下一页</button>';
+      h+='<span class="info">共 '+total+' 条</span>';
+      box.innerHTML=h;
+    }
+
+    function loadCourses(id){
+      _viewParentId=0;
+      for(var i=0;i<_pkgData.length;i++){ if(parseInt(_pkgData[i].id)===parseInt(id)){ _viewParentId=parseInt(_pkgData[i].parent_id)||0; break; } }
+      fetch('/admin/packages-manage/api/courses/'+id).then(function(r){ return r.json(); }).then(function(d){
+        _courseCache[id]=(d && d.courses) || [];
+        _viewCourseId=id; _page=1; saveHashState(); renderPkgList();
+      }).catch(function(){ alert('加载课程失败'); });
+    }
+
+    function parseHashState(){
+      var h=String(location.hash||'').replace(/^#/,'');
+      var out={};
+      h.split('&').forEach(function(pair){
+        var kv=pair.split('=');
+        if(kv[0]) out[kv[0]]=kv[1];
+      });
+      return out;
+    }
+    function saveHashState(){
+      var parts=[];
+      if(_viewParentId) parts.push('parent='+_viewParentId);
+      if(_viewCourseId) parts.push('course='+_viewCourseId);
+      location.hash=parts.length ? parts.join('&') : '';
+    }
+
+    function delPkg(id){
+      if(!confirm('确认删除该课程包？')) return;
+      fetch('/admin/packages-manage/api/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})}).then(function(r){ return r.json(); }).then(function(d){
+        if(d && d.ok){
+          _pkgData=_pkgData.filter(function(p){ return parseInt(p.id)!==id; });
+          renderPkgList();
+        } else { alert((d && d.error) || '删除失败'); }
+      }).catch(function(){ alert('删除失败，请重试'); });
+    }
+
+    ['menuToggle','sidebarToggle'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open');});
+    });
+    document.getElementById('pkgList').addEventListener('click', function(e){
+      var btn=e.target.closest ? e.target.closest('button[data-action]') : null;
+      if(!btn) return;
+      var id=parseInt(btn.getAttribute('data-id'))||0;
+      var action=btn.getAttribute('data-action');
+      if(action==='delete') delPkg(id);
+      else if(action==='edit') openPkgModal(id);
+      else if(action==='children'){ _viewParentId=id; _viewCourseId=0; _page=1; saveHashState(); renderPkgList(); }
+      else if(action==='courses'){
+        for(var ci=0;ci<_pkgData.length;ci++){
+          if(parseInt(_pkgData[ci].id)===id){ _viewParentId=parseInt(_pkgData[ci].parent_id)||0; break; }
+        }
+        loadCourses(id);
+      }
+      else if(action==='backCourse'){ _viewCourseId=0; _page=1; saveHashState(); renderPkgList(); }
+      else if(action==='back'){ _viewParentId=0; _viewCourseId=0; _page=1; saveHashState(); renderPkgList(); }
+    });
+    document.getElementById('pkgBackWrap').addEventListener('click', function(e){
+      var btn=e.target.closest ? e.target.closest('button[data-action]') : null;
+      if(!btn) return;
+      if(btn.getAttribute('data-action')==='backCourse'){ _viewCourseId=0; _page=1; saveHashState(); renderPkgList(); }
+      if(btn.getAttribute('data-action')==='back'){ _viewParentId=0; _viewCourseId=0; _page=1; saveHashState(); renderPkgList(); }
+    });
+    document.getElementById('pkgSearch').addEventListener('input', function(){ _page=1; renderPkgList(); });
+    document.getElementById('pkgStatusFilter').addEventListener('change', function(){ _page=1; renderPkgList(); });
+    document.getElementById('pkgPagination').addEventListener('click', function(e){
+      var btn=e.target.closest ? e.target.closest('button[data-page]') : null;
+      if(btn && !btn.disabled){ _page=parseInt(btn.getAttribute('data-page'))||1; renderPkgList(); }
+    });
+    function pkgList(level){ return (_pkgData||[]).filter(function(p){ return level===1 ? (!p.parent_id) : !!p.parent_id; }); }
+    function fillParentSelect(selected){
+      var sel=document.getElementById('pkgFormParent');
+      if(!sel) return;
+      var h='<option value="0">选择一级</option>';
+      pkgList(1).forEach(function(p){
+        h+='<option value="'+p.id+'"'+(selected===parseInt(p.id)?' selected':'')+'>'+esc(p.title)+'</option>';
+      });
+      sel.innerHTML=h;
+    }
+    function setInheritLocked(locked){
+      var pairs=[['pkgFormProvince','pkgFormProvinceText'],['pkgFormYear','pkgFormYearText'],['pkgFormClassType','pkgFormClassTypeText'],['pkgFormExamType','pkgFormExamTypeText'],['pkgFormParent','pkgFormParentText']];
+      pairs.forEach(function(pair){
+        var sel=document.getElementById(pair[0]);
+        var txt=document.getElementById(pair[1]);
+        if(!sel || !txt) return;
+        if(locked){
+          if(pair[0]==='pkgFormClassType'){
+            txt.value=(sel.value==='公开课'||sel.value==='免费课'||sel.value==='公共课')?'公开课（免费课）':(sel.value==='专项集训课'?'专项集训':(sel.value==='押题密训课'?'冲刺密训':'系统学习'));
+          } else {
+            txt.value=pair[0]==='pkgFormParent' && sel.selectedIndex>=0 ? sel.options[sel.selectedIndex].text : sel.value;
+          }
+          sel.style.display='none';
+          txt.style.display='';
+        } else {
+          sel.style.display='';
+          txt.style.display='none';
+        }
+      });
+    }
+    function handleNewClick(){
+      if(_viewCourseId){
+        try { openSeriesModal(); } catch(e) { location.href='/admin/courses-manage/new?package_id='+_viewCourseId; }
+        return;
+      }
+      openPkgModal();
+    }
+    var _provs = <%- JSON.stringify(provinceOptions || []) %>;
+    var _seriesTeachers = <%- JSON.stringify(teachers || []) %>;
+    var seriesSelectedIds = [];
+    var seriesDefaultPkgId = 0;
+    function seriesEsc(v){ return String(v==null?'':v).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function seriesPkgById(id){ for(var i=0;i<_pkgData.length;i++){ if(parseInt(_pkgData[i].id)===parseInt(id)) return _pkgData[i]; } return null; }
+    function seriesPkgList(level){ return (_pkgData||[]).filter(function(p){ return level===1 ? (!p.parent_id) : !!p.parent_id; }); }
+    function seriesRenderAssoc(){
+      var box=document.getElementById('seriesAssocList');
+      if(!box) return;
+      box.innerHTML='';
+      box.style.display=seriesSelectedIds.length ? 'flex' : 'none';
+      seriesSelectedIds.forEach(function(id){
+        if(parseInt(id)===parseInt(seriesDefaultPkgId)) return;
+        var p=seriesPkgById(id);
+        if(!p) return;
+        var parent=seriesPkgById(p.parent_id);
+        var label=(parseInt(p.parent_id)||0) && parent ? parent.title + ' · ' + p.title : p.title;
+        var card=document.createElement('div');
+        card.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;background:#f8fafc';
+        card.innerHTML='<span style="flex:1;min-width:0;font-size:12px;color:#334155;line-height:1.5">'+seriesEsc(label)+'</span><button type="button" class="del-btn" onclick="seriesRemovePkg('+p.id+')" title="移除">×</button>';
+        box.appendChild(card);
+      });
+      document.getElementById('seriesPkgIds').value=seriesSelectedIds.join(',');
+    }
+    function seriesRemovePkg(id){
+      id=parseInt(id)||0;
+      var i=seriesSelectedIds.indexOf(id);
+      if(i>=0) seriesSelectedIds.splice(i,1);
+      seriesRenderAssoc();
+    }
+    function seriesOpenAdd(){
+      var parentSel=document.getElementById('addSeriesParent');
+      var childSel=document.getElementById('addSeriesChild');
+      var h='<option value="">选择一级课程包</option>';
+      seriesPkgList(1).forEach(function(p){ h+='<option value="'+p.id+'">'+seriesEsc(p.title)+'</option>'; });
+      parentSel.innerHTML=h;
+      childSel.innerHTML='<option value="">选择二级课程包</option>';
+      document.getElementById('addSeriesOverlay').style.display='flex';
+      document.getElementById('addSeriesOverlay').classList.add('open');
+      document.getElementById('addSeriesModal').style.display='flex';
+      document.getElementById('addSeriesModal').classList.add('open');
+    }
+    function seriesCloseAdd(){
+      var overlay=document.getElementById('addSeriesOverlay');
+      var modal=document.getElementById('addSeriesModal');
+      if(overlay){ overlay.classList.remove('open'); overlay.style.display='none'; }
+      if(modal){ modal.classList.remove('open'); modal.style.display='none'; }
+    }
+    function seriesOnParentChange(){
+      var parent=document.getElementById('addSeriesParent');
+      var child=document.getElementById('addSeriesChild');
+      var pid=parseInt(parent ? parent.value : 0)||0;
+      var h='<option value="">选择二级课程包</option>';
+      seriesPkgList(2).filter(function(p){ return parseInt(p.parent_id)===pid; }).forEach(function(p){
+        h+='<option value="'+p.id+'">'+seriesEsc(p.title)+'</option>';
+      });
+      child.innerHTML=h;
+    }
+    function seriesConfirmAdd(){
+      var child=document.getElementById('addSeriesChild');
+      var id=parseInt(child ? child.value : 0)||0;
+      if(!id){ alert('请选择二级课程包'); return; }
+      if(parseInt(id)===parseInt(seriesDefaultPkgId)) return;
+      if(seriesSelectedIds.indexOf(id)<0) seriesSelectedIds.push(id);
+      seriesRenderAssoc();
+      seriesCloseAdd();
+    }
+    function seriesPopulateCategory(){
+      var sel=document.getElementById('seriesCategory');
+      if(!sel) return;
+      var prov=document.getElementById('seriesProvince').value;
+      var p=null;
+      for(var i=0;i<_provs.length;i++){ if(_provs[i].name===prov){ p=_provs[i]; break; } }
+      var subs=(p && p.subjects) || [{name:'数学',standard:'数学'},{name:'英语',standard:'英语'},{name:'语文',standard:'语文'},{name:'计算机',standard:'计算机'},{name:'政治',standard:'政治'},{name:'管理学',standard:'管理学'},{name:'教育学',standard:'教育学'},{name:'医学',standard:'医学'},{name:'会计',standard:'会计'},{name:'经济学',standard:'经济学'},{name:'法学',standard:'法学'},{name:'艺术',standard:'艺术'},{name:'体育',standard:'体育'}];
+      var h='<option value="">选择科目</option>';
+      subs.forEach(function(s){
+        var label=s.name;
+        h+='<option value="'+seriesEsc(s.name)+'" data-standard="'+seriesEsc(s.standard||s.name||'')+'">'+seriesEsc(label)+'</option>';
+      });
+      sel.innerHTML=h;
+    }
+    function seriesFilterTeacher(){
+      var subj=document.getElementById('seriesCategory').value;
+      var catSel=document.getElementById('seriesCategory');
+      var opt=catSel && catSel.options[catSel.selectedIndex];
+      var standard=opt ? opt.getAttribute('data-standard')||'' : '';
+      var tsel=document.getElementById('seriesTeacher');
+      var h='<option value="">选择教师</option>';
+      _seriesTeachers.forEach(function(t){
+        if(!subj || t.subject===subj || t.subject===standard || !t.subject) h+='<option value="'+t.id+'">'+seriesEsc(t.real_name)+'</option>';
+      });
+      tsel.innerHTML=h;
+    }
+    function seriesUpdateTitle(){
+      var year=document.getElementById('seriesYear').value;
+      var prov=document.getElementById('seriesProvince').value;
+      var cat=document.getElementById('seriesCategory').value;
+      var el=document.getElementById('seriesAutoTitle');
+      el.value=(year && prov && cat) ? year+prov+'专升本'+cat : '';
+    }
+    function seriesCollectSubjects(){ return true; }
+    function openSeriesModal(editId, editCourse){
+      var id=parseInt(_viewCourseId)||0;
+      if(!id){ alert('请先进入二级课程包课程列表'); return; }
+      if(editCourse===undefined){
+        editCourse=null;
+      }
+      if(editId && !editCourse){
+        var list=_courseCache[_viewCourseId]||[];
+        for(var i=0;i<list.length;i++){ if(parseInt(list[i].id)===parseInt(editId)){ editCourse=list[i]; break; } }
+        if(!editCourse){ alert('课程不存在'); return; }
+      }
+      var pkg=seriesPkgById(editCourse ? (editCourse.package_id||id) : id);
+      if(!pkg){ alert('课程包不存在'); return; }
+      var parent=seriesPkgById(pkg.parent_id);
+      document.getElementById('seriesCourseId').value=editCourse ? editCourse.id : 0;
+      document.getElementById('seriesForm').action=editCourse ? '/admin/courses-manage/'+editCourse.id+'/update-basic' : '/admin/courses-manage';
+      document.querySelector('#seriesModal .course-detail-modal__title').textContent=editCourse ? '编辑系列课' : '新建系列课';
+      document.getElementById('seriesPkgId').value=editCourse ? (editCourse.package_id||id) : id;
+      seriesDefaultPkgId=editCourse ? (editCourse.package_id||id) : id;
+      seriesSelectedIds=[];
+      if(editCourse){
+        var ids=String(editCourse.package_ids||'').split(',').map(function(x){ return parseInt(x)||0; }).filter(function(x){ return x>0; });
+        if(!ids.length && editCourse.package_id) ids=[parseInt(editCourse.package_id)];
+        seriesSelectedIds=ids;
+      }
+      document.getElementById('seriesPkgIds').value=seriesSelectedIds.join(',');
+      document.getElementById('seriesDefaultPkg').textContent=(parent ? parent.title + ' · ' : '') + pkg.title;
+      document.getElementById('seriesProvince').value=editCourse ? (editCourse.province||pkg.province||'') : (pkg.province||'');
+      document.getElementById('seriesYear').value=editCourse ? (editCourse.year||pkg.year||'') : (pkg.year||'');
+      document.getElementById('seriesExamType').value=editCourse ? (editCourse.exam_type||pkg.exam_type||'专升本') : (pkg.exam_type||'专升本');
+      var ct=(editCourse && editCourse.class_type) || pkg.class_type || '班课';
+      ct=(ct==='公开课'||ct==='免费课'||ct==='公共课')?'公开课':(ct==='专项集训课'?'专项集训课':(ct==='押题密训课'?'押题密训课':'班课'));
+      document.getElementById('seriesClassTypeText').value=ct==='公开课'?'公开课（免费课）':(ct==='专项集训课'?'专项集训':(ct==='押题密训课'?'冲刺密训':'系统学习'));
+      document.getElementById('seriesCourseType').value=ct==='公开课'?'public':'class';
+      document.getElementById('seriesClassType').value=ct;
+      document.getElementById('seriesAutoTitle').value='';
+      seriesPopulateCategory();
+      seriesFilterTeacher();
+      if(editCourse){
+        document.getElementById('seriesCategory').value=editCourse.category||'';
+        document.getElementById('seriesTeacher').value=editCourse.teacher_id||'';
+        document.getElementById('seriesAutoTitle').value=editCourse.title||'';
+      }
+      seriesRenderAssoc();
+      var overlay=document.getElementById('seriesOverlay');
+      var modal=document.getElementById('seriesModal');
+      overlay.style.display='flex';
+      overlay.classList.add('open');
+      modal.style.display='flex';
+      modal.classList.add('open');
+    }
+    function openSeriesEdit(id){
+      var pid=_viewCourseId;
+      if(!pid){ openSeriesModal(id); return; }
+      fetch('/admin/packages-manage/api/courses/'+pid).then(function(r){ return r.json(); }).then(function(d){
+        _courseCache[pid]=(d && d.courses) || [];
+        var c=null;
+        for(var i=0;i<_courseCache[pid].length;i++){ if(parseInt(_courseCache[pid][i].id)===parseInt(id)){ c=_courseCache[pid][i]; break; } }
+        openSeriesModal(id, c);
+      }).catch(function(){ openSeriesModal(id); });
+    }
+    function closeSeriesModal(){
+      var overlay=document.getElementById('seriesOverlay');
+      var modal=document.getElementById('seriesModal');
+      if(overlay){ overlay.classList.remove('open'); overlay.style.display='none'; }
+      if(modal){ modal.classList.remove('open'); modal.style.display='none'; }
+    }
+    function saveSeriesModal(){
+      var form=document.getElementById('seriesForm');
+      if(!form) return;
+      seriesUpdateTitle();
+      if(!form.checkValidity()){ form.reportValidity(); return; }
+      var data=new URLSearchParams(new FormData(form));
+      var btn=document.querySelector('#seriesModal .btn-primary');
+      if(btn) btn.disabled=true;
+      var action=form.getAttribute('action') || '/admin/courses-manage';
+      fetch(action, {
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:data.toString(),
+        redirect:'follow'
+      }).then(function(r){
+        if(action.indexOf('update-basic')>=0){
+          return r.json().then(function(d){ if(!d || !d.ok) throw new Error('保存失败'); });
+        }
+        return r.text();
+      }).then(function(){ closeSeriesModal(); if(_viewCourseId){ _courseCache={}; loadCourses(_viewCourseId); } else { renderPkgList(); } })
+        .catch(function(){ alert('保存失败，请重试'); })
+        .then(function(){ if(btn) btn.disabled=false; });
+    }
+    function openPkgModal(editId){
+      editId=parseInt(editId)||0;
+      document.getElementById('pkgFormId').value=editId;
+      document.getElementById('pkgLevelWrap').style.display='none';
+      document.getElementById('pkgFormParentLabel').textContent='所属一级课程包';
+      document.getElementById('pkgFormTitle').value='';
+      document.getElementById('pkgFormDescription').value='';
+      document.getElementById('pkgFormExamType').value='专升本';
+      document.getElementById('pkgFormSalePrice').value='';
+      document.getElementById('pkgFormYear').value='';
+      document.getElementById('pkgFormProvince').value='';
+      document.getElementById('pkgFormClassType').value='班课';
+      document.getElementById('pkgFormPrice').value='';
+      document.getElementById('pkgFormStudentCount').value='';
+      document.getElementById('pkgFormActualCount').value='0';
+      document.getElementById('pkgFormStatus').value='archived';
+      document.getElementById('pkgFormSort').value='';
+      document.getElementById('pkgFormStartDate').value='';
+      document.getElementById('pkgFormEndDate').value='';
+      setInheritLocked(false);
+      var p=null;
+      if(editId){
+        for(var ei=0;ei<_pkgData.length;ei++){ if(parseInt(_pkgData[ei].id)===editId){ p=_pkgData[ei]; break; } }
+      }
+      if(p){
+        var lv=parseInt(p.parent_id)||0 ? 2 : 1;
+        document.getElementById('pkgFormLevel').value=lv;
+        document.getElementById('pkgParentWrap').style.display=lv===2?'':'none';
+        document.getElementById('pkgModalTitle').textContent=lv===2?'编辑二级课程包':'编辑一级课程包';
+        fillParentSelect(parseInt(p.parent_id)||0);
+        document.getElementById('pkgFormParent').disabled = lv===1;
+        document.getElementById('pkgFormTitle').value=p.title||'';
+        document.getElementById('pkgFormDescription').value=p.description||'';
+        document.getElementById('pkgFormExamType').value=p.exam_type||'专升本';
+        document.getElementById('pkgFormSalePrice').value=p.sale_price||'';
+        document.getElementById('pkgFormYear').value=p.year||'';
+        document.getElementById('pkgFormProvince').value=p.province||'';
+        var _ct=p.class_type||'';
+        document.getElementById('pkgFormClassType').value=(_ct==='公开课'||_ct==='免费课'||_ct==='公共课')?'公开课':(_ct==='专项集训课'?'专项集训课':(_ct==='押题密训课'?'押题密训课':'班课'));
+        document.getElementById('pkgFormPrice').value=p.price||'';
+        document.getElementById('pkgFormStudentCount').value=p.student_count||'';
+        document.getElementById('pkgFormActualCount').value=p.actual_student_count||0;
+        document.getElementById('pkgFormStatus').value=(p.status==='published'?'published':'archived');
+        document.getElementById('pkgFormSort').value=p.sort_order||'';
+        document.getElementById('pkgFormStartDate').value=p.start_date||'';
+        document.getElementById('pkgFormEndDate').value=p.end_date||'';
+        if(lv===2) setInheritLocked(true);
+      } else {
+        document.getElementById('pkgParentWrap').style.display=_viewParentId ? '' : 'none';
+        document.getElementById('pkgFormLevel').value=_viewParentId ? 2 : 1;
+        document.getElementById('pkgModalTitle').textContent=_viewParentId ? '新建二级课程包' : '新建一级课程包';
+        fillParentSelect(_viewParentId||0);
+        document.getElementById('pkgFormParent').disabled=true;
+        if(_viewParentId){
+          var parent=null;
+          for(var i=0;i<_pkgData.length;i++){ if(parseInt(_pkgData[i].id)===_viewParentId){ parent=_pkgData[i]; break; } }
+          if(parent){
+            document.getElementById('pkgFormProvince').value=parent.province||'';
+            document.getElementById('pkgFormYear').value=parent.year||'';
+            var ct=parent.class_type||'';
+            document.getElementById('pkgFormClassType').value=(ct==='公开课'||ct==='免费课'||ct==='公共课')?'公开课':(ct==='专项集训课'?'专项集训课':(ct==='押题密训课'?'押题密训课':'班课'));
+            document.getElementById('pkgFormExamType').value=parent.exam_type||'专升本';
+            setInheritLocked(true);
+          }
+        }
+      }
+      document.getElementById('pkgOverlay').style.display='flex';
+      document.getElementById('pkgOverlay').classList.add('open');
+      var pkgDescWrap=document.getElementById('pkgDescWrap');
+      if(pkgDescWrap) pkgDescWrap.style.display=(parseInt(document.getElementById('pkgFormLevel').value)||0)===1?'':'none';
+      document.getElementById('pkgModal').style.display='flex';
+      document.getElementById('pkgModal').classList.add('open');
+    }
+    function closePkgModal(){
+      document.getElementById('pkgOverlay').style.display='none';
+      document.getElementById('pkgOverlay').classList.remove('open');
+      document.getElementById('pkgModal').style.display='none';
+      document.getElementById('pkgModal').classList.remove('open');
+    }
+    function savePkgForm(){
+      var title=document.getElementById('pkgFormTitle').value.trim();
+      if(!title){ alert('请输入名称'); return; }
+      var id=parseInt(document.getElementById('pkgFormId').value)||0;
+      var p=null;
+      if(id){
+        for(var i=0;i<_pkgData.length;i++){ if(parseInt(_pkgData[i].id)===id){ p=_pkgData[i]; break; } }
+      }
+      var lv = p ? (parseInt(p.parent_id)||0 ? 2 : 1) : (_viewParentId ? 2 : 1);
+      var parentId = p ? (lv===2 ? (parseInt(document.getElementById('pkgFormParent').value)||0) : 0) : (_viewParentId||0);
+      var data={title:title, description:document.getElementById('pkgFormDescription').value, year:document.getElementById('pkgFormYear').value, province:document.getElementById('pkgFormProvince').value, class_type:document.getElementById('pkgFormClassType').value, exam_type:document.getElementById('pkgFormExamType').value, price:document.getElementById('pkgFormPrice').value||'', sale_price:document.getElementById('pkgFormSalePrice').value||'', student_count:document.getElementById('pkgFormStudentCount').value||0, status:document.getElementById('pkgFormStatus').value, parent_id:parentId, level:lv, sort_order:document.getElementById('pkgFormSort').value||0, start_date:document.getElementById('pkgFormStartDate').value, end_date:document.getElementById('pkgFormEndDate').value};
+      if(id) data.id=id;
+      var url=id ? '/admin/packages-manage/api/update' : '/admin/packages-manage/api/create';
+      fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){ return r.json(); }).then(function(d){
+        if(d && d.ok){
+          if(id){
+            for(var j=0;j<_pkgData.length;j++){
+              if(parseInt(_pkgData[j].id)===id){
+                _pkgData[j]=Object.assign({}, _pkgData[j], d, {child_count:_pkgData[j].child_count||0, course_count:_pkgData[j].course_count||0});
+                break;
+              }
+            }
+          } else {
+            var parentTitle='';
+            for(var k=0;k<_pkgData.length;k++){ if(parseInt(_pkgData[k].id)===parentId){ parentTitle=_pkgData[k].title; break; } }
+            _pkgData.push(Object.assign({}, d, {child_count:0, course_count:0, parent_title:parentTitle}));
+          }
+          renderPkgList();
+          closePkgModal();
+        } else { alert((d && d.error) || '保存失败'); }
+      }).catch(function(){ alert('保存失败，请重试'); });
+    }
+    renderPkgList();
+    (function(){
+      var hs=parseHashState();
+      if(hs.course){
+        loadCourses(parseInt(hs.course));
+      } else if(hs.parent){
+        _viewParentId=parseInt(hs.parent);
+        renderPkgList();
+      }
+    })();
+  </script>
+  <div class="modal-overlay" id="seriesOverlay" style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center"></div>
+  <div class="course-detail-modal" id="seriesModal" style="position:fixed;top:50%;left:50%;z-index:310;transform:translate(-50%,-50%);width:560px;max-width:94vw;min-height:560px;max-height:96vh;background:#fff;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.22);display:none;flex-direction:column">
+    <div class="course-detail-modal__header">
+      <div>
+        <h3 class="course-detail-modal__title">新建系列课</h3>
+        <p class="course-detail-modal__sub">创建科目课</p>
+      </div>
+      <button class="course-detail-modal__close" onclick="closeSeriesModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="course-detail-modal__body" style="overflow-y:auto;flex:1">
+      <form method="POST" action="/admin/courses-manage" id="seriesForm" onsubmit="event.preventDefault(); seriesUpdateTitle(); if(seriesCollectSubjects()){ saveSeriesModal(); } return false;">
+        <input type="hidden" id="seriesCourseId" value="0">
+        <input type="hidden" name="title" id="seriesAutoTitle" value="">
+        <input type="hidden" name="package_id" id="seriesPkgId" value="0">
+        <input type="hidden" name="package_ids" id="seriesPkgIds" value="">
+        <div style="margin-bottom:12px">
+          <div id="seriesDefaultPkg" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;background:#f8fafc;margin-bottom:6px;font-size:12px;color:#334155"></div>
+          <div id="seriesAssocList" style="display:none;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+          <div style="display:flex;justify-content:flex-end"><button type="button" class="add-btn" title="添加课程包" onclick="seriesOpenAdd()" style="margin-top:0">+</button></div>
+        </div>
+        <div class="form-group"><label>考试科目</label><select name="category" id="seriesCategory" required onchange="seriesFilterTeacher()"><option value="">选择科目</option></select></div>
+        <div class="form-group"><label>授课教师</label><select name="teacher_id" id="seriesTeacher"><option value="">选择教师</option></select><input type="hidden" name="teaching_mode" value=""></div>
+        <div class="form-group"><label>招考省份</label><input type="text" name="province" id="seriesProvince" readonly></div>
+        <div class="form-group"><label>考试年份</label><input type="text" name="year" id="seriesYear" readonly></div>
+        <div class="form-group"><label>考试类型</label><input type="text" name="exam_type" id="seriesExamType" readonly></div>
+        <div class="form-group"><label>课程类型</label><input type="text" id="seriesClassTypeText" readonly><input type="hidden" name="course_type" id="seriesCourseType" value="class"><input type="hidden" name="class_type" id="seriesClassType" value="班课"></div>
+      </form>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--color-border-light,#e2e8f0);flex-shrink:0">
+      <button onclick="closeSeriesModal()" class="btn btn-outline">取消</button>
+      <button onclick="saveSeriesModal()" class="btn btn-primary">保存</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="addSeriesOverlay" style="position:fixed;inset:0;z-index:320;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center"></div>
+  <div class="course-detail-modal" id="addSeriesModal" style="position:fixed;top:50%;left:50%;z-index:330;transform:translate(-50%,-50%);width:440px;max-width:92vw;background:#fff;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.18);display:none;flex-direction:column">
+    <div class="course-detail-modal__header">
+      <div>
+        <h3 class="course-detail-modal__title">添加关联课程包</h3>
+        <p class="course-detail-modal__sub">先选择一级课程包，再选择二级课程包。</p>
+      </div>
+      <button class="course-detail-modal__close" onclick="seriesCloseAdd()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="course-detail-modal__body">
+      <div class="field" style="margin-bottom:12px">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">一级课程包</label>
+        <select id="addSeriesParent" onchange="seriesOnParentChange()" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box"></select>
+      </div>
+      <div class="field">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">二级课程包</label>
+        <select id="addSeriesChild" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box"></select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--color-border-light,#e2e8f0)">
+      <button onclick="seriesCloseAdd()" class="btn btn-outline">取消</button>
+      <button onclick="seriesConfirmAdd()" class="btn btn-primary">添加</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="courseViewOverlay" style="position:fixed;inset:0;z-index:340;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center"></div>
+  <div class="course-detail-modal" id="courseViewModal" style="position:fixed;top:50%;left:50%;z-index:350;transform:translate(-50%,-50%);width:560px;max-width:94vw;min-height:420px;max-height:90vh;background:#fff;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.22);display:none;flex-direction:column">
+    <div class="course-detail-modal__header">
+      <div>
+        <h3 class="course-detail-modal__title">课程详情</h3>
+        <p class="course-detail-modal__sub">查看系列课信息</p>
+      </div>
+      <button class="course-detail-modal__close" onclick="closeCourseView()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="course-detail-modal__body" id="courseViewBody" style="overflow-y:auto;flex:1"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--color-border-light,#e2e8f0)">
+      <button onclick="closeCourseView()" class="btn btn-outline">关闭</button>
+    </div>
+  </div>
+</body>
+</html>

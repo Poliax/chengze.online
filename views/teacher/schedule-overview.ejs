@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>承泽教育 · 排课系统</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    body.sched-body{background:linear-gradient(160deg,#f5f7fc 0%,#eef2f8 100%);min-height:100vh;font-family:var(--font-cn);color:#0f172a}
+    .sched-shell{display:flex;flex-direction:column;min-height:100vh;padding:16px 20px;box-sizing:border-box}
+    .sched-topbar{height:52px;background:#fff;border-bottom:1px solid var(--color-border);padding:0 18px;margin-bottom:14px;border-radius:0;box-shadow:none;flex-wrap:nowrap}
+    .sched-brand{font-size:15px;font-weight:800;color:#0f172a;white-space:nowrap}
+    .sched-content{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px}
+    .stats{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+    .stat{flex:1;min-width:150px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px}
+    .stat strong{font-size:22px;font-weight:800;color:#0f172a;display:block}
+    .stat span{font-size:12px;color:#64748b}
+    .list-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+    .list-header h2{font-size:16px;font-weight:800;color:#0f172a;margin:0}
+    .table-wrap{overflow-x:auto}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:300;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#fff;border-radius:10px;padding:22px;width:440px;max-width:92vw;box-shadow:0 24px 64px rgba(0,0,0,.22);box-sizing:border-box}
+    .modal-box h3{margin:0 0 14px;font-size:15px;font-weight:700;color:#0f172a}
+    .modal-box .field{margin-bottom:12px}
+    .modal-box .field label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:4px}
+    .modal-box .field select{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit;background:#fff;box-sizing:border-box;color:#334155}
+    .modal-box .field select:disabled{background:#f8fafc;color:#94a3b8;cursor:not-allowed}
+    .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+    .modal-actions button{height:32px;padding:0 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+    .modal-actions .cancel{background:#fff;border:1px solid #cbd5e1;color:#64748b}
+    .modal-actions .go{background:#2563eb;border:none;color:#fff}
+    .modal-actions .go:disabled{background:#a5c6fa;cursor:not-allowed}
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="sched-body">
+  <div class="sched-shell">
+    <header class="teacher-topbar sched-topbar">
+      <div class="topbar-left">
+        <span class="sched-brand">承泽教育 · 排课系统</span>
+      </div>
+      <div class="topbar-right">
+        <button type="button" class="btn btn-primary btn-sm" onclick="openSchedulePicker()">排课</button>
+        <a href="/admin/dashboard" class="btn btn-outline btn-sm">返回控制台</a>
+      </div>
+    </header>
+    <div class="sched-content">
+      <div class="stats">
+        <div class="stat"><strong><%= total %></strong><span>课程总数</span></div>
+        <div class="stat"><strong><%= scheduled %></strong><span>已排课</span></div>
+        <div class="stat"><strong><%= pending %></strong><span>待排课</span></div>
+      </div>
+
+      <div class="list-header">
+        <h2>排课总览</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>课程名称</th><th>考试科目</th><th>年份/省份</th><th>排课状态</th><th>课时数</th><th>关联课程包</th><th>操作</th></tr>
+          </thead>
+          <tbody>
+            <% if (!courses.length) { %>
+              <tr><td colspan="7" class="empty">暂无课程</td></tr>
+            <% } %>
+            <% courses.forEach(c => { %>
+            <tr>
+              <td style="font-weight:600"><%= c.title %></td>
+              <td><%= c.category || '-' %></td>
+              <td><%= c.year || '--' %> / <%= c.province || '--' %></td>
+              <td><span class="badge <%= (parseInt(c.scheduled_count)||0)>0 ? 'badge-active' : 'badge-disabled' %>"><%= (parseInt(c.scheduled_count)||0)>0 ? '已排课' : '未排课' %></span></td>
+              <td><%= c.lesson_count || 0 %></td>
+              <td><%= c.package_titles || '-' %></td>
+              <td><a class="btn-table" href="/admin/courses-manage/<%= c.id %>/scheduler?package_id=<%= c.package_id || c.first_package_id || '' %>" target="_blank">进入排课</a></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="schedulePickerModal">
+    <div class="modal-box">
+      <h3>选择排课课程</h3>
+      <div class="field">
+        <label>一级课程包</label>
+        <select id="pkgLevel1" onchange="onPkg1Change()"><option value="">请选择一级课程包</option></select>
+      </div>
+      <div class="field">
+        <label>二级课程包</label>
+        <select id="pkgLevel2" onchange="onPkg2Change()" disabled><option value="">请先选择一级课程包</option></select>
+      </div>
+      <div class="field">
+        <label>科目</label>
+        <select id="pkgCourse" onchange="onCourseChange()" disabled><option value="">请先选择二级课程包</option></select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="cancel" onclick="closeSchedulePicker()">取消</button>
+        <button type="button" class="go" id="enterSchedulerBtn" onclick="enterScheduler()" disabled>进入排课</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var schedPkgTree = [];
+    function openSchedulePicker() {
+      resetSchedulePicker();
+      document.getElementById('schedulePickerModal').classList.add('open');
+      if (schedPkgTree.length === 0) loadSchedulePackages();
+    }
+    function closeSchedulePicker() {
+      document.getElementById('schedulePickerModal').classList.remove('open');
+    }
+    function loadSchedulePackages() {
+      fetch('/admin/api/schedule-packages').then(function(r) { return r.json(); }).then(function(d) {
+        schedPkgTree = (d && d.packages) || [];
+        var sel = document.getElementById('pkgLevel1');
+        sel.innerHTML = '<option value="">请选择一级课程包</option>';
+        schedPkgTree.forEach(function(p) {
+          var o = document.createElement('option');
+          o.value = p.id;
+          o.textContent = (p.year || '') + ' ' + p.title;
+          sel.appendChild(o);
+        });
+      });
+    }
+    function resetSchedulePicker() {
+      var sel1 = document.getElementById('pkgLevel1');
+      sel1.value = '';
+      var sel2 = document.getElementById('pkgLevel2');
+      sel2.innerHTML = '<option value="">请先选择一级课程包</option>';
+      sel2.disabled = true;
+      var selC = document.getElementById('pkgCourse');
+      selC.innerHTML = '<option value="">请先选择二级课程包</option>';
+      selC.disabled = true;
+      document.getElementById('enterSchedulerBtn').disabled = true;
+    }
+    function onPkg1Change() {
+      var p = schedPkgTree.find(function(x) { return String(x.id) === document.getElementById('pkgLevel1').value; });
+      var sel2 = document.getElementById('pkgLevel2');
+      sel2.innerHTML = '<option value="">请选择二级课程包</option>';
+      sel2.disabled = !p || !(p.children || []).length;
+      (p.children || []).forEach(function(c) {
+        var o = document.createElement('option');
+        o.value = c.id;
+        o.textContent = (c.year || '') + ' ' + c.title;
+        sel2.appendChild(o);
+      });
+      var selC = document.getElementById('pkgCourse');
+      selC.innerHTML = '<option value="">请先选择二级课程包</option>';
+      selC.disabled = true;
+      document.getElementById('enterSchedulerBtn').disabled = true;
+    }
+    function onPkg2Change() {
+      var p1 = schedPkgTree.find(function(x) { return String(x.id) === document.getElementById('pkgLevel1').value; });
+      var p2 = ((p1 && p1.children) || []).find(function(x) { return String(x.id) === document.getElementById('pkgLevel2').value; });
+      var selC = document.getElementById('pkgCourse');
+      selC.innerHTML = '<option value="">请选择科目</option>';
+      selC.disabled = !p2 || !(p2.courses || []).length;
+      (p2.courses || []).forEach(function(c) {
+        var o = document.createElement('option');
+        o.value = c.id;
+        o.textContent = c.category + (c.scheduledCount > 0 ? ' · 已排课' : ' · 未排课');
+        selC.appendChild(o);
+      });
+      document.getElementById('enterSchedulerBtn').disabled = true;
+    }
+    function onCourseChange() {
+      document.getElementById('enterSchedulerBtn').disabled = !document.getElementById('pkgCourse').value;
+    }
+    function enterScheduler() {
+      var pkg2 = document.getElementById('pkgLevel2').value;
+      var courseId = document.getElementById('pkgCourse').value;
+      if (!courseId) return;
+      window.open('/admin/courses-manage/' + courseId + '/scheduler?package_id=' + pkg2, '_blank');
+    }
+  </script>
+</body>
+</html>

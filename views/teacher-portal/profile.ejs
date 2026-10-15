@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>个人信息 · 授课后台</title>
+
+<link rel="stylesheet" href="/css/teacher-backend.css?v=20260812">
+<style>
+.profile-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; max-width: 600px; }
+.profile-avatar-wrap { padding: 28px 24px 20px; text-align: center; }
+.profile-photo {
+  width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 16px;
+  background: linear-gradient(135deg,#2563eb,#7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44px; font-weight: 700; color: #fff;
+  border: 4px solid #fff; box-shadow: 0 4px 16px rgba(37,99,235,0.2);
+}
+.profile-name-big { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.profile-subject { font-size: 14px; color: #2563eb; font-weight: 500; margin-bottom: 4px; }
+.profile-bio-text { font-size: 13px; color: #475569; line-height: 1.6; padding: 0 12px; }
+.profile-stats { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid #f1f5f9; }
+.profile-stat { padding: 14px 12px; text-align: center; border-right: 1px solid #f1f5f9; }
+.profile-stat:last-child { border-right: none; }
+.profile-stat strong { display: block; font-size: 20px; font-weight: 700; }
+.profile-stat span { font-size: 12px; color: #64748b; }
+.profile-stat .stat-note { font-size: 10px; color: #94a3b8; display: block; }
+.profile-info { padding: 20px 24px; }
+.profile-info h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #64748b; }
+.profile-info-row { display: flex; padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; line-height: 1.5; }
+.profile-info-row:last-child { border-bottom: none; }
+.profile-info-label { color: #64748b; width: 80px; flex-shrink: 0; font-size: 13px; }
+.hours-badge { display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #16a34a; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+
+/* Watermark */
+.watermark { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.content { position: relative; z-index: 1; }
+
+/* Modal */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 12px; padding: 28px; width: 400px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+.modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head><body>
+<%- include('partials/sidebar') %>
+<div class="main"><%- include('partials/header') %>
+<div class="content">
+
+<div class="watermark" id="watermark"></div>
+
+<div class="profile-card">
+
+  <!-- Avatar & Name -->
+  <div class="profile-avatar-wrap">
+    <div class="profile-photo"><%= teacher.real_name ? teacher.real_name[0] : '师' %></div>
+    <div class="profile-name-big"><%= teacher.real_name || teacher.display_name %></div>
+    <% if (teacher.subject) { %><div class="profile-subject"><%= teacher.subject %></div><% } %>
+    <% if (teacher.bio) { %><div class="profile-bio-text"><%= teacher.bio %></div><% } %>
+  </div>
+
+  <!-- Stats -->
+  <div class="profile-stats">
+    <div class="profile-stat"><strong><%= courseCount %></strong><span>课程</span></div>
+    <div class="profile-stat"><strong><%= lessonCount %></strong><span>课时</span></div>
+    <div class="profile-stat">
+      <strong><%= studentCount %></strong><span>学员</span>
+      <% if (teacher.total_hours > 0) { %><span class="stat-note">累计授课 <%= teacher.total_hours %> 小时</span><% } %>
+    </div>
+  </div>
+
+  <!-- 基本信息 -->
+  <div class="profile-info">
+    <h3>基本信息</h3>
+    <div class="profile-info-row">
+      <span class="profile-info-label">姓名</span>
+      <span><%= teacher.real_name || '-' %></span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label">电话</span>
+      <span><%= teacher.phone || '-' %></span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label">入职时间</span>
+      <span><%= teacher.hire_date || '-' %></span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label">办公地点</span>
+      <span><%= teacher.office_location || '-' %></span>
+    </div>
+  </div>
+
+  <!-- 岗位信息 -->
+  <div class="profile-info" style="border-top:1px solid #f1f5f9">
+    <h3>岗位信息</h3>
+    <div class="profile-info-row">
+      <span class="profile-info-label">授课省份</span>
+      <span><%= teacher.province || '-' %></span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label">讲授科目</span>
+      <span><%= teacher.subject || '-' %></span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label">累计授课</span>
+      <span><span class="hours-badge"><%= teacher.total_hours || 0 %> 小时</span></span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label">历史课程</span>
+      <span>
+        <% if (historyCourses.length > 0) { %>
+          <% historyCourses.forEach(function(hc, hci) { %>
+            <span class="badge badge-<%= hc.category %>" style="margin:1px 2px"><%= hc.title %></span>
+          <% }) %>
+        <% } else { %>-<% } %>
+      </span>
+    </div>
+  </div>
+
+  <!-- 账户 -->
+  <div class="profile-info" style="border-top:1px solid #f1f5f9">
+    <h3>账户</h3>
+    <div class="profile-info-row">
+      <span class="profile-info-label">教师编码</span>
+      <span style="font-family:monospace;color:#64748b"><%= teacher.teacher_no || String(teacher.id).padStart(6, "0") %></span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label">注册时间</span>
+      <span style="color:#94a3b8;font-size:13px"><%= new Date(teacher.created_at).toLocaleDateString('zh-CN') %></span>
+    </div>
+  </div>
+
+</div>
+
+</div></div>
+
+<script>
+document.getElementById('menuToggle')?.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open')});
+
+// Watermark
+(function(){
+  var name = '<%= (teacher.real_name || teacher.display_name).replace(/'/g, "\\'") %>';
+  if (!name) return;
+  var wm = document.getElementById('watermark');
+  var spacing = 140;
+  var cols = Math.ceil(window.innerWidth / spacing) + 2;
+  var rows = Math.ceil(window.innerHeight / spacing) + 2;
+  for (var r = 0; r < rows; r++) {
+    for (var c = 0; c < cols; c++) {
+      var el = document.createElement('div');
+      el.textContent = name;
+      el.style.cssText = 'position:absolute;left:' + (c * spacing) + 'px;top:' + (r * spacing) + 'px;'
+        + 'font-size:18px;font-weight:700;color:rgba(0,0,0,0.06);'
+        + 'font-family:"Noto Serif SC",sans-serif;white-space:nowrap;'
+        + 'transform:rotate(-25deg);transform-origin:left center;user-select:none;pointer-events:none;';
+      wm.appendChild(el);
+    }
+  }
+})();
+</script>
+</body></html>

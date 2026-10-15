@@ -1,14 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
   let courseData = {};
   const provinces = [
-    { id: 'zhejiang', name: '浙江' }, { id: 'shandong', name: '山东' },
-    { id: 'henan', name: '河南' }, { id: 'guangdong', name: '广东' },
-    { id: 'jiangsu', name: '江苏' }, { id: 'sichuan', name: '四川' },
-    { id: 'fujian', name: '福建' }, { id: 'hunan', name: '湖南' },
-    { id: 'anhui', name: '安徽' }, { id: 'shaanxi', name: '陕西' },
-    { id: 'hubei', name: '湖北' }, { id: 'jiangxi', name: '江西' }
+    { id: '32', name: '江苏' }, { id: '33', name: '浙江' }, { id: '34', name: '安徽' },
+    { id: '35', name: '福建' }, { id: '36', name: '江西' }, { id: '37', name: '山东' },
+    { id: '41', name: '河南' }, { id: '42', name: '湖北' }, { id: '43', name: '湖南' },
+    { id: '44', name: '广东' }, { id: '51', name: '四川' }, { id: '61', name: '陕西' }
   ];
-  let currentProvince = 'zhejiang';
+  let currentProvince = '33';
 
   // Init province buttons
   document.querySelectorAll('.cc-province-btn').forEach(function(btn) {
@@ -27,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (firstBtn) {
     firstBtn.style.borderColor = '#2d5f6e';
     firstBtn.style.background = 'rgba(45,95,110,0.06)';
-    loadProvince('zhejiang');
+    loadProvince('33');
   }
 
   function loadProvince(provinceId) {

@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>课程日历 · 授课后台</title>
+
+<link rel="stylesheet" href="/css/teacher-backend.css?v=20260812">
+<style>
+.cal-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.cal-toolbar h2 { font-size: 18px; font-weight: 700; margin-right: 8px; }
+.cal-toolbar select { padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff; }
+.cal-toolbar .view-toggle { display: flex; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+.cal-toolbar .view-toggle a { padding: 6px 14px; font-size: 13px; text-decoration: none; color: #64748b; background: #fff; }
+.cal-toolbar .view-toggle a.active { background: #2563eb; color: #fff; }
+.cal-toolbar .view-toggle a:first-child { border-right: 1px solid #e2e8f0; }
+
+/* Month view */
+.month-wrap { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+.month-hd { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #e2e8f0; }
+.month-hd h3 { font-size: 16px; font-weight: 700; }
+.month-nav { display: flex; gap: 8px; align-items: center; }
+.month-nav span { font-size: 14px; color: #64748b; min-width: 120px; text-align: center; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); }
+.cal-hdr { background: #f8fafc; font-size: 12px; font-weight: 600; color: #64748b; text-align: center; padding: 10px 4px; border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; }
+.cal-hdr:last-child { border-right: none; }
+.cal-day { min-height: 85px; border-right: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; padding: 6px 8px; font-size: 13px; cursor: pointer; transition: background 0.1s; }
+.cal-day:last-child { border-right: none; }
+.cal-day:hover { background: #f8fafc; }
+.cal-day.other { background: #fafafa; }
+.cal-day.today { background: #eff6ff; }
+.cal-day-num { font-weight: 600; margin-bottom: 4px; text-align: center; }
+.cal-day.other .cal-day-num { color: #94a3b8; }
+.cal-day.today .cal-day-num { color: #2563eb; }
+.cal-ev { font-size: 11px; padding: 2px 5px; border-radius: 3px; color: #fff; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.4; cursor: pointer; }
+.cal-ev:hover { opacity: 0.85; }
+
+/* Year view */
+.year-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.year-month { background: #fff; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; }
+.year-month-hd { padding: 10px 12px; font-size: 14px; font-weight: 700; border-bottom: 1px solid #f1f5f9; }
+.ym-grid { display: grid; grid-template-columns: repeat(7,1fr); }
+.ym-hdr { font-size: 9px; font-weight: 600; color: #94a3b8; text-align: center; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+.ym-day { font-size: 10px; text-align: center; padding: 3px 0; border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; }
+.ym-day:nth-child(7n) { border-right: none; }
+.ym-day.other { color: #cbd5e1; }
+.ym-day.today { background: #eff6ff; color: #2563eb; font-weight: 700; }
+.ym-day.has-ev { font-weight: 700; color: #2563eb; }
+.ym-day .ym-dot { display: inline-block; width: 4px; height: 4px; border-radius: 50%; margin-left: 1px; }
+
+/* Legend */
+.cal-legend { display: flex; gap: 14px; margin-top: 14px; font-size: 13px; color: #64748b; flex-wrap: wrap; }
+.cal-legend span { display: flex; align-items: center; gap: 4px; }
+.cal-legend .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+/* Calendar layout: left calendar + right day detail */
+.cal-layout { display: flex; gap: 16px; align-items: flex-start; }
+.cal-main { flex: 1.5; min-width: 0; }
+.cal-side { flex: 0 0 280px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; min-height: 320px; position: sticky; top: 72px; }
+.cal-side-hd { font-size: 14px; font-weight: 700; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
+.cal-side-empty { color: #94a3b8; font-size: 13px; text-align: center; padding: 30px 0; }
+.cal-side-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+.cal-side-item:last-child { border-bottom: none; }
+.cal-side-time { flex: 0 0 48px; font-size: 12px; color: #2563eb; font-weight: 600; }
+.cal-side-title { font-size: 13px; font-weight: 600; }
+.cal-side-course { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.cal-side-link { display:inline-block; margin-top:6px; padding:6px 12px; font-size:12px; color:#fff; font-weight:600; text-decoration:none; background:#2563eb; border-radius:6px; }
+.cal-side-link:hover { background:#1d4ed8; }
+.cal-day.selected { outline: 2px solid #2563eb; outline-offset: -2px; }
+@media (max-width:1200px) { .cal-side { flex-basis: 260px; } }
+@media (max-width:900px) { .cal-layout { flex-direction: column; } .cal-side { flex: 1; width: 100%; position: static; min-height: 220px; } }
+@media (max-width:600px) {
+  .cal-toolbar { gap: 8px; }
+  .month-hd { padding: 6px 10px; }
+  .cal-day { padding: 2px 3px; }
+  .cal-ev { font-size: 9px; }
+  .cal-side { padding: 10px; }
+}
+/* Year view fills one screen */
+.content { height: calc(100vh - 56px); overflow: hidden; }
+.year-grid { gap: 6px; height: calc(100% - 70px); }
+.year-month { display:flex; flex-direction:column; overflow:hidden; }
+.year-month-hd { padding: 4px 6px; font-size: 11px; }
+.ym-grid { flex:1; display:grid; grid-template-columns: repeat(7,1fr); grid-auto-rows: 1fr; }
+.ym-hdr { font-size: 8px; padding: 1px 0; }
+.ym-day { font-size: 9px; padding: 0; display:flex; align-items:center; justify-content:center; }
+.ym-day .ym-dot { width: 3px; height: 3px; margin-left: 1px; }
+.cal-legend { margin-top: 8px; font-size: 12px; }
+
+/* Compact one-screen calendar */
+.content { padding: 16px 20px; }
+.cal-toolbar { margin-bottom: 10px; }
+.cal-toolbar h2 { font-size: 16px; }
+.month-hd { padding: 8px 14px; }
+.cal-hdr { padding: 6px 4px; }
+.cal-day { min-height: clamp(48px, 7.5vw, 84px); padding: 4px 6px; font-size: clamp(11px, 1.2vw, 13px); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.cal-ev { font-size: 10px; padding: 1px 4px; margin-bottom: 1px; }
+.cal-layout { align-items: stretch; }
+.cal-side { flex: 0 0 320px; min-height: 380px; padding: 12px; }
+.cal-side-item { padding: 9px 0; }
+.cal-side-hd { font-size: 13px; margin-bottom: 8px; padding-bottom: 8px; }
+
+@media (max-width:1200px) { .year-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width:900px) { .year-grid { grid-template-columns: repeat(2, 1fr); height: auto; } }
+@media (max-width:768px) {
+  .year-grid { grid-template-columns: repeat(2, 1fr); }
+  .cal-day { min-height: 60px; padding: 4px; font-size: 12px; }
+  .cal-ev { font-size: 10px; }
+}
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head><body>
+<%- include('partials/sidebar') %>
+<div class="main"><%- include('partials/header') %>
+<div class="content">
+
+<!-- Toolbar -->
+<div class="cal-toolbar">
+<h2>课程日历</h2>
+<select id="yearSelect" onchange="goCalendar()">
+<% years.forEach(function(y) { %>
+<option value="<%= y %>" <%= y === year ? 'selected' : '' %>><%= y %> 年</option>
+<% }) %>
+</select>
+
+<% if (view === 'month') { %>
+<select id="monthSelect" onchange="goCalendar()">
+<% for (var mi = 1; mi <= 12; mi++) { %>
+<option value="<%= mi %>" <%= mi === month ? 'selected' : '' %>><%= monthNames[mi-1] %></option>
+<% } %>
+</select>
+<% } %>
+
+<div class="view-toggle">
+<a href="/teach/calendar?year=<%= year %><%= view==='month'?'&month='+month:'' %>&view=month" class="<%= view==='month'?'active':'' %>">月视图</a>
+<a href="/teach/calendar?year=<%= year %>&view=year" class="<%= view==='year'?'active':'' %>">年视图</a>
+</div>
+</div>
+
+<script>
+function goCalendar() {
+  var y = document.getElementById('yearSelect').value;
+  var m = document.getElementById('monthSelect') ? document.getElementById('monthSelect').value : '';
+  var v = '<%= view %>';
+  var url = '/teach/calendar?year=' + y + (m ? '&month=' + m : '') + '&view=' + v;
+  window.location.href = url;
+}
+</script>
+
+<% if (view === 'month') { %>
+<!-- Month View -->
+<div class="cal-layout">
+<div class="cal-main">
+<div class="month-wrap">
+<div class="month-hd">
+<h3><%= year %> 年 <%= monthNames[month-1] %></h3>
+<div class="month-nav">
+<a href="/teach/calendar?year=<%= prevYear %>&month=<%= prevMonth %>&view=month" class="btn btn-outline btn-sm">‹</a>
+<span><%= year %> 年 <%= monthNames[month-1] %></span>
+<a href="/teach/calendar?year=<%= nextYear %>&month=<%= nextMonth %>&view=month" class="btn btn-outline btn-sm">›</a>
+</div>
+</div>
+
+<div class="cal-grid">
+<div class="cal-hdr">日</div><div class="cal-hdr">一</div><div class="cal-hdr">二</div><div class="cal-hdr">三</div><div class="cal-hdr">四</div><div class="cal-hdr">五</div><div class="cal-hdr">六</div>
+</div>
+<% var todayStr = new Date(); var ts = todayStr.getFullYear()+'-'+String(todayStr.getMonth()+1).padStart(2,'0')+'-'+String(todayStr.getDate()).padStart(2,'0'); %>
+<% weeks.forEach(function(week) { %>
+<div class="cal-grid">
+<% week.forEach(function(day) { if (day === null) { %>
+<div class="cal-day other"></div>
+<% } else { var isToday = day.date === ts; %>
+<div class="cal-day <%= isToday?'today':'' %>" data-date="<%= day.date %>" data-ev='<%= JSON.stringify(day.schedules) %>'>
+<div class="cal-day-num"><%= day.day %></div>
+<% day.schedules.forEach(function(s) { %>
+<div class="cal-ev" style="background:<%= s.color||'#2563eb' %>" title="<%= s.start_time %> <%= s.title %>"><%= s.start_time.slice(0,5) %> <%= s.title %></div>
+<% }) %>
+</div>
+<% }}) %>
+</div>
+<% }) %>
+</div>
+</div>
+<div class="cal-side" id="calSide">
+<div class="cal-side-hd">当天课程</div>
+<div class="cal-side-empty">点击左侧日期，查看当天课程</div>
+</div>
+</div>
+
+<% } else { %>
+
+<!-- Year View -->
+<div class="year-grid">
+<% yearMonths.forEach(function(ym) { 
+  var todayStr = new Date(); var ts = todayStr.getFullYear()+'-'+String(todayStr.getMonth()+1).padStart(2,'0')+'-'+String(todayStr.getDate()).padStart(2,'0');
+%>
+<div class="year-month">
+<div class="year-month-hd"><%= ym.name %></div>
+<div class="ym-grid">
+<div class="ym-hdr">日</div><div class="ym-hdr">一</div><div class="ym-hdr">二</div><div class="ym-hdr">三</div><div class="ym-hdr">四</div><div class="ym-hdr">五</div><div class="ym-hdr">六</div>
+<% ym.weeks.forEach(function(week) { week.forEach(function(day) { if (day === null) { %>
+<div class="ym-day other"></div>
+<% } else { var isToday = day.date === ts; var hasEv = day.schedules.length > 0; %>
+<div class="ym-day <%= isToday?'today':'' %> <%= hasEv?'has-ev':'' %>" title="<%= day.date %><% day.schedules.forEach(function(s){ %> <%= s.title %><% }) %>"><%= day.day %><% if(hasEv) { %><span class="ym-dot" style="background:#2563eb"></span><% } %></div>
+<% }})}) %>
+</div></div>
+<% }) %>
+</div>
+
+<% } %>
+
+<!-- Legend -->
+<div class="cal-legend">
+<span><span class="dot" style="background:#2563eb"></span> 授课</span>
+<span><span class="dot" style="background:#7c3aed"></span> 答疑</span>
+<span><span class="dot" style="background:#dc2626"></span> 考试</span>
+</div>
+
+</div></div>
+<script>
+document.getElementById('menuToggle')?.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open')});
+// Click day to show courses on the right
+document.querySelectorAll('.cal-day:not(.other)').forEach(function(el) {
+  el.addEventListener('click', function() {
+    document.querySelectorAll('.cal-day.selected').forEach(function(x) { x.classList.remove('selected'); });
+    el.classList.add('selected');
+    var date = el.dataset.date || '';
+    var evs = [];
+    try { evs = JSON.parse(el.dataset.ev || '[]'); } catch(e) {}
+    var side = document.getElementById('calSide');
+    if (!side) return;
+    var html = '<div class="cal-side-hd">' + date + ' 的课程</div>';
+    if (evs.length === 0) {
+      html += '<div class="cal-side-empty">当天暂无课程</div>';
+    } else {
+      evs.forEach(function(ev) {
+        html += '<div class="cal-side-item">';
+        html += '<span class="cal-side-time">' + (ev.start_time || '') + '</span>';
+        html += '<div><div class="cal-side-title">' + (ev.title || '') + '</div>';
+        html += '<div class="cal-side-course">' + (ev.course_title || '') + '</div></div>';
+        if (ev.course_id) {
+          html += '<div><a class="cal-side-link" href="/teach/live/' + ev.course_id + '?lesson=' + (ev.lesson_id || '') + '" target="_blank">进入课程</a></div>';
+        }
+        html += '</div>';
+      });
+    }
+    side.innerHTML = html;
+  });
+});
+</script>
+</body></html>

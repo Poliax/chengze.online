@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/teacher.css?v=<%= cssVer %>">
+<style>
+  .detail-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px 24px; }
+  .detail-item { display:flex; align-items:flex-start; gap:8px; padding:5px 0; border-bottom:1px dashed #eef2f7; font-size:13px; }
+  .detail-label { width:84px; flex-shrink:0; color:#64748b; font-weight:600; }
+  .detail-value { flex:1; color:#0f172a; }
+  .detail-line { margin:3px 0; font-size:13px; color:#334155; }
+  .detail-actions { display:flex; gap:8px; margin-top:16px; }
+  @media (max-width:640px){ .detail-grid { grid-template-columns:1fr; } }
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %>
+<div class="teacher-main">
+<%- include('partials/header') %>
+<div class="teacher-content">
+  <div class="list-header">
+    <h2>省份详情：<%= prov.name %> (<%= prov.code %>)</h2>
+    <div class="list-tools">
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>基本信息</h3>
+    <div class="detail-grid">
+      <div class="detail-item"><span class="detail-label">省份名称</span><span class="detail-value"><%= prov.name %></span></div>
+      <div class="detail-item"><span class="detail-label">编码</span><span class="detail-value"><%= prov.code %></span></div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>考试时间</h3>
+    <% if (examSchedule && examSchedule.length) { %>
+      <% examSchedule.forEach(x => { %><div class="detail-line"><%= x.year %>年：<%= x.exam_time || '待定' %></div><% }) %>
+    <% } else { %>
+      <div class="detail-line" style="color:#94a3b8">未设置</div>
+    <% } %>
+  </div>
+
+  <div class="form-card">
+    <h3>考试科目</h3>
+    <% if (subjectRows && subjectRows.length) { %>
+      <% subjectRows.forEach(s => { %><span class="badge badge-数学" style="margin:2px 4px 2px 0"><%= s.name %></span><% }) %>
+    <% } else { %>
+      <div class="detail-line" style="color:#94a3b8">未设置</div>
+    <% } %>
+  </div>
+
+  <div class="form-card">
+    <h3>开设课程</h3>
+    <% if (courseList && courseList.length) { %>
+      <% courseList.forEach(c => { %><a href="/admin/courses-manage/<%= c.id %>" class="badge badge-英语" style="margin:2px 4px 2px 0;text-decoration:none"><%= c.title %><% if (c.status === 'published') { %> · 已发布<% } %></a><% }) %>
+    <% } else { %>
+      <div class="detail-line" style="color:#94a3b8">暂无开设课程</div>
+    <% } %>
+  </div>
+
+  <div class="form-card">
+    <h3>考试日程</h3>
+    <% if (scheduleRows && scheduleRows.length) { %>
+      <% scheduleRows.forEach(s => { %><div class="detail-line"><%= s.month||'' %> <%= s.event||'' %><% if (s.date) { %> · <%= s.date %><% } %><% if (s.desc) { %> · <%= s.desc %><% } %></div><% }) %>
+    <% } else { %>
+      <div class="detail-line" style="color:#94a3b8">未设置</div>
+    <% } %>
+  </div>
+
+  <div class="form-card">
+    <h3>专科专业</h3>
+    <% const juniorCats = (categories || []).filter(c => c.kind === 'junior'); %>
+    <% if (juniorCats.length) { %>
+      <% juniorCats.forEach(c => { %><div class="detail-line"><strong><%= c.name %></strong><% if (c.majors && c.majors.length) { %>：<%= c.majors.join('、') %><% } %></div><% }) %>
+    <% } else { %>
+      <div class="detail-line" style="color:#94a3b8">未设置</div>
+    <% } %>
+  </div>
+
+  <div class="form-card">
+    <h3>本科专业</h3>
+    <% const undergradCats = (categories || []).filter(c => c.kind === 'undergrad'); %>
+    <% if (undergradCats.length) { %>
+      <% undergradCats.forEach(c => { %><div class="detail-line"><strong><%= c.name %></strong><% if (c.link_category_name) { %>（对应：<%= c.link_category_name %>）<% } %></div><% }) %>
+    <% } else { %>
+      <div class="detail-line" style="color:#94a3b8">未设置</div>
+    <% } %>
+  </div>
+
+  <div class="form-card">
+    <h3>院校信息</h3>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">专科院校</span>
+        <span class="detail-value"><%= juniorList && juniorList.length ? juniorList.join('、') : '未设置' %></span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">本科院校</span>
+        <span class="detail-value"><%= undergradList && undergradList.length ? undergradList.join('、') : '未设置' %></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>招录数据</h3>
+    <% if (admissionRows && admissionRows.length) { %>
+      <% admissionRows.forEach(a => { %><div class="detail-line"><%= a.year||'' %> <%= a.university||'' %> <%= a.major||'' %><% if (a.plan !== '' && a.plan != null) { %> · 招生 <%= a.plan %> 人<% } %><% if (a.score !== '' && a.score != null) { %> · 投档线 <%= a.score %><% } %></div><% }) %>
+    <% } else { %>
+      <div class="detail-line" style="color:#94a3b8">未设置</div>
+    <% } %>
+  </div>
+
+  <div class="form-card">
+    <h3>资料</h3>
+    <div class="detail-line">
+      <% if (prov.outline_file) { %><a href="<%= prov.outline_file %>" target="_blank" class="link">考试大纲</a><% } %>
+      <% if (prov.papers_file) { %><a href="<%= prov.papers_file %>" target="_blank" class="link" style="margin-left:8px">历年真题</a><% } %>
+      <% if (!prov.outline_file && !prov.papers_file) { %><span style="color:#94a3b8">未上传</span><% } %>
+    </div>
+  </div>
+
+  <div class="detail-actions">
+    <form method="POST" action="/admin/provinces-manage/<%= prov.id %>/delete" onsubmit="return confirm('确定删除该省份及其科目、日程？')">
+      <button type="submit" class="btn btn-danger">删除</button>
+    </form>
+    <a href="/admin/provinces-manage/<%= prov.id %>/edit" class="btn btn-primary">编辑</a>
+  </div>
+</div>
+</div>
+</body>
+</html>

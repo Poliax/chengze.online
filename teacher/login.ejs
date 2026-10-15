@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+<link rel="shortcut icon" type="image/x-icon" href="/favicon-v18.ico?v=20260905"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192-v18.png?v=20260905"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16-v18.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-v18.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192-v18.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v18.png">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root { --primary:#A51C30; --primary-hover:#881538; --muted:#64748b; --border:#e2e8f0; }
+body.login-page {
+  display:flex; align-items:center; justify-content:center; min-height:100vh;
+  background:#f8fafc; font-family:'Noto Serif SC','宋体','SimSun','Songti SC',Georgia,'Times New Roman',serif;
+  color:#0f172a; line-height:1.6; font-size:15px;
+}
+.login-box { width:380px; max-width:90vw; }
+.login-card { background:#fff; border-radius:12px; padding:40px 36px; box-shadow:0 1px 3px rgba(0,0,0,.08); border:1px solid var(--border); }
+.login-logo { text-align:center; margin-bottom:28px; }
+.login-logo .logo-mark { display:block; margin:0 auto 12px; }
+.login-logo h1 { font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; margin-top:8px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+.login-logo p { font-size:14px; color:var(--muted); margin-top:4px; }
+.alert { background:#fef2f2; border:1px solid #fecaca; color:#dc2626; padding:10px 14px; border-radius:8px; font-size:14px; margin-bottom:18px; }
+.form-group { margin-bottom:18px; }
+.form-group label { display:block; font-size:14px; font-weight:600; margin-bottom:6px; color:#0f172a; }
+.form-group input { width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:8px; font-size:15px; font-family:inherit; outline:none; transition:border-color .2s; }
+.form-group input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(165,28,48,.12); }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border:none; border-radius:8px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; text-decoration:none; transition:background .2s; }
+.btn-primary { background:#FFFFFF; color:#1E1E1E; border:1px solid #E5E7EB; }
+.btn-primary:hover { background:#F9FAFB; color:#1E1E1E; border-color:#CBD5E1; }
+.hint { margin-top:18px; padding:12px; background:#f1f5f9; border-radius:8px; font-size:12px; color:var(--muted); text-align:center; }
+.login-footer { text-align:center; margin-top:20px; }
+.login-footer a { color:var(--muted); font-size:14px; text-decoration:none; }
+.login-footer a:hover { color:var(--primary); }
+</style>
+</head><body class="login-page">
+<div class="login-box">
+<div class="login-card">
+<div class="login-logo">
+<svg class="logo-mark" width="28" height="28" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#881538"/><path d="M32 16 47 22 32 28 17 22Z" fill="#C8A96A"/><path d="M22 28v8c0 3.3 4.7 6 10 6s10-2.7 10-6v-8l-10 5Z" fill="#C8A96A" opacity=".9"/><path d="M47 22v9" stroke="#C8A96A" stroke-width="2" stroke-linecap="round"/><circle cx="47" cy="33" r="2.2" fill="#C8A96A"/></svg>
+<h1>管理后台</h1>
+<p>承泽教育 · 管理员专用系统</p>
+</div>
+<% if (error) { %><div class="alert"><%= error %></div><% } %>
+<form method="POST" action="/admin/login">
+<div class="form-group"><label>账号</label><input name="username" placeholder="输入账号" required autocomplete="username"></div>
+<div class="form-group"><label>密码</label><input name="password" type="password" placeholder="输入密码" required autocomplete="current-password"></div>
+<button type="submit" class="btn btn-primary" style="width:100%;padding:12px;justify-content:center">登 录</button>
+</form>
+<div class="hint">管理员账号由系统管理员保管</div>
+</div>
+<div class="login-footer"><a href="/">← 返回官网</a></div>
+</div></body></html>

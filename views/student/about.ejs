@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+
+<style>
+  :root { --indigo:#6366f1; --violet:#8b5cf6; --purple:#a855f7; --ink:#1e293b; --muted:#64748b; --line:#e7e6f2; --radius:16px; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Arial,sans-serif; background:#f8f9ff; color:var(--ink); }
+  a { text-decoration:none; color:inherit; }
+  .container { max-width:1180px; margin:0 auto; padding:0 28px; }
+  .topbar { background:#23272B; color:rgba(255,255,255,.78); font-size:13px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .topbar-inner { display:flex; align-items:center; justify-content:space-between; height:44px; }
+  .topbar .hot { color:#fbbf24; }
+  header.site-header { background:#2E3438; border-bottom:1px solid rgba(255,255,255,.12); position:sticky; top:0; z-index:30; }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:76px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand svg { width:28px; height:28px; }
+  .brand-name { font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; color:#fff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  .brand-name em { font-style:normal; font-weight:400; background:linear-gradient(90deg,var(--indigo),var(--purple)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .main-nav { display:flex; align-items:center; gap:30px; }
+  .main-nav a { font-size:14px; color:rgba(255,255,255,.78); font-weight:600; }
+  .main-nav a:hover, .main-nav a.active { color:#fff; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; font-weight:700; }
+  .btn-primary { background:linear-gradient(90deg,var(--indigo),var(--purple)); color:#fff; }
+  .btn-sm { padding:9px 20px; font-size:13px; }
+  .page-hero { background:linear-gradient(120deg,#eef2ff,#f5f3ff 55%,#faf5ff); padding:72px 0; }
+  .page-hero h1 { font-size:38px; font-weight:800; }
+  .page-hero p { margin-top:14px; color:var(--muted); font-size:15px; line-height:1.8; max-width:640px; }
+  .crumbs { font-size:13px; color:var(--muted); margin-bottom:18px; }
+  .section { padding:72px 0; }
+  .section-head { max-width:680px; margin-bottom:42px; }
+  .kicker { font-size:12px; letter-spacing:3px; color:var(--violet); text-transform:uppercase; font-weight:700; }
+  .section-head h2 { font-size:28px; font-weight:800; margin-top:10px; }
+  .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:36px; }
+  .about-grid p { color:var(--muted); line-height:1.9; font-size:14px; margin-bottom:14px; }
+  .values { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:50px; }
+  .value { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:24px; }
+  .value h3 { font-size:17px; margin-bottom:8px; }
+  .value p { font-size:13px; color:var(--muted); line-height:1.8; }
+  footer { background:#111827; color:rgba(255,255,255,.55); }
+  .footer-grid { display:grid; grid-template-columns:1.6fr 1fr 1fr 1.2fr; gap:32px; padding:52px 0 40px; }
+  footer h4 { color:#fff; font-size:14px; margin-bottom:14px; }
+  footer ul { list-style:none; } footer li { margin-bottom:8px; font-size:13px; } footer a:hover { color:#fff; }
+  .contact-line { font-size:13px; margin-bottom:8px; }
+  .footer-bottom { border-top:1px solid rgba(255,255,255,.1); padding:18px 0; font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+  @media (max-width:960px) { .about-grid { grid-template-columns:1fr; } .values { grid-template-columns:1fr; } .footer-grid { grid-template-columns:1fr 1fr; } }
+  @media (max-width:640px) { .topbar-inner { flex-direction:column; height:auto; padding:8px 0; gap:4px; text-align:center; } .nav-inner { flex-direction:column; height:auto; padding:14px 0; gap:12px; } .main-nav { flex-wrap:wrap; gap:16px; } .page-hero h1 { font-size:28px; } .footer-grid { grid-template-columns:1fr; } }
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="/"><svg viewBox="0 0 340 300" role="img" aria-label="承泽教育"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
+<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
+<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg><span class="brand-name">承泽教育<em>专升本</em></span></a>
+      <nav class="main-nav"><a href="/">首页</a><a href="/learning" target="_blank" rel="noopener">学习中心</a><a class="active" href="/about">关于我们</a><a class="btn btn-primary btn-sm" href="/contact">联系报名</a></nav>
+    </div>
+  </header>
+  <div class="topbar"><div class="container topbar-inner"><p>📞 咨询热线：<b>service@chengze.online</b></p><p><span class="hot">🔥 2027 专升本备考季</span> · 系统学习 · 专项集训 · 冲刺密训</p></div></div>
+  <section class="page-hero"><div class="container"><p class="crumbs"><a href="/">首页</a> / <span>关于我们</span></p><h1>承泽教育</h1><p>不只是为了考试，更是培养未来面对世界的能力。我们相信有序的学习，自有回响。</p></div></section>
+  <section class="section"><div class="container">
+    <div class="section-head"><span class="kicker">About Chengze</span><h2>专注专升本在线教育</h2></div>
+    <div class="about-grid"><div><p>承泽教育把直播授课、课后回放、课程日历、讲义课件、题库刷题与模拟考试整合为一条清晰的学习链路。</p><p>每一门课程都有明确的课表与进度，每一讲都配套讲义与练习，让备考不再零散。</p></div><div><p>以考纲为纲，以真题为尺，用可执行的计划陪伴考生走完备考全程。</p><p>从系统学习到专项集训，再到冲刺密训，让每一个阶段都有目标、有反馈、有进步。</p></div></div>
+    <div class="values"><div class="value"><h3>严谨</h3><p>课程与练习以考纲和真题为基础，不偏离备考主线。</p></div><div class="value"><h3>有序</h3><p>课表、讲义、练习、答疑形成闭环，备考节奏清晰。</p></div><div class="value"><h3>陪伴</h3><p>直播回放、在线答疑与学习总览，让每一步都有迹可循。</p></div></div>
+  </div></section>
+  <footer><div class="container footer-grid"><div><a class="brand" href="/"><svg viewBox="0 0 340 300" role="img" aria-label="承泽教育"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
+<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
+<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg><span class="brand-name" style="color:#fff">承泽教育<em>专升本</em></span></a><p style="font-size:13px;line-height:1.8;margin-top:16px">专注专升本在线教育，让每一个有梦的专科生，都有机会成为本科生。</p></div><div><h4>快捷导航</h4><ul><li><a href="/">网站首页</a></li><li><a href="/learning" target="_blank">学习中心</a></li><li><a href="/about">关于我们</a></li><li><a href="/contact">联系报名</a></li></ul></div><div><h4>课程类型</h4><ul><li>系统学习</li><li>专项集训</li><li>冲刺密训</li><li>公开课</li></ul></div><div><h4>联系方式</h4><p class="contact-line">✉️ <span><b>service@chengze.online</b></span></p><p class="contact-line">🕘 <span><b>全年无休</b> 在线学习</span></p></div></div><div class="container footer-bottom"><p>© 2026 承泽教育 版权所有</p><p>专升本在线教育第一品牌</p></div></footer>
+</body>
+</html>

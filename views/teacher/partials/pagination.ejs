@@ -1,0 +1,14 @@
+<% if (pages > 1) { %>
+<div class="pagination" id="<%= id %>">
+  <% if (current > 1) { %><a href="javascript:void(0)" class="page-btn" onclick="<%= fn %>(<%= current-1 %>)">‹ 上一页</a><% } else { %><span class="page-btn disabled">‹ 上一页</span><% } %>
+  <% var pStart = Math.max(1, current-2); var pEnd = Math.min(pages, current+2); %>
+  <% if (pStart > 1) { %><a href="javascript:void(0)" onclick="<%= fn %>(1)">1</a><% if (pStart > 2) { %><span class="dots">…</span><% } %><% } %>
+  <% for (var pi=pStart; pi<=pEnd; pi++) { %>
+    <% if (pi === current) { %><span class="current"><%= pi %></span><% } else { %><a href="javascript:void(0)" onclick="<%= fn %>(<%= pi %>)"><%= pi %></a><% } %>
+  <% } %>
+  <% if (pEnd < pages) { %><% if (pEnd < pages-1) { %><span class="dots">…</span><% } %><a href="javascript:void(0)" onclick="<%= fn %>(<%= pages %>)"><%= pages %></a><% } %>
+  <% if (current < pages) { %><a href="javascript:void(0)" class="page-btn" onclick="<%= fn %>(<%= current+1 %>)">下一页 ›</a><% } else { %><span class="page-btn disabled">下一页 ›</span><% } %>
+  <span class="info">共 <%= total %> 条</span>
+  <span class="jump">跳至 <input type="number" min="1" max="<%= pages %>" value="<%= current %>" onkeydown="if(event.key==='Enter'){<%= fn %>(this.value)}"> 页</span>
+</div>
+<% } %>

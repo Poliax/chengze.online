@@ -1,0 +1,1032 @@
+{
+  "files": {
+    "CNAME": {
+      "sha256": "9fc1a462524dbbdd6ddef4750a6d7ab4f73c6885184d6dc5cb4780aa2c024211",
+      "bytes": 18
+    },
+    "README.md": {
+      "sha256": "fa7a696e6ce27cb001d7a3f961735c8cbad102529bbedb9ae6c09f127fbd2b39",
+      "bytes": 13
+    },
+    "VERSION": {
+      "sha256": "6dae4a52aa1ca494be63ccdb77116679f48dd13867b9a825c23c8a197064fe4a",
+      "bytes": 6
+    },
+    "admin-login.ejs": {
+      "sha256": "4fa42404b9f84f81ad9521c5eca7a453b1dc3e695eb90f5cb1f00f5db8116815",
+      "bytes": 3323
+    },
+    "apple-touch-icon-round.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "apple-touch-icon-teal.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "apple-touch-icon-v13.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "apple-touch-icon-v14.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "apple-touch-icon-v15.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "apple-touch-icon-v16.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "apple-touch-icon-v17.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "apple-touch-icon-v18.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "apple-touch-icon.png": {
+      "sha256": "0806316393fe4700e0c42c95db5734cc7e7614fd8781c45263de1bc17b8a78c7",
+      "bytes": 6037
+    },
+    "c1.html": {
+      "sha256": "b580c0527645470d979e9bbd74ce753e6145a2e604654ce313a856be6049ca09",
+      "bytes": 9402
+    },
+    "css/backend.css": {
+      "sha256": "8e3b1f1f3e5f4db90b0079f8e2a2613bc38b58a214d3588674b04631aa4609ba",
+      "bytes": 45717
+    },
+    "css/style.css": {
+      "sha256": "10886aad455f244076589a523edd185af4e84a81abdd2612acc42842a3d2d170",
+      "bytes": 38588
+    },
+    "css/teacher-backend.css": {
+      "sha256": "c62f643cce676949f02f9e82cfb7e1383ae6d2111e83ca896b44f16163ecbd97",
+      "bytes": 14700
+    },
+    "css/teacher-liu.svg": {
+      "sha256": "d572ede77942348dbc5a057b48f005c8fcb196d6963db65e2dd25186360e3c5d",
+      "bytes": 1659
+    },
+    "css/teacher.css": {
+      "sha256": "8e3b1f1f3e5f4db90b0079f8e2a2613bc38b58a214d3588674b04631aa4609ba",
+      "bytes": 45717
+    },
+    "db/index.js": {
+      "sha256": "0101915763e2a4a22197ccd4a56fca62ae4164d0cc999c83d5735969f57b69b2",
+      "bytes": 43661
+    },
+    "db/migrations/001-replay-links.js": {
+      "sha256": "ef9f5e176512ac53f1a71039323ebbe9b66ccf85d8b3396f6b5a730cadd771be",
+      "bytes": 1436
+    },
+    "db/replay-storage.js": {
+      "sha256": "2ded0f67d3863aa814efd9505f61f6112fdd44d2f1558ab73cc931693bcf977a",
+      "bytes": 1445
+    },
+    "db/schema.sql": {
+      "sha256": "02a5d9513ea4fdff94aa5fa2b8469011a4db9cad47af3717b9583dc6787d3822",
+      "bytes": 6107
+    },
+    "favicon-16-round.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-16-teal.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-16-v13.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-16-v14.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-16-v15.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-16-v16.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-16-v17.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-16-v18.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-16.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-192-round.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-192-teal.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-192-v13.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-192-v14.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-192-v15.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-192-v16.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-192-v17.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-192-v18.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-192.png": {
+      "sha256": "0410438997fc34539bcff5b5303b663ac8469591c8004ddbd2c429cedcc236e7",
+      "bytes": 6400
+    },
+    "favicon-32-round.png": {
+      "sha256": "58c348c31ad782bf0a46b03920034b5916ad8490f1316dec320bb2da4285dc75",
+      "bytes": 1030
+    },
+    "favicon-32-teal.png": {
+      "sha256": "58c348c31ad782bf0a46b03920034b5916ad8490f1316dec320bb2da4285dc75",
+      "bytes": 1030
+    },
+    "favicon-32-v13.png": {
+      "sha256": "58c348c31ad782bf0a46b03920034b5916ad8490f1316dec320bb2da4285dc75",
+      "bytes": 1030
+    },
+    "favicon-32-v14.png": {
+      "sha256": "58c348c31ad782bf0a46b03920034b5916ad8490f1316dec320bb2da4285dc75",
+      "bytes": 1030
+    },
+    "favicon-32-v15.png": {
+      "sha256": "58c348c31ad782bf0a46b03920034b5916ad8490f1316dec320bb2da4285dc75",
+      "bytes": 1030
+    },
+    "favicon-32-v16.png": {
+      "sha256": "f972c80ec349fb6ce5fe6344f68aa92d89c1c0665cc8ed9405ce566f678f61b6",
+      "bytes": 523
+    },
+    "favicon-32-v17.png": {
+      "sha256": "58c348c31ad782bf0a46b03920034b5916ad8490f1316dec320bb2da4285dc75",
+      "bytes": 1030
+    },
+    "favicon-32-v18.png": {
+      "sha256": "58c348c31ad782bf0a46b03920034b5916ad8490f1316dec320bb2da4285dc75",
+      "bytes": 1030
+    },
+    "favicon-32.png": {
+      "sha256": "58c348c31ad782bf0a46b03920034b5916ad8490f1316dec320bb2da4285dc75",
+      "bytes": 1030
+    },
+    "favicon-classic-teal-v3.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-classic-teal-v4.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-confirmed-v6.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-green-v9.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-red-v8.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-round.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-rounded-teal.svg": {
+      "sha256": "a6eebb4902d01e7a7cf449d70d3547d0ccb3bd251a7c47b95188aaa080582d4a",
+      "bytes": 1322
+    },
+    "favicon-teal-gold-v5.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-teal.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-thicker-v7.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v10.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v13.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v14.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v15.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v16.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v17.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v18.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v5.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v6.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v7.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v8.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon-v9.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon.ico": {
+      "sha256": "33f35c13041e57a084939c62108a352b718b75cca5d3758a28060c4d2b20026c",
+      "bytes": 32038
+    },
+    "favicon.svg": {
+      "sha256": "01cafda33b152d0b9fbfbbafd7e8163497297bf161c0bed56caf767350b028f0",
+      "bytes": 392
+    },
+    "index.html": {
+      "sha256": "d1c97a0a05c084e6c059223a04ab091d82a68d6b8e07ed7a54566d33e3378901",
+      "bytes": 17469
+    },
+    "index.js": {
+      "sha256": "3ee55e88c559d5c453bc4928141dfd9e00b0787e4eab60c86ef02d593c5b83ee",
+      "bytes": 34490
+    },
+    "js/main.js": {
+      "sha256": "4144d7b26392aba5e1fe9eaa75ced812841edbafcf65bd668bea81016925500f",
+      "bytes": 46295
+    },
+    "js/province-data.js": {
+      "sha256": "bb34108de57e0c2f867ab9be2c0f8441f25be3db1885aebdea184ef9ca9e4c30",
+      "bytes": 14591
+    },
+    "js/teacher-catalog.js": {
+      "sha256": "0c9abaedc4bb3b1f4d8487161d7ae0945d90ac7c844ed45f121242f7f42acd4e",
+      "bytes": 4035
+    },
+    "js/teacher-chen-female.svg": {
+      "sha256": "a38240ee5cd5149195b595e2e134245f773eb0117e13f000b7d98f6edbf6f7fc",
+      "bytes": 1772
+    },
+    "js/teacher-liu.svg": {
+      "sha256": "f02c3fdbfe6fb43be269060ab73f0a0db8934eeb06ec90495ea0b711c67ad057",
+      "bytes": 1722
+    },
+    "lw2.html": {
+      "sha256": "cc559a0e5495c2d699f4d84bb344bcbecb97dfa44141b183ea7d509c48955e63",
+      "bytes": 2196
+    },
+    "main.js": {
+      "sha256": "ee98e2b9e6ec333a7c1413c10def405a72dbd070470933013f6319e84b636c89",
+      "bytes": 45451
+    },
+    "middleware/auth.js": {
+      "sha256": "cee34ae191527f48902f4993e2049e57994ff156ddfd7c3e781327bbbeb77c04",
+      "bytes": 361
+    },
+    "middleware/course-access.js": {
+      "sha256": "4d2cf53480fc03740222ca8923f1fd3450e27e4eacc7a96cd2e7b5ce1966dd37",
+      "bytes": 4330
+    },
+    "middleware/live-security.js": {
+      "sha256": "e499a249a05c23bd7b432d71492463d58f2aa6d081a1a74681f7a0ba514d8618",
+      "bytes": 6975
+    },
+    "middleware/media-signing.js": {
+      "sha256": "4860e753359a7ef5f4c5f3954d5a8e3f65c9a0addf918e0b8fc1a3385b290d94",
+      "bytes": 3184
+    },
+    "middleware/recording-auth.js": {
+      "sha256": "b0f36f90fd2e35b9904716da5754d6d8e8965ee3c326d047c3e895f306e0f3be",
+      "bytes": 1986
+    },
+    "middleware/static-files.js": {
+      "sha256": "871fa824f81cecdeff29ea7961220f9a2e772d90d5dc2a4d7f5eb781c173f88b",
+      "bytes": 1845
+    },
+    "middleware/trtc-tickets.js": {
+      "sha256": "93450b5d887d293be4075187c00542ce68e29aa31ccddc7ded970218659e3512",
+      "bytes": 916
+    },
+    "middleware/vendor/TLSSigAPIv2.js": {
+      "sha256": "83b8e33346403f3f77d9f91c6b88256a2307e71732c917be4fc472e0afddfbd5",
+      "bytes": 10584
+    },
+    "package-lock.json": {
+      "sha256": "98764bb68d3b97a20ba6385a4c392f8a0b1a6f13bfdd628e5cfd51e01967c78b",
+      "bytes": 78587
+    },
+    "package.json": {
+      "sha256": "993de3d997987683a139fac3c5d472e9bb956592c96f069d29c5ce9465fecdab",
+      "bytes": 700
+    },
+    "player/flv.min.js": {
+      "sha256": "733b9b325dbc59871a652c0a84f2f285a2cfd06cf2efcedcd87cb1e194cd1e8f",
+      "bytes": 144165
+    },
+    "player/hls.min.js": {
+      "sha256": "bf908f85f3941c514bd3df640695d1bf1190798720a74569700f64cc19845d6b",
+      "bytes": 543036
+    },
+    "player/mediapipe/selfie_segmentation.binarypb": {
+      "sha256": "0007be42c754f111063c0121bba7104880b7c56277d3a9681cdcb17709236aee",
+      "bytes": 362
+    },
+    "player/mediapipe/selfie_segmentation.js": {
+      "sha256": "a4720d2d2374ec9df3510461ff186a4af427fb5bd402375e135875a991467da3",
+      "bytes": 44542
+    },
+    "player/mediapipe/selfie_segmentation.tflite": {
+      "sha256": "8d13b7fae74af625c641226813616a2117bd6bca19eb3b75574621fc08557f27",
+      "bytes": 249024
+    },
+    "player/mediapipe/selfie_segmentation_landscape.tflite": {
+      "sha256": "4aafe6223bb8dac6fac8ca8ed56852870a33051ef3f6238822d282a109962894",
+      "bytes": 249792
+    },
+    "player/mediapipe/selfie_segmentation_solution_simd_wasm_bin.data": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "player/mediapipe/selfie_segmentation_solution_simd_wasm_bin.js": {
+      "sha256": "9406e7e30843bdca189689d4bea413f3e468f71e381560e583ef12792d26d46a",
+      "bytes": 276493
+    },
+    "player/mediapipe/selfie_segmentation_solution_simd_wasm_bin.wasm": {
+      "sha256": "d93e73677ef1fe791ff5407083c0f9ced6d6050a705bd6c20823fc05919d8dc4",
+      "bytes": 5694839
+    },
+    "player/mediapipe/selfie_segmentation_solution_wasm_bin.js": {
+      "sha256": "ed59858c14c9db26d34abbf0afa9017e5c6583a6ad63dae63d2fe42e19abfea5",
+      "bytes": 276488
+    },
+    "player/mediapipe/selfie_segmentation_solution_wasm_bin.wasm": {
+      "sha256": "37665276fd8e38589a28b07ddec805266efb1b7a1a52fd36667ef11dff43a847",
+      "bytes": 5587523
+    },
+    "player/tcplayer.min.css": {
+      "sha256": "5c903d86961c78e2799ac8b4f253663753ed86cc5ecc345767f66a9921287cf6",
+      "bytes": 63658
+    },
+    "player/tcplayer.min.js": {
+      "sha256": "c6e8a9516a37a8ba8702aa35c56371bdc9206c4347826ae3176fa470a62a061d",
+      "bytes": 634205
+    },
+    "player/trtc.js": {
+      "sha256": "4baea34998a096bfec2297e6d39077f0c92511162e55fa99f2516dccc9289b33",
+      "bytes": 584740
+    },
+    "public/css/teacher-backend.css": {
+      "sha256": "572da2060ea61f1dcf6b37c43cc173dd3336e21d39691e6c3d9552b0911dd6f5",
+      "bytes": 13272
+    },
+    "public/images/chengze-confirmed-dark.svg": {
+      "sha256": "b9125fe46ba9f45b95e89bfe1acba8919f9d3f7440102bc63552c6a93259af37",
+      "bytes": 17679
+    },
+    "public/images/chengze-confirmed-light.svg": {
+      "sha256": "da8ca9e2055092fb705e828dba3d3f379f72c988548d66b684db3894fb8cfb5c",
+      "bytes": 17679
+    },
+    "public/images/chengze-confirmed-mark.svg": {
+      "sha256": "9a34406da489e5ce8f2c7e2a2d5f10dd66ead213807a3c92d146da5c82d23bd6",
+      "bytes": 1184
+    },
+    "public/images/chengze-red-dark.svg": {
+      "sha256": "9dbf02ca2460465ca13c09f9260b6444e07489878149a0f438b6e645d95f2313",
+      "bytes": 17679
+    },
+    "public/images/chengze-red-light.svg": {
+      "sha256": "200a0dfcb7325b9787c408c7caeaa03fd4990a001962f74e318e503e3266d783",
+      "bytes": 17679
+    },
+    "public/images/chengze-red-mark.svg": {
+      "sha256": "1aa2308cd351c76414dbba6a3c4e18a2d8f92dd30debe1581db0e22a500118ee",
+      "bytes": 1184
+    },
+    "public/images/chengze-teal-dark.svg": {
+      "sha256": "b9125fe46ba9f45b95e89bfe1acba8919f9d3f7440102bc63552c6a93259af37",
+      "bytes": 17679
+    },
+    "public/images/chengze-teal-light.svg": {
+      "sha256": "da8ca9e2055092fb705e828dba3d3f379f72c988548d66b684db3894fb8cfb5c",
+      "bytes": 17679
+    },
+    "public/images/chengze-teal-mark.svg": {
+      "sha256": "9a34406da489e5ce8f2c7e2a2d5f10dd66ead213807a3c92d146da5c82d23bd6",
+      "bytes": 1184
+    },
+    "public/images/chengze-thicker-dark.svg": {
+      "sha256": "b9125fe46ba9f45b95e89bfe1acba8919f9d3f7440102bc63552c6a93259af37",
+      "bytes": 17679
+    },
+    "public/images/chengze-thicker-light.svg": {
+      "sha256": "da8ca9e2055092fb705e828dba3d3f379f72c988548d66b684db3894fb8cfb5c",
+      "bytes": 17679
+    },
+    "public/images/chengze-thicker-mark.svg": {
+      "sha256": "9a34406da489e5ce8f2c7e2a2d5f10dd66ead213807a3c92d146da5c82d23bd6",
+      "bytes": 1184
+    },
+    "public/images/exam-paper.svg": {
+      "sha256": "1b90372d20ab29d032093ff9ee01993cefafcf9d839446f3660808f97f6013c2",
+      "bytes": 875
+    },
+    "public/images/logo.svg": {
+      "sha256": "9a34406da489e5ce8f2c7e2a2d5f10dd66ead213807a3c92d146da5c82d23bd6",
+      "bytes": 1184
+    },
+    "public/images/teachers/t1787491064990.jpg": {
+      "sha256": "86caa9c102b14788408a281f9c77d403705dfca7675a2fc6db9ae5b2b36e75c9",
+      "bytes": 6841
+    },
+    "public/images/teachers/teacher-chen-female.svg": {
+      "sha256": "a38240ee5cd5149195b595e2e134245f773eb0117e13f000b7d98f6edbf6f7fc",
+      "bytes": 1772
+    },
+    "public/images/teachers/teacher-chen.svg": {
+      "sha256": "25ea1e5520c09b248c2a7e363216285e3b1dc80ea60cad5e1cd1435e0fadbcc0",
+      "bytes": 1850
+    },
+    "public/images/teachers/teacher-li.svg": {
+      "sha256": "f3fc7efe6c8a04a5d484d85c4272ab9bbd5da23148c2812fafa770b1d7e26639",
+      "bytes": 2584
+    },
+    "public/images/teachers/teacher-liu.svg": {
+      "sha256": "f02c3fdbfe6fb43be269060ab73f0a0db8934eeb06ec90495ea0b711c67ad057",
+      "bytes": 1722
+    },
+    "public/images/teachers/teacher-wang.svg": {
+      "sha256": "4055f7528474468f40ae0bb5e36dd47e94ca793b9b2e0dc992a14a5264eeaa42",
+      "bytes": 1728
+    },
+    "public/images/teachers/teacher-zhang.svg": {
+      "sha256": "49a98da8fba8fee8229e97e3438ce880eac9041fcbd414c6967bfcdeae3a659b",
+      "bytes": 2426
+    },
+    "public/images/teachers/teacher-zhou.svg": {
+      "sha256": "fa5a9c594d2e8f4849f7140c91c0365e29b8ed7193ebff3184c4b984f9c13e1c",
+      "bytes": 2639
+    },
+    "public/site/about.html": {
+      "sha256": "ca236ebdf3105212634d0d943ded430db0b78c14d63b08206cf86bca43fccb8a",
+      "bytes": 10782
+    },
+    "public/site/contact.html": {
+      "sha256": "e2f973d1f42ece04623b351bd9bfd3eeca2f117bd5dbd6a65d2c404f1789692b",
+      "bytes": 9830
+    },
+    "public/site/courses.html": {
+      "sha256": "6e6321ad285664f3a7d898f6142356d4e3f118eed58aaa41b8fef8a402a9df1c",
+      "bytes": 10906
+    },
+    "public/site/css/style.css": {
+      "sha256": "22b525ce359a2744f6a5c5df28d53ea32e5515d9fbfe3e32a04b9613fb76cb21",
+      "bytes": 27119
+    },
+    "public/site/favicon.svg": {
+      "sha256": "391469e42538b76a354f90984b653f6dc63c47ccac75aceae00b5c981de1545b",
+      "bytes": 394
+    },
+    "public/site/feedback.html": {
+      "sha256": "d240ca07bd61534a86269162a916645920d2101605507087db98e361a7616d94",
+      "bytes": 7982
+    },
+    "public/site/index.html": {
+      "sha256": "67bda154af967e8462f60e7781b0b3c2f3dbfdc544e95bc9dd0f4749da2fcf83",
+      "bytes": 13481
+    },
+    "public/site/js/main.js": {
+      "sha256": "4ab72e141b0d5037af74201cf28cd890eaca459bf4e5265d2072bc0471a64903",
+      "bytes": 13372
+    },
+    "public/site/learning.html": {
+      "sha256": "16d6835a67965762d3818fe9228183aa808131f0fc7f0c7e24442cfbc81a67b3",
+      "bytes": 5162
+    },
+    "public/site/style.css": {
+      "sha256": "166386c0494defbd805e9ceced7b323e4b3f79e90f5ed78df55795c3b846ea2c",
+      "bytes": 25076
+    },
+    "public/site/teachers.html": {
+      "sha256": "455af372e3f783ed35bdd03932997a8e9482107a23dee2506d8385f155e2a126",
+      "bytes": 8354
+    },
+    "routes/admin.js": {
+      "sha256": "eedc8eaf7e74466e35111bf3840737396783ec46730e9941e2f6d0a19bf02934",
+      "bytes": 2211
+    },
+    "routes/ads.js": {
+      "sha256": "e97a5b1c25af4f02784f8849a890c3f14f5b447f31e9fb771467667161371af5",
+      "bytes": 1431
+    },
+    "routes/auth.js": {
+      "sha256": "cba2626802490955b91ba66e2f788a3537e3654cb33e3bea86c8525004b8c393",
+      "bytes": 1555
+    },
+    "routes/course-materials.js": {
+      "sha256": "f20a91aeaeb5ebf7ebadec3e960f44fc41c027504d74c983d27da0f58674b4bd",
+      "bytes": 2823
+    },
+    "routes/live-admin.js": {
+      "sha256": "f5246824574babe3c89ea345e46ec8a6ccb032ffee43c5cec4418bfa417dbadd",
+      "bytes": 15622
+    },
+    "routes/live.js": {
+      "sha256": "66341440509bec61c3188b48df730aa71616f700429f77a8e24fd3d17b3b015a",
+      "bytes": 17329
+    },
+    "routes/materials.js": {
+      "sha256": "6473e737d97b2ef2844875f010dd5588214c424fd0d48dfb466071b9658203a0",
+      "bytes": 4266
+    },
+    "routes/orders.js": {
+      "sha256": "3384579fdbc55eecd9e28f1f34b13e5ca0f98615ce51835aa564322b0d033cad",
+      "bytes": 3617
+    },
+    "routes/package-view.js": {
+      "sha256": "6a0740d4ae617fa0b489bfbb03aee70fb1322fad6d31a6133f99997cf276c875",
+      "bytes": 2543
+    },
+    "routes/packages.js": {
+      "sha256": "81d148dbd046ab57f3740874b9b44c64bd925f955fbf0e431708dc4a639dc15d",
+      "bytes": 14913
+    },
+    "routes/progress.js": {
+      "sha256": "a394647f3affd773b17b93ad0d6b1f972dd10625c08dac10bbde8d4b3d72e42e",
+      "bytes": 3428
+    },
+    "routes/provinces.js": {
+      "sha256": "cfdc569762a65f54bb7011dde183c2aadef0d9748e5f65d5c6a5a0dd2269aac6",
+      "bytes": 22065
+    },
+    "routes/questions.js": {
+      "sha256": "4f2a5fd62962bc793bb25c81c5d1bc2ffcd5bf9de9964dc9fd84b9e99bc7bf1a",
+      "bytes": 4692
+    },
+    "routes/student-auth.js": {
+      "sha256": "f7ecc37978c320df1e4e942e232178aa69abb5cffdc5bff25c4919d78f7d99e4",
+      "bytes": 14397
+    },
+    "routes/student.js": {
+      "sha256": "42b2baf9d5827e1ebe4aef05be7e6a95139a3f2b873018b5ee3c991ff99c0e2c",
+      "bytes": 17322
+    },
+    "routes/teacher-portal.js": {
+      "sha256": "0ccb918c8c7aa6ecc50f5d301432b71bc0ed7bb6b5ac818ab1c8b7881de12432",
+      "bytes": 10718
+    },
+    "routes/teacher.js": {
+      "sha256": "8566fbb5cb550d56c86379160db522a5fe6db78557b8abcdbbfd83ae4d494a22",
+      "bytes": 85800
+    },
+    "server.js": {
+      "sha256": "b1d3c72d9994672474c3d98e9529e83fe42a7ef79bc89364e9cec96e0530ab26",
+      "bytes": 34337
+    },
+    "session-store.js": {
+      "sha256": "401efe656e7453648b970f4a078a8fb1dea9043b744483b847ca02d692eb19bf",
+      "bytes": 793
+    },
+    "student/about.ejs": {
+      "sha256": "719edf0c68ba7ca677329ceff1f43c1737f8f47085ad4a313b4a107ab84b0b98",
+      "bytes": 8821
+    },
+    "student/contact.ejs": {
+      "sha256": "ef688becda50150d9efad48cbb5d8934a2ce9111a04a5d04778009a5c0e6d1c4",
+      "bytes": 14698
+    },
+    "student/course.ejs": {
+      "sha256": "48908e51aba5a7260c96a19df4b553169828fd757b4bb1b128466fa031e4a39f",
+      "bytes": 11839
+    },
+    "student/live-watch.ejs": {
+      "sha256": "25e7b6243e70547cb43af8b79c35efb5750dc4637c5aa8b6c71c471ef7835155",
+      "bytes": 24066
+    },
+    "student/replay-duo.ejs": {
+      "sha256": "db9278d6413026cfa6d05bf33d67b819818aa6b119ef1f0d8a43af843adc37b0",
+      "bytes": 21406
+    },
+    "student/replay.ejs": {
+      "sha256": "cebe5fc56182b65669f32d85c04ebceac30568e48cd0f02d87fa88441441ef4a",
+      "bytes": 11934
+    },
+    "student/site.ejs": {
+      "sha256": "266665bbe1c4008ff9058ea4552f95f5e8ca0498bcba21afa8072f5eeb1fb7dd",
+      "bytes": 13272
+    },
+    "student/vod-replay.ejs": {
+      "sha256": "b7c3491e39b41a39ae1cb30397b3c64d7d5daccf2cf4350e15d80ed90a6374fb",
+      "bytes": 7280
+    },
+    "student/watch.ejs": {
+      "sha256": "9f59e57aa7ac8efad0d8cb1cd1169959692811507dcb6c72a02b2735ae33f43e",
+      "bytes": 11684
+    },
+    "student-auth.js": {
+      "sha256": "f8a688ce41f56f63ad01435e3405e01493e840592728ad7f801588c877d07383",
+      "bytes": 8817
+    },
+    "student-home-v4.ejs": {
+      "sha256": "30295749cfceda5d66ba918ebfb71b3252e4c60deb59cb1bf0a9b460288bb288",
+      "bytes": 129332
+    },
+    "style.css": {
+      "sha256": "f050bd93752be8cce36a42cd2d4b794cb64dc242a78d0d89dc06ac21ca59ca3d",
+      "bytes": 38636
+    },
+    "teacher/live-studio.ejs": {
+      "sha256": "0db2631ced4aac18673b9bd3c58efefc8d3e05f926ddb3a22010164dcb5acf50",
+      "bytes": 124896
+    },
+    "teacher/login.ejs": {
+      "sha256": "f91681102438cdf5a6ccc216d87167a291b4b01cfff12663e06210494f29ee43",
+      "bytes": 4558
+    },
+    "teacher-catalog.js": {
+      "sha256": "6d498953aa4a9884f8d1cd09dce9b6b98af8f7e77bd24c6bd1e7b1ef2d0771c7",
+      "bytes": 4035
+    },
+    "teacher-portal/login.ejs": {
+      "sha256": "f62a1afd78d2e08cd14dc22efc9d6997db0d9ac8de6c133196960da4e7d898e7",
+      "bytes": 4568
+    },
+    "teacher-portal/tp-login.ejs": {
+      "sha256": "e9acb461e9d7e72b04972c8726a5df8a75d8b190a619831935c94cd5819ce41b",
+      "bytes": 5428
+    },
+    "views/admin-login.ejs": {
+      "sha256": "f72dbeb3458a7c1e1528722e361af54559f43b0fcc871acb55c6a3974741ed97",
+      "bytes": 3595
+    },
+    "views/admin.ejs": {
+      "sha256": "f15e7c06bdead8cb69bb3efdf552524ca312999dd07d7406e0989ea88d24883e",
+      "bytes": 6597
+    },
+    "views/student/about.ejs": {
+      "sha256": "a4d1bdd3cc6cbaf1c6fb382073daf3b93a92fb1be4109333043aad27e3aca19c",
+      "bytes": 9906
+    },
+    "views/student/contact.ejs": {
+      "sha256": "3cc3071a9d44edc19cebf56a9c815512cbaba5c3ebf64f0fa7f76158cd4d93ff",
+      "bytes": 15783
+    },
+    "views/student/course.ejs": {
+      "sha256": "d7a387c76114e668eaef273dda574119fb8f212b76e0478ed92df2fdd4e27ac4",
+      "bytes": 12924
+    },
+    "views/student/home.ejs": {
+      "sha256": "ef13d9121d3344a7510e5a8634fec2a4f0139b1905e6cc0d9b24e3651b999d2f",
+      "bytes": 128453
+    },
+    "views/student/index.ejs": {
+      "sha256": "f95303d846387d107e707a351aa343dbc1cfa239706c2b288a174a28f912ff46",
+      "bytes": 30908
+    },
+    "views/student/live-watch.ejs": {
+      "sha256": "ecf3f081626b74a6ac9f79ec1a43c7a957cc6198e99f21ad9281355706d6d7d6",
+      "bytes": 24488
+    },
+    "views/student/materials.ejs": {
+      "sha256": "d90ee85c4c609a9cf085090dc89dd4ccf404abed3afac835682186187dc040ed",
+      "bytes": 2190
+    },
+    "views/student/orders.ejs": {
+      "sha256": "572d3dd7a1078cf1a827527fb45c57e566341a472d40a21894d3413c2e160f1f",
+      "bytes": 4036
+    },
+    "views/student/package.ejs": {
+      "sha256": "8f0ce44ef48efad047572b1456d5cdbec1760546d988173b1e7d4cb1c4c93129",
+      "bytes": 17639
+    },
+    "views/student/policy.ejs": {
+      "sha256": "553189e510feed021d6efe37587412be7e9049bbde532f67cc6474d602975b37",
+      "bytes": 4222
+    },
+    "views/student/province.ejs": {
+      "sha256": "131bc831245a03915f326c79ec989f16d8c3a6a215374d4bdcc8834cc945a88a",
+      "bytes": 9688
+    },
+    "views/student/replay-duo.ejs": {
+      "sha256": "3267bdb4e8459d94333efd0926812e938924dc23d947cbadcac31a6541a0dcf3",
+      "bytes": 21845
+    },
+    "views/student/replay.ejs": {
+      "sha256": "f3a36de5105264da2dbc1ec2a871b1a816daf92176680e9de96271d7cad672a6",
+      "bytes": 13110
+    },
+    "views/student/site.ejs": {
+      "sha256": "1c7844e3407320136394390ec85b63f1e84c2aa883421d1ba3ac072185782ef2",
+      "bytes": 14357
+    },
+    "views/student/student.js": {
+      "sha256": "2c9cdc028f01abc942f45fe5857a40103543f443b6aec4fb1f4f46f69ff438a8",
+      "bytes": 5321
+    },
+    "views/student/vod-replay.ejs": {
+      "sha256": "6027a2d4737dc954fc3c78c3f70a76f85f72edb1e870020d922437a652d7f506",
+      "bytes": 7571
+    },
+    "views/student/watch.ejs": {
+      "sha256": "d1da004dc0399e0b81d7f80f914be6ab4c44d07bdce6f8c1bc05aa345b4140b9",
+      "bytes": 11955
+    },
+    "views/student-home-v4.ejs": {
+      "sha256": "c88b67462f592e22ee746c5f35f76e0fb9394c698fd990b5680d859ed3b24c38",
+      "bytes": 128863
+    },
+    "views/teacher/ads.ejs": {
+      "sha256": "b4413349d80aeef73da413b2176b9c49dcec06841bbaba50400599ceee96719f",
+      "bytes": 2258
+    },
+    "views/teacher/assistant-form.ejs": {
+      "sha256": "1337b9ea160a658a3650ac252f4edf23eb77b1039df0dcc8229b067ca8b79a86",
+      "bytes": 2549
+    },
+    "views/teacher/assistants.ejs": {
+      "sha256": "0c897b1f167109907c1b16c3907d480e41b59158459c1e5f9db6e43d21b870ba",
+      "bytes": 3432
+    },
+    "views/teacher/course-catalog.ejs": {
+      "sha256": "610608bcdedcffa93dd90a6777c1a9114ff1771d7f27fddc77aff174a38d91a2",
+      "bytes": 2710
+    },
+    "views/teacher/course-detail.ejs": {
+      "sha256": "26745c92b7bbf6f92961d426a3577d2b7fb9d03c6c208be9e027ab5596eb3fac",
+      "bytes": 6854
+    },
+    "views/teacher/course-form.ejs": {
+      "sha256": "744ecdec0a0b3126a701efc6e891d54adc4ab50674e451987c08c102b19d209e",
+      "bytes": 2378
+    },
+    "views/teacher/course-materials-detail.ejs": {
+      "sha256": "44055fb2141e9ef14f3a3aca7583a795f2ada3a6bfa6223a66b239aef91a3367",
+      "bytes": 3077
+    },
+    "views/teacher/course-materials.ejs": {
+      "sha256": "0308cbfa012d2e85cc166f7b6b5d4e412431f705cff81c0fd51074692fc75c1d",
+      "bytes": 1787
+    },
+    "views/teacher/course-package-step.ejs": {
+      "sha256": "f459543483667604ca8a7c70ab56c5f31e5c91368e3a6e396c2ae68852fb58ba",
+      "bytes": 61305
+    },
+    "views/teacher/course-plan.ejs": {
+      "sha256": "aba76fb5fbd98252bec03eaf3c16abf7cff7b6cedddec7138a445e29d29b0062",
+      "bytes": 17457
+    },
+    "views/teacher/course-scheduler.ejs": {
+      "sha256": "37c0c045aae1692922ee7e59a6a5c2d47bfcab29768877e304322a84d1febf7e",
+      "bytes": 35670
+    },
+    "views/teacher/course-series.ejs": {
+      "sha256": "53f4818c162a6350abb4bec5b53913421f839aef79fefec303371406620552be",
+      "bytes": 52979
+    },
+    "views/teacher/courses.ejs": {
+      "sha256": "d8c4740a2456d83f0f29411e7a76d28b5d4c14b32e82591c6cc922b0e77c2645",
+      "bytes": 59644
+    },
+    "views/teacher/dashboard.ejs": {
+      "sha256": "662a0c5e5b2fa35bf34297553fbe95f235c63e87b1a3ebac7496bc13bb1602e3",
+      "bytes": 8663
+    },
+    "views/teacher/lesson-form.ejs": {
+      "sha256": "88d66c6862271164a407cb3d00b50c3ee784776f393aeeb798020743de7f4b06",
+      "bytes": 2677
+    },
+    "views/teacher/live-manage-form.ejs": {
+      "sha256": "8b71c840575a06cc71a329347f0b80a212df68924c275c920b8233e0ed194dc0",
+      "bytes": 3636
+    },
+    "views/teacher/live-manage.ejs": {
+      "sha256": "2fd436a5fbe4edc8ca91b98991d4afb0db482db0c9e4a44cca28c7a2e62faaeb",
+      "bytes": 15552
+    },
+    "views/teacher/live-replay-form.ejs": {
+      "sha256": "2894b223389467b54e10ddb6d61e94e70edf9293052836bb774af4869809e10d",
+      "bytes": 2161
+    },
+    "views/teacher/live-replay.ejs": {
+      "sha256": "6cf65a541d922a6e16b89e0c082128b60c733aaf80495049032b057e5a9c8702",
+      "bytes": 8120
+    },
+    "views/teacher/live-studio.ejs": {
+      "sha256": "a024ec81ed1f6cc1ed85fa55418b8bf7c2d150a751600586b4d5a166b6e6323c",
+      "bytes": 125375
+    },
+    "views/teacher/login.ejs": {
+      "sha256": "31b489a73220cc7851023f8200030a89410350a199ff2ebdfebe1cd4ea7ab9a3",
+      "bytes": 4830
+    },
+    "views/teacher/logistics-form.ejs": {
+      "sha256": "d7b694d1cf2ac8dd5664e25581f0a635ba3c0771ebc98e470d3f2ad890d56dbf",
+      "bytes": 11291
+    },
+    "views/teacher/logistics.ejs": {
+      "sha256": "34ba05595f63fe1da49ad18ca3830aa09607bdb283a623eb1db8226c330a28e1",
+      "bytes": 5205
+    },
+    "views/teacher/orders-form.ejs": {
+      "sha256": "05391f485c7d9ab26ce5128debd1310a72af7fc52da14370b5135def03813d05",
+      "bytes": 5168
+    },
+    "views/teacher/orders.ejs": {
+      "sha256": "1a100b242a9acf13becd052c7a1c59bcfffb4ffdbd7c5501a80caade5478515b",
+      "bytes": 9426
+    },
+    "views/teacher/package-detail.ejs": {
+      "sha256": "d37a0d8e8d187fc6f327f91b68d6905a352e767bba17d5d6fe191e08e3c5b21b",
+      "bytes": 7975
+    },
+    "views/teacher/package-form.ejs": {
+      "sha256": "2a0cd8a525742230f6ac245da643e70476a20c6a97568a86630aa1fcd7082a7b",
+      "bytes": 3257
+    },
+    "views/teacher/packages.ejs": {
+      "sha256": "ab89ca2db152ce6264b170227f510e5d3f7f70cc32d9cf46b2bd6bf607493249",
+      "bytes": 2253
+    },
+    "views/teacher/partials/header.ejs": {
+      "sha256": "929f530ae6264fb5c7ebff0411354dc174ac699f69c638d786fb11927f0d5a75",
+      "bytes": 633
+    },
+    "views/teacher/partials/pagination.ejs": {
+      "sha256": "551b60927e6da57633c022f32a319ef85fa16f0d531796cb7214b6b29c4d02bf",
+      "bytes": 1333
+    },
+    "views/teacher/partials/sidebar.ejs": {
+      "sha256": "80a5f695cf6d2fa551f21f97658f0e843d353c648ac7f3166a45d5504203ee7b",
+      "bytes": 8295
+    },
+    "views/teacher/province-detail.ejs": {
+      "sha256": "b4fa3eb9f4e7aa81d394c2af7e663b35947924f347ed881c1a268deb2dc9c973",
+      "bytes": 6156
+    },
+    "views/teacher/province-form.ejs": {
+      "sha256": "630ac1562757ea38a4847f2370754e4db7499fe602c476be3b448d74fc774bd7",
+      "bytes": 34379
+    },
+    "views/teacher/provinces.ejs": {
+      "sha256": "551e778e854784acc6e738a22ebc73733ba5c9b7b4a3186dd5049c9bb1914d8e",
+      "bytes": 4801
+    },
+    "views/teacher/qa-detail.ejs": {
+      "sha256": "f2125a122e1fb8c548a728afee6cfeb16e74ce74cf8b4b524424072ab090bb96",
+      "bytes": 3052
+    },
+    "views/teacher/qa.ejs": {
+      "sha256": "8998b6014be057d393ca26747649b005f29f17d91826ec5e02fbb70e10f586a2",
+      "bytes": 3690
+    },
+    "views/teacher/questions.ejs": {
+      "sha256": "3babfd44395d83f3985c64e702287a572f190979fe394c5973a265e2d06c9a5c",
+      "bytes": 4763
+    },
+    "views/teacher/registrations.ejs": {
+      "sha256": "6f90282b3a0ab2baffcfdf1198bb20e9cd5a14f048f8e0599d23e15177a813a7",
+      "bytes": 8675
+    },
+    "views/teacher/replay-duo.ejs": {
+      "sha256": "88c961ce7188721d4fec0bb6ea5f667a35258792f79c19f2e3ba7c5d4bd67f9f",
+      "bytes": 20306
+    },
+    "views/teacher/research-form.ejs": {
+      "sha256": "adc5e49786ac4fe8445b31b1d386d9af43cc1aa3cf3c89a07d5448f2e1dcbf2f",
+      "bytes": 5146
+    },
+    "views/teacher/research.ejs": {
+      "sha256": "33d898793e7154d13e16d943805912e0cacf67a0c7514cdc07fb31d1cca0180e",
+      "bytes": 7637
+    },
+    "views/teacher/schedule-overview.ejs": {
+      "sha256": "f20b9e316b31921ea012a74daae95c0232579d26e44a118d32efe18b22a96a76",
+      "bytes": 9551
+    },
+    "views/teacher/staff-detail.ejs": {
+      "sha256": "22662db9a6f171dec3f8c7119dea4fb51a11a27d1dc2687e5500fd0cbf7f608f",
+      "bytes": 3201
+    },
+    "views/teacher/staff-form.ejs": {
+      "sha256": "af488f0df0039e34d8c782b91786a6eb0d94ff30e80f8fc1b5b24f548c80691e",
+      "bytes": 14139
+    },
+    "views/teacher/staff.ejs": {
+      "sha256": "ab05babf82ff917822d6f9ce048f6da86daa2ebd3bd7b5a0c628c0bced601752",
+      "bytes": 6184
+    },
+    "views/teacher/student-detail.ejs": {
+      "sha256": "91873a6d82a108f6583bb21dd01bb5a7aec9365ecd3f0aa31b8657245fe62fdc",
+      "bytes": 5666
+    },
+    "views/teacher/students.ejs": {
+      "sha256": "9492b5f54d7c241ee7f2f5e7937ea05e6d87538af5002bf5a36c09a23ba3c486",
+      "bytes": 9186
+    },
+    "views/teacher/teaching-room.ejs": {
+      "sha256": "13856d372ea71d29f7263a67a982804e0534f54c1e145b61f6aea6d8a2b540e0",
+      "bytes": 16262
+    },
+    "views/teacher/upload-materials.ejs": {
+      "sha256": "bda1e693499e7c6474174c11089501e586898f5654d415170ba8b347a6bdd7a3",
+      "bytes": 2644
+    },
+    "views/teacher/user-form.ejs": {
+      "sha256": "7e557a33b92c819bd065a35f1e0dacaa49f54760956dce9c1738cf4906829a7f",
+      "bytes": 4513
+    },
+    "views/teacher-portal/calendar.ejs": {
+      "sha256": "52de12168f9d6592d1d07899d156976a85b042e883f0f77485acace2ad592f9e",
+      "bytes": 12961
+    },
+    "views/teacher-portal/dashboard.ejs": {
+      "sha256": "016d3e21e1608beffb73e77cc8e3f1b4cd303da41566e03bc925b7def6bf2811",
+      "bytes": 6871
+    },
+    "views/teacher-portal/login.ejs": {
+      "sha256": "8cba3bb2d98d686f5b3985fab55e1d36239b885ab47f362b80e602111c77459a",
+      "bytes": 4840
+    },
+    "views/teacher-portal/partials/header.ejs": {
+      "sha256": "7dd4355eec65d1a221cdbaa1c0ecc4414efa852486ff3a1737c468ba964d803b",
+      "bytes": 634
+    },
+    "views/teacher-portal/partials/sidebar.ejs": {
+      "sha256": "cdeeacfba6105ac611782af9ecccb962c596f87e2b66472a1e6c7e89503235b8",
+      "bytes": 1776
+    },
+    "views/teacher-portal/profile.ejs": {
+      "sha256": "49c021e794f6697d8292997f63d56c0a32f3e767dfe36207b47de655183fe401",
+      "bytes": 7402
+    },
+    "views/teacher-portal/tp-dashboard.ejs": {
+      "sha256": "7e06ec002050b625a60361ad2b9e59ef0e20fc5b021cbc0edbeaeb93b335b523",
+      "bytes": 5714
+    },
+    "views/teacher-portal/tp-login.ejs": {
+      "sha256": "9c97693f8301ec813baedd464e15738e7c0c4622c494262e63a552149f7d1d4b",
+      "bytes": 5700
+    },
+    "vod.js": {
+      "sha256": "255aa9289d4028533f50b99dc3586bf6f2d602f2c41703194f3c7d3890cb744f",
+      "bytes": 1123
+    },
+    "middleware/vendor/LICENSE": {
+      "sha256": "ec266e5c69b8d456f3e2947476615b9b829da9492f13eb6ce6809bb1a1779ff3",
+      "bytes": 1078
+    }
+  }
+}

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { background: #f8fafc; font-family: 'Noto Sans SC', 'PingFang SC', 'Inter', sans-serif; color: #0f172a; }
+    .course-portal { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .course-portal-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 0; border-bottom: 1px solid #e2e8f0; margin-bottom: 24px;
+    }
+    .course-portal-nav .logo { display: inline-flex; align-items: center; gap: 10px; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 22px; font-weight: 400; line-height: 1; letter-spacing: .5px; color: #0f172a; text-decoration: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    .course-portal-nav .logo svg { width: 28px; height: 28px; flex: none; }
+    .footer__col .logo__icon svg { width: 28px; height: 28px; vertical-align: middle; }
+    .course-portal-nav a { color: #64748b; text-decoration: none; font-size: 14px; }
+    .course-portal-nav a:hover { color: #2563eb; }
+
+    .course-detail-header { display: flex; gap: 32px; margin-bottom: 32px; align-items: flex-start; }
+    .course-detail-cover {
+      width: 320px; min-width: 320px; height: 180px; border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.15); font-size: 48px;
+      box-shadow: 0 10px 26px rgba(37,99,235,.18);
+    }
+    .course-detail-info h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+    .course-detail-info p { font-size: 14px; color: #64748b; line-height: 1.7; margin-bottom: 16px; }
+    .course-detail-meta { display: flex; gap: 20px; font-size: 13px; color: #94a3b8; margin-bottom: 16px; flex-wrap: wrap; }
+    .course-detail-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .lesson-section h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .lesson-list { list-style: none; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: white; }
+    .lesson-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s;
+    }
+    .lesson-item:last-child { border-bottom: none; }
+    .lesson-item:hover { background: #f8fafc; }
+    .lesson-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #eff6ff; color: #2563eb;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+    }
+    .lesson-item.completed .lesson-num { background: #10b981; color: white; }
+    .lesson-info { flex: 1; min-width: 0; }
+    .lesson-info .lesson-title { font-size: 15px; font-weight: 500; }
+    .lesson-info .lesson-meta { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .lesson-status { font-size: 12px; font-weight: 500; }
+    .lesson-status.completed { color: #10b981; }
+    .lesson-status.in-progress { color: #2563eb; }
+    .lesson-watch-btn {
+      padding: 6px 14px; background: #2563eb; color: white;
+      border-radius: 8px; font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .lesson-watch-btn:hover { background: #1d4ed8; }
+    .lesson-watch-btn.completed { background: #10b981; }
+    .lesson-watch-btn.live-now { background: #ef4444; }
+    .lesson-watch-btn.pending { background: #e2e8f0; color: #94a3b8; pointer-events: none; }
+
+    @media (max-width: 768px) {
+      .course-detail-header { flex-direction: column; }
+      .course-detail-cover { width: 100%; min-width: 0; }
+    }
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+  <div class="course-portal">
+    <div class="course-portal-nav">
+      <a href="/" class="logo"><svg viewBox="0 0 340 300" role="img" aria-label="承泽教育"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
+<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
+<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg>承泽在线</a>
+      <a href="/live/student">← 返回课程列表</a>
+    </div>
+
+    <div class="course-detail-header">
+      <div class="course-detail-cover">
+        <div style="font-size:17px;font-weight:700;color:#fff;text-align:center;line-height:1.6;letter-spacing:1px"><%= course.province||'' %> <%= course.year||'' %><br><%= course.class_type||'' %></div>
+      </div>
+      <div class="course-detail-info">
+        <h1><%= course.title %></h1>
+        <p><%= course.description %></p>
+        <div class="course-detail-meta">
+          <span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <%= course.teacher_name %>
+          </span>
+          <span><%= lessons.length %> 课时</span>
+          <span><%= course.student_count %> 人学习</span>
+        </div>
+        <% if (course.teacher_bio && course.teacher_bio !== '') { %><p style="font-size:13px;color:#94a3b8"><%= course.teacher_bio %></p><% } %>
+        
+        <!-- Live status -->
+        <div id="liveEntryWrap" style="display:<%= isLive ? 'flex' : 'none' %>;margin:12px 0;padding:12px 16px;background:#fee2e2;border:1px solid #fecaca;border-radius:10px;align-items:center;gap:10px;">
+          <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;animation:pulse 1.5s infinite;flex-shrink:0"></span>
+          <div>
+            <div style="font-weight:600;font-size:14px;color:#dc2626;">正在直播中</div>
+            <div style="font-size:12px;color:#ef4444;">老师正在上课，点击进入课堂</div>
+          </div>
+          <a id="liveEntryLink" href="<%= liveWatchUrl || '/live/student/live-watch/' + course.id %>" style="margin-left:auto;padding:6px 16px;background:#dc2626;color:white;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;flex-shrink:0;">进入课堂 →</a>
+        </div>
+        
+        
+      </div>
+    </div>
+
+    <% if (course.teacher_name) { %>
+    <div style="margin:16px 0;padding:14px 16px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 1px 3px rgba(15,23,42,.04)">
+      <div style="width:42px;height:42px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0"><%= course.teacher_name.charAt(0) %></div>
+      <div style="min-width:0">
+        <div style="font-size:14px;font-weight:700;color:#0f172a">授课教师：<%= course.teacher_name %></div>
+        <% if (course.teacher_bio && course.teacher_bio !== '') { %><div style="font-size:13px;color:#64748b;margin-top:4px;line-height:1.6"><%= course.teacher_bio %></div><% } %>
+      </div>
+    </div>
+    <% } %>
+
+    <style>
+      @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    </style>
+
+    <div class="lesson-section">
+      <h2>课程目录</h2>
+      <ul class="lesson-list">
+        <% lessons.forEach((l, idx) => { %>
+          <%
+            const prog = studentProgress ? studentProgress[l.id] : null;
+            const isCompleted = prog && prog.completed === 1;
+            const isInProgress = prog && prog.completed === 0 && prog.watch_duration > 0;
+          %>
+          <li class="lesson-item <%= isCompleted ? 'completed' : '' %>">
+            <div class="lesson-num"><%= idx + 1 %></div>
+            <div class="lesson-info">
+              <div class="lesson-title"><%= l.title %></div>
+              <div class="lesson-meta">
+                <%= Math.floor(l.duration / 60) %>分<%= l.duration % 60 %>秒
+                <% if (l.description) { %> · <%= l.description %><% } %>
+              </div>
+            </div>
+            <div>
+              <% if (isCompleted) { %>
+                <span class="lesson-status completed">已完成</span>
+              <% } else if (isInProgress) { %>
+                <span class="lesson-status in-progress">学习中</span>
+              <% } %>
+            </div>
+            <%
+              var isLiveNow = currentLiveLessonId && Number(l.id) === Number(currentLiveLessonId);
+              var hasVideo = l.video_url && l.video_url !== '';
+              var btnText = isLiveNow ? '正在直播' : (hasVideo ? '开始学习' : '尚未开课');
+              var btnCls = isLiveNow ? ' live-now' : (hasVideo ? (isCompleted ? ' completed' : '') : ' pending');
+            %>
+            <a href="<%= isLiveNow ? '/live/student/live-watch/' + course.id : (hasVideo ? '/live/student/replay-duo/' + course.id + '?lesson=' + l.id + '&v=2' : '/live/student/watch/' + l.id) %>" class="lesson-watch-btn <%= btnCls %>" target="_blank" rel="noopener">
+              <%= btnText %>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="footer" style="margin-top: 48px;">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__col"><h4><span class="logo__icon"><svg viewBox="0 0 340 300" role="img" aria-label="承泽教育"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
+<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
+<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg></span>承泽在线</h4><p>专注专升本在线教育</p></div>
+        <div class="footer__col"><h4>快速链接</h4><ul><li><a href="/live/student">课程中心</a></li><li><a href="/ai-tutor.html">AI 助教</a></li></ul></div>
+        <div class="footer__col"><h4>联系我们</h4><ul><li>service@chengze.online</li></ul></div>
+      </div>
+      <div class="footer__bottom"><p>&copy; 2026 承泽教育. All rights reserved.</p></div>
+    </div>
+  </footer>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+(function() {
+  var courseId = <%= course.id %>;
+  var wrap = document.getElementById('liveEntryWrap');
+  var link = document.getElementById('liveEntryLink');
+  function checkLive() {
+    fetch('/api/live/courses').then(function(r) { return r.json(); }).then(function(d) {
+      var live = (d && d.live) || [];
+      var hit = live.filter(function(x) { return String(x.course_id) === String(courseId); })[0];
+      if (wrap) wrap.style.display = hit ? 'flex' : 'none';
+      if (link && hit) link.href = '/live/student/live-watch/' + courseId;
+    }).catch(function() {});
+  }
+  setInterval(checkLive, 10000);
+  checkLive();
+  try {
+    var sock = io();
+    if (sock) sock.on('live:status', checkLive);
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>

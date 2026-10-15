@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    .teaching-toolbar {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .teaching-toolbar-sep { width: 1px; height: 24px; background: rgba(255,255,255,0.15); margin: 0 4px; }
+    .teaching-info-bar {
+      background: rgba(255,255,255,0.05);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .teaching-info-bar .live-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .teaching-info-bar .live-text { color: #ef4444; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
+    .teaching-info-bar .lesson-title { color: white; font-size: 14px; }
+    .empty-lesson-msg {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: rgba(255,255,255,0.3);
+      gap: 12px;
+      text-align: center;
+      padding: 40px;
+    }
+    .empty-lesson-msg a { color: #60a5fa; text-decoration: underline; }
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teaching-room">
+      <!-- Main Teaching Stage -->
+      <div class="teaching-stage">
+        <div class="teaching-info-bar">
+          <span class="live-dot"></span>
+          <span class="live-text">授课中</span>
+          <span class="lesson-title"><%= course.title %></span>
+        </div>
+
+        <div class="teaching-canvas-wrap">
+          <% if (lessons.length > 0) { %>
+            <canvas id="teachCanvas" width="960" height="540"></canvas>
+          <% } else { %>
+            <div class="empty-lesson-msg">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <div>
+                <p style="font-size: 16px; margin-bottom: 8px;">暂无课时内容</p>
+                <p style="font-size: 14px;"><a href="/admin/courses-manage/<%= course.id %>">前往课程页</a> 添加课时</p>
+              </div>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Teaching Controls -->
+        <div class="teaching-controls">
+          <div class="teaching-toolbar">
+            <button class="teaching-ctrl-btn" id="playBtn" aria-label="播放" title="播放/暂停">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            </button>
+            <button class="teaching-ctrl-btn" id="rewindBtn" aria-label="后退" title="后退 10 秒">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+            <button class="teaching-ctrl-btn" id="forwardBtn" aria-label="前进" title="前进 10 秒">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            </button>
+            <div class="teaching-toolbar-sep"></div>
+            <button class="teaching-ctrl-btn" id="prevSlideBtn" aria-label="上一页" title="上一页">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="teaching-ctrl-btn" id="nextSlideBtn" aria-label="下一页" title="下一页">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <div class="teaching-toolbar-sep"></div>
+            <button class="teaching-ctrl-btn" id="fullscreenTeachBtn" aria-label="全屏" title="全屏">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+          </div>
+          <div style="color: rgba(255,255,255,0.5); font-size: 13px; display: flex; gap: 16px; align-items: center;">
+            <span id="teachTimeDisplay">00:00 / 00:00</span>
+            <span id="slideCounter">第 1 页</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lesson Sidebar -->
+      <div class="teaching-sidebar">
+        <div class="teaching-sidebar-header">课时列表</div>
+        <ul class="teaching-lesson-list">
+          <% if (lessons.length === 0) { %>
+            <li style="padding: 20px; text-align: center; color: var(--color-text-muted); font-size: 13px;">暂无课时</li>
+          <% } else { %>
+            <% lessons.forEach((l, idx) => { %>
+              <li class="teaching-lesson-item <%= idx === 0 ? 'active' : '' %>" data-index="<%= idx %>" data-duration="<%= l.duration %>" data-slides='<%= l.slides_data %>'>
+                <div class="teaching-lesson-num"><%= idx + 1 %></div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 500;"><%= l.title %></div>
+                  <div style="font-size: 12px; color: var(--color-text-muted);"><%= Math.floor(l.duration / 60) %>分<%= l.duration % 60 %>秒</div>
+                </div>
+              </li>
+            <% }) %>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById('teachCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const container = canvas.closest('.teaching-stage');
+
+      let slides = [];
+      let currentSlideIdx = 0;
+      let totalDuration = 0;
+      let currentTime = 0;
+      let isPlaying = false;
+      let animId = null;
+      let lastTs = null;
+      let currentLessonSlides = [];
+      let currentLessonDuration = 0;
+
+      // Lesson items
+      const lessonItems = document.querySelectorAll('.teaching-lesson-item');
+      
+      function parseSlides(el) {
+        try {
+          const raw = el.dataset.slides;
+          return raw ? JSON.parse(raw) : [];
+        } catch { return []; }
+      }
+
+      function loadLesson(el) {
+        lessonItems.forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        
+        currentLessonSlides = parseSlides(el);
+        currentLessonDuration = parseInt(el.dataset.duration) || 0;
+        currentSlideIdx = 0;
+        currentTime = 0;
+        isPlaying = false;
+        
+        if (animId) { cancelAnimationFrame(animId); animId = null; }
+        lastTs = null;
+        
+        drawFrame(0);
+        updateTimeDisplay();
+        updateSlideCounter();
+        
+        document.getElementById('playBtn').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>';
+      }
+
+      function drawFrame(time) {
+        const w = canvas.width;
+        const h = canvas.height;
+
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, '#0f172a');
+        grad.addColorStop(0.6, '#1e293b');
+        grad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Grid dots
+        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+        for (let x = 0; x < w; x += 40) {
+          for (let y = 0; y < h; y += 40) {
+            ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI * 2); ctx.fill();
+          }
+        }
+
+        // Find current slide
+        let slide = currentLessonSlides.length > 0 ? currentLessonSlides[0] : null;
+        for (let i = currentLessonSlides.length - 1; i >= 0; i--) {
+          if (time >= currentLessonSlides[i].time) { slide = currentLessonSlides[i]; break; }
+        }
+
+        if (slide) {
+          // Slide bar
+          const barY = 50;
+          ctx.fillStyle = 'rgba(255,255,255,0.06)';
+          ctx.fillRect(60, barY, w - 120, 2);
+
+          const durationSecs = currentLessonDuration || 1;
+          currentLessonSlides.forEach((s) => {
+            const pct = (s.time * 60) / durationSecs;
+            const mx = 60 + pct * (w - 120);
+            ctx.fillStyle = s === slide ? '#2563eb' : 'rgba(255,255,255,0.12)';
+            ctx.beginPath(); ctx.arc(mx, barY, s === slide ? 5 : 3, 0, Math.PI * 2); ctx.fill();
+          });
+
+          // Progress dot
+          const pct = Math.min(time / durationSecs, 1);
+          const dotX = 60 + pct * (w - 120);
+          ctx.fillStyle = '#2563eb';
+          ctx.beginPath(); ctx.arc(dotX, barY, 6, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = 'rgba(37,99,235,0.25)';
+          ctx.beginPath(); ctx.arc(dotX, barY, 12, 0, Math.PI * 2); ctx.fill();
+
+          // Time
+          ctx.fillStyle = 'rgba(255,255,255,0.4)';
+          ctx.font = '12px Inter, monospace';
+          ctx.textAlign = 'right';
+          ctx.fillText(formatTime(time), w - 60, 42);
+
+          // Slide title
+          ctx.fillStyle = '#2563eb';
+          ctx.font = '600 14px "Noto Sans SC", sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(slide.title || '', 60, 95);
+
+          // Content
+          const startY = 140;
+          const lineH = 40;
+          (slide.lines || []).forEach((line, i) => {
+            if (!line) return;
+            const y = startY + i * lineH;
+            if (line.startsWith('Example:')) {
+              ctx.fillStyle = 'rgba(255,255,255,0.4)';
+              ctx.font = '400 14px "Noto Sans SC", sans-serif';
+            } else if (line.startsWith('答案')) {
+              ctx.fillStyle = '#10b981';
+              ctx.font = '600 16px "Noto Sans SC", sans-serif';
+            } else if (line.startsWith('If ') || line.startsWith('I ') || line.startsWith('It ')) {
+              ctx.fillStyle = '#93c5fd';
+              ctx.font = '500 17px "Noto Sans SC", sans-serif';
+            } else if (line.startsWith('•') || line.match(/^\d+\./)) {
+              ctx.fillStyle = 'rgba(255,255,255,0.85)';
+              ctx.font = '400 16px "Noto Sans SC", sans-serif';
+            } else {
+              ctx.fillStyle = 'rgba(255,255,255,0.7)';
+              ctx.font = '400 16px "Noto Sans SC", sans-serif';
+            }
+            ctx.textAlign = 'left';
+            ctx.fillText(line, 60, y);
+          });
+
+          // Watermark
+          ctx.fillStyle = 'rgba(255,255,255,0.06)';
+          ctx.font = '600 14px "Noto Sans SC", sans-serif';
+          ctx.textAlign = 'right';
+          ctx.fillText('承泽教育 · 教师授课', w - 60, h - 30);
+        }
+      }
+
+      function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      }
+
+      function updateTimeDisplay() {
+        document.getElementById('teachTimeDisplay').textContent = 
+          formatTime(currentTime) + ' / ' + formatTime(currentLessonDuration);
+      }
+
+      function updateSlideCounter() {
+        document.getElementById('slideCounter').textContent = 
+          currentLessonSlides.length > 0 ? `第 ${currentSlideIdx + 1} 页 / 共 ${currentLessonSlides.length} 页` : '无幻灯片';
+      }
+
+      function togglePlay() {
+        if (currentLessonDuration === 0) return;
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          document.getElementById('playBtn').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+          lastTs = null;
+          animId = requestAnimationFrame(playLoop);
+        } else {
+          document.getElementById('playBtn').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>';
+          if (animId) { cancelAnimationFrame(animId); animId = null; }
+        }
+      }
+
+      function playLoop(ts) {
+        if (!isPlaying) return;
+        if (lastTs === null) lastTs = ts;
+        const delta = (ts - lastTs) / 1000;
+        lastTs = ts;
+        currentTime = Math.min(currentTime + delta, currentLessonDuration);
+        drawFrame(currentTime);
+        updateTimeDisplay();
+        
+        // Update slide index
+        let idx = 0;
+        for (let i = currentLessonSlides.length - 1; i >= 0; i--) {
+          if (currentTime >= currentLessonSlides[i].time) { idx = i; break; }
+        }
+        if (idx !== currentSlideIdx) { currentSlideIdx = idx; updateSlideCounter(); }
+
+        if (currentTime >= currentLessonDuration) {
+          isPlaying = false;
+          document.getElementById('playBtn').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>';
+          return;
+        }
+        animId = requestAnimationFrame(playLoop);
+      }
+
+      // Event listeners
+      document.getElementById('playBtn').addEventListener('click', togglePlay);
+      
+      document.getElementById('rewindBtn').addEventListener('click', () => {
+        currentTime = Math.max(0, currentTime - 10);
+        drawFrame(currentTime);
+        updateTimeDisplay();
+      });
+      
+      document.getElementById('forwardBtn').addEventListener('click', () => {
+        currentTime = Math.min(currentLessonDuration, currentTime + 10);
+        drawFrame(currentTime);
+        updateTimeDisplay();
+      });
+
+      document.getElementById('prevSlideBtn').addEventListener('click', () => {
+        if (currentLessonSlides.length === 0) return;
+        currentSlideIdx = Math.max(0, currentSlideIdx - 1);
+        currentTime = currentLessonSlides[currentSlideIdx].time;
+        drawFrame(currentTime);
+        updateTimeDisplay();
+        updateSlideCounter();
+      });
+
+      document.getElementById('nextSlideBtn').addEventListener('click', () => {
+        if (currentLessonSlides.length === 0) return;
+        currentSlideIdx = Math.min(currentLessonSlides.length - 1, currentSlideIdx + 1);
+        currentTime = currentLessonSlides[currentSlideIdx].time;
+        drawFrame(currentTime);
+        updateTimeDisplay();
+        updateSlideCounter();
+      });
+
+      document.getElementById('fullscreenTeachBtn').addEventListener('click', () => {
+        const stage = document.querySelector('.teaching-stage');
+        if (!document.fullscreenElement) {
+          stage.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      });
+
+      // Lesson click
+      lessonItems.forEach(item => {
+        item.addEventListener('click', () => loadLesson(item));
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+        if (e.code === 'ArrowLeft') { document.getElementById('prevSlideBtn').click(); }
+        if (e.code === 'ArrowRight') { document.getElementById('nextSlideBtn').click(); }
+      });
+
+      // Init
+      if (lessonItems.length > 0) loadLesson(lessonItems[0]);
+    })();
+  </script>
+</body>
+</html>

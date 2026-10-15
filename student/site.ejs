@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+<link rel="shortcut icon" type="image/x-icon" href="/favicon-v18.ico?v=20260905"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192-v18.png?v=20260905"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v18.png?v=20260905"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16-v18.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32-v18.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192-v18.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v18.png">
+<style>
+  :root { --indigo:#6366f1; --violet:#8b5cf6; --purple:#a855f7; --ink:#1e293b; --muted:#64748b; --tint:#f6f7ff; --line:#e7e6f2; --radius:16px; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Arial,sans-serif; background:#f8f9ff; color:var(--ink); }
+  a { text-decoration:none; color:inherit; }
+  .container { max-width:1180px; margin:0 auto; padding:0 28px; }
+  .topbar { background:#23272B; color:rgba(255,255,255,.78); font-size:13px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .topbar-inner { display:flex; align-items:center; justify-content:space-between; height:44px; }
+  .topbar b { color:#fff; }
+  .topbar .hot { color:#fbbf24; }
+  header.site-header { background:#2E3438; border-bottom:1px solid rgba(255,255,255,.12); position:sticky; top:0; z-index:30; }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:76px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand svg { width:28px; height:28px; }
+  .brand-name { font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; color:#fff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  .brand-name em { font-style:normal; font-weight:400; background:linear-gradient(90deg,var(--indigo),var(--purple)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .main-nav { display:flex; align-items:center; gap:30px; }
+  .main-nav a { font-size:14px; color:rgba(255,255,255,.78); font-weight:600; }
+  .main-nav a:hover, .main-nav a.active { color:#fff; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; font-weight:700; }
+  .btn-primary { background:linear-gradient(90deg,var(--indigo),var(--purple)); color:#fff; }
+  .btn-light { background:#fff; color:#1e293b; }
+  .btn-lg { padding:15px 32px; font-size:15px; }
+  .btn-sm { padding:9px 20px; font-size:13px; }
+  .page-hero { background:linear-gradient(120deg,#eef2ff 0%,#f5f3ff 55%,#faf5ff 100%); color:var(--ink); padding:72px 0; }
+  .page-hero h1 { font-size:38px; font-weight:800; line-height:1.3; }
+  .page-hero h1 .grad { background:linear-gradient(90deg,var(--indigo),var(--purple)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .page-hero p { margin-top:14px; color:var(--muted); font-size:15px; line-height:1.8; max-width:640px; }
+  .crumbs { font-size:13px; color:var(--muted); margin-bottom:18px; }
+  .section { padding:72px 0; }
+  .section-tint { background:#f1f2fe; }
+  .section-head { max-width:680px; margin-bottom:42px; }
+  .kicker { font-size:12px; letter-spacing:3px; color:var(--violet); text-transform:uppercase; font-weight:700; }
+  .section-head h2 { font-size:28px; font-weight:800; margin-top:10px; }
+  .programs { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px; box-shadow:0 10px 26px rgba(79,70,229,.06); }
+  .card .ic { width:46px; height:46px; border-radius:14px; background:linear-gradient(135deg,rgba(99,102,241,.14),rgba(168,85,247,.16)); color:var(--indigo); display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px; }
+  .card h3 { font-size:17px; margin-bottom:8px; }
+  .card p { font-size:13px; color:var(--muted); line-height:1.8; }
+  .feature-list { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .feature { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px; }
+  .feature b { font-size:15px; color:var(--ink); }
+  .feature p { font-size:13px; color:var(--muted); margin-top:8px; line-height:1.8; }
+  .faq-item { background:#fff; border:1px solid var(--line); border-radius:14px; margin-bottom:12px; overflow:hidden; }
+  .faq-q { width:100%; display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border:none; background:none; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink); }
+  .faq-a { display:none; padding:0 20px 18px; font-size:14px; color:var(--muted); line-height:1.8; }
+  .faq-item.open .faq-a { display:block; }
+  .cta-banner { background:linear-gradient(120deg,var(--indigo),var(--purple)); color:#fff; border-radius:20px; padding:42px 48px; display:flex; align-items:center; justify-content:space-between; gap:24px; box-shadow:0 20px 50px rgba(139,92,246,.25); }
+  .cta-banner h2 { font-size:24px; font-weight:800; }
+  .cta-banner p { margin-top:8px; color:rgba(255,255,255,.82); font-size:14px; }
+  footer { background:#111827; color:rgba(255,255,255,.55); }
+  .footer-grid { display:grid; grid-template-columns:1.6fr 1fr 1fr 1.2fr; gap:32px; padding:52px 0 40px; }
+  footer h4 { color:#fff; font-size:14px; margin-bottom:14px; }
+  footer ul { list-style:none; }
+  footer li { margin-bottom:8px; font-size:13px; }
+  footer a:hover { color:#fff; }
+  .contact-line { font-size:13px; margin-bottom:8px; }
+  .footer-bottom { border-top:1px solid rgba(255,255,255,.1); padding:18px 0; font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+  @media (max-width:960px) { .programs { grid-template-columns:repeat(2,1fr); } .feature-list { grid-template-columns:repeat(2,1fr); } .footer-grid { grid-template-columns:1fr 1fr; } .cta-banner { flex-direction:column; align-items:flex-start; padding:30px; } }
+  @media (max-width:640px) { .topbar-inner { flex-direction:column; height:auto; padding:8px 0; gap:4px; text-align:center; } .nav-inner { flex-direction:column; height:auto; padding:14px 0; gap:12px; } .main-nav { flex-wrap:wrap; gap:16px; } .programs, .feature-list { grid-template-columns:1fr; } .page-hero h1 { font-size:28px; } .footer-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="/">
+        <svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#881538"/><path d="M32 16 47 22 32 28 17 22Z" fill="#C8A96A"/><path d="M22 28v8c0 3.3 4.7 6 10 6s10-2.7 10-6v-8l-10 5Z" fill="#C8A96A" opacity=".9"/><path d="M47 22v9" stroke="#C8A96A" stroke-width="2" stroke-linecap="round"/><circle cx="47" cy="33" r="2.2" fill="#C8A96A"/></svg>
+        <span class="brand-name">承泽教育<em>专升本</em></span>
+      </a>
+      <nav class="main-nav">
+        <a class="active" href="/">首页</a>
+        <a href="/learning" target="_blank" rel="noopener">学习中心</a>
+        <a href="/about">关于我们</a>
+        <a class="btn btn-primary btn-sm nav-cta" href="/contact">联系报名</a>
+      </nav>
+    </div>
+  </header>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <p>📞 咨询热线：<b>service@chengze.online</b></p>
+      <p><span class="hot">🔥 2027 专升本备考季</span> · 系统学习 · 专项集训 · 冲刺密训</p>
+    </div>
+  </div>
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="crumbs"><a href="/">首页</a> / <span>承泽教育</span></p>
+      <h1>不只是为了考试<br><span class="grad">更是培养未来面对世界的能力</span></h1>
+      <p>系统学习、专项集训、冲刺密训与公开课，直播授课、课后回放、科学排课、题库刷题与模拟考试一站式备考。</p>
+      <p style="margin-top:28px"><a class="btn btn-primary btn-lg" href="/contact">预约免费试听</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="kicker">课程体系</span><h2>按阶段规划，让备考更有秩序</h2></div>
+      <div class="programs">
+        <div class="card"><div class="ic">学</div><h3>系统学习</h3><p>按考期系统规划课程，直播 + 回放稳步推进。</p></div>
+        <div class="card"><div class="ic">专</div><h3>专项集训</h3><p>针对薄弱科目集中突破，专项练习巩固提升。</p></div>
+        <div class="card"><div class="ic">冲</div><h3>冲刺密训</h3><p>考前冲刺押题，查漏补缺，进入考试状态。</p></div>
+        <div class="card"><div class="ic">公</div><h3>公开课</h3><p>免费试听体验，了解教学风格与课程质量。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tint">
+    <div class="container">
+      <div class="section-head"><span class="kicker">为什么选择承泽</span><h2>完整的学习闭环</h2></div>
+      <div class="feature-list">
+        <div class="feature"><b>直播授课</b><p>固定课表按时开课，错过可看回放。</p></div>
+        <div class="feature"><b>课后回放</b><p>每节课自动生成回放，随时复习。</p></div>
+        <div class="feature"><b>科学排课</b><p>课程日历清晰展示，按科目查看课次。</p></div>
+        <div class="feature"><b>讲义练习</b><p>按课时配套讲义课件与课后练习。</p></div>
+        <div class="feature"><b>刷题模考</b><p>题库练习 + 模拟考试，检验学习效果。</p></div>
+        <div class="feature"><b>在线答疑</b><p>助教与 AI 答疑，备考问题及时解决。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="kicker">报名答疑</span><h2>报名前，你可能想问</h2></div>
+      <div class="faq-list">
+        <div class="faq-item open"><button class="faq-q">怎么开始学习？<span class="chev">＋</span></button><div class="faq-a"><p>进入学习中心，选择适合你的课程类型，按课表参加直播或观看回放，完成课后练习即可。</p></div></div>
+        <div class="faq-item"><button class="faq-q">可以免费试听吗？<span class="chev">＋</span></button><div class="faq-a"><p>可以。预约免费试听与学情测评，课程顾问会联系你安排试听并领取备考资料。</p></div></div>
+        <div class="faq-item"><button class="faq-q">现在报名有什么优惠？<span class="chev">＋</span></button><div class="faq-a"><p>2027 备考季早鸟优惠与资料礼包以联系报名页顾问确认为准。</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="cta-banner">
+        <div><h2>还在犹豫？先约一节试听</h2><p>免费领取备考资料与 1 对 1 备考规划。</p></div>
+        <a class="btn btn-light btn-lg" href="/contact">立即预约</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-grid">
+      <div><a class="brand" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#881538"/><path d="M32 16 47 22 32 28 17 22Z" fill="#C8A96A"/><path d="M22 28v8c0 3.3 4.7 6 10 6s10-2.7 10-6v-8l-10 5Z" fill="#C8A96A" opacity=".9"/><path d="M47 22v9" stroke="#C8A96A" stroke-width="2" stroke-linecap="round"/><circle cx="47" cy="33" r="2.2" fill="#C8A96A"/></svg><span class="brand-name" style="color:#fff">承泽教育<em>专升本</em></span></a><p style="font-size:13px;line-height:1.8;margin-top:16px">专注专升本在线教育，让每一个有梦的专科生，都有机会成为本科生。</p></div>
+      <div><h4>快捷导航</h4><ul><li><a href="/">网站首页</a></li><li><a href="/learning" target="_blank">学习中心</a></li><li><a href="/about">关于我们</a></li><li><a href="/contact">联系报名</a></li></ul></div>
+      <div><h4>课程类型</h4><ul><li>系统学习</li><li>专项集训</li><li>冲刺密训</li><li>公开课</li></ul></div>
+      <div><h4>联系方式</h4><p class="contact-line">✉️ <span><b>service@chengze.online</b></span></p><p class="contact-line">🕘 <span><b>全年无休</b> 在线学习</span></p></div>
+    </div>
+    <div class="container footer-bottom"><p>© 2026 承泽教育 版权所有</p><p>专升本在线教育第一品牌</p></div>
+  </footer>
+  <script>document.querySelectorAll('.faq-q').forEach(function(b){b.addEventListener('click',function(){this.closest('.faq-item').classList.toggle('open');});});</script>
+</body>
+</html>

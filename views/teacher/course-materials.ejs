@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<div class="course-detail-header">
+<h2>讲义管理</h2>
+</div>
+<% if (msg) { %><div style="background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:14px"><%= msg %></div><% } %>
+<div class="form-card"><h3>选择课程</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+<% if (courses.length === 0) { %><div class="empty-state"><p>暂无课程</p></div><% } %>
+<% courses.forEach(c => { %>
+<a href="/admin/course-materials/<%= c.id %>" style="display:block;text-decoration:none;color:inherit;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;background:#fafbfe">
+<strong style="font-size:14px"><%= c.title %></strong>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px"><%= c.province||'-' %> · <%= c.year||'-' %>年</div>
+<div style="font-size:12px;color:#881538;margin-top:8px">讲义 <%= c.file_count||0 %> 份 →</div>
+</a>
+<% }) %>
+</div>
+</div>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="20" fill="#20B2AA"/>
+  <!-- Hair (short spiky) -->
+  <path d="M48 85 Q48 15 100 10 Q152 15 152 85 Q158 55 142 35 Q125 15 100 12 Q75 15 58 35 Q42 55 48 85Z" fill="#4A3728"/>
+  <!-- Face -->
+  <ellipse cx="100" cy="92" rx="46" ry="48" fill="#FCE4D6"/>
+  <!-- Eyes -->
+  <ellipse cx="80" cy="90" rx="13" ry="15" fill="#fff"/>
+  <ellipse cx="120" cy="90" rx="13" ry="15" fill="#fff"/>
+  <ellipse cx="80" cy="90" rx="9" ry="12" fill="#4A6741"/>
+  <ellipse cx="120" cy="90" rx="9" ry="12" fill="#4A6741"/>
+  <ellipse cx="80" cy="88" rx="5" ry="7" fill="#2C1810"/>
+  <ellipse cx="120" cy="88" rx="5" ry="7" fill="#2C1810"/>
+  <!-- Eye shine -->
+  <ellipse cx="84" cy="84" rx="3" ry="3" fill="#fff" opacity="0.8"/>
+  <ellipse cx="124" cy="84" rx="3" ry="3" fill="#fff" opacity="0.8"/>
+  <!-- Eyebrows -->
+  <path d="M66 74 Q80 68 94 74" fill="none" stroke="#4A3728" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M106 74 Q120 68 134 74" fill="none" stroke="#4A3728" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- Nose -->
+  <path d="M100 102 Q103 107 99 109" fill="none" stroke="#E8B890" stroke-width="2" stroke-linecap="round"/>
+  <!-- Friendly smile -->
+  <path d="M88 118 Q100 126 112 118" fill="none" stroke="#E07070" stroke-width="2" stroke-linecap="round"/>
+  <!-- Dimples -->
+  <path d="M82 118 Q78 116 82 115" fill="none" stroke="#E8B890" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M118 118 Q122 116 118 115" fill="none" stroke="#E8B890" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Hat -->
+  <ellipse cx="100" cy="42" rx="48" ry="10" fill="#4A3728" opacity="0.0"/>
+</svg>

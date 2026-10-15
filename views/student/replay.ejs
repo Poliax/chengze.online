@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #2B2F36; color: white; font-family: 'Noto Sans SC', 'Inter', sans-serif; height: 100vh; overflow: hidden; }
+    .replay-nav { display: flex; align-items: center; gap: 16px; height: 64px; padding: 0 20px; background: #2B2F36; border-bottom: 1px solid rgba(255,255,255,.28); }
+    .replay-nav .brand { display:inline-flex; align-items:center; gap:10px; font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; color:#fff; text-decoration:none; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; white-space:nowrap; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    .replay-nav .brand svg { width:28px; height:28px; flex:none; }
+    .replay-nav .brand .brand-tag { font-size:11px; font-weight:400; color:rgba(255,255,255,.55); letter-spacing:1px; margin-left:2px; }
+    .replay-nav .back { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; }
+    .replay-nav .back:hover { color: white; }
+    .replay-nav h1 { font-size: 16px; font-weight: 600; }
+    .replay-badge { background: #6366f1; color: white; font-size: 11px; padding: 2px 8px; border-radius: 4px; letter-spacing: 1px; }
+    .replay-stage { display: flex; height: calc(100vh - 48px); }
+    .replay-canvas-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: #0a0f1a; }
+    .replay-canvas-wrap canvas { max-width: 100%; max-height: 100%; }
+    .replay-sidebar { width: 280px; background: #2B2F36; border-left: 1px solid rgba(255,255,255,0.06); padding: 16px; overflow-y: auto; }
+    .replay-sidebar h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: rgba(255,255,255,0.7); }
+    .replay-timeline-item { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; cursor: pointer; color: rgba(255,255,255,0.5); transition: color 0.15s; }
+    .replay-timeline-item:hover { color: rgba(255,255,255,0.8); }
+    .replay-controls { display: flex; align-items: center; gap: 8px; padding: 8px 20px; background: #2B2F36; border-top: 1px solid rgba(255,255,255,0.06); }
+    .replay-btn { width: 30px; height: 30px; border-radius: 6px; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .replay-btn:hover { background: rgba(255,255,255,0.15); }
+    .replay-time { color: rgba(255,255,255,0.4); font-size: 12px; font-family: 'Inter', monospace; }
+    .replay-progress { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; position: relative; }
+    .replay-progress-fill { height: 100%; background: #6366f1; border-radius: 2px; width: 0%; transition: width 0.1s; }
+    .replay-info { font-size: 12px; color: rgba(255,255,255,0.3); margin-left: auto; }
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body>
+  <% if (replay.recorded_file && replay.recorded_file !== "") { %>
+  <div class="replay-nav">
+    <span class="brand"><svg viewBox="0 0 340 300" role="img" aria-label="承泽教育"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
+<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
+<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg>承泽在线<span class="brand-tag">课程回放端</span></span>
+    <a href="/live/student/courses/<%= replay.course_id %>" class="back">&larr; 返回课程</a>
+    <h1><%= courseTitle %></h1>
+    <span class="replay-badge" style="background:#6366f1">录播</span>
+    <span style="font-size:13px;color:rgba(255,255,255,0.3)"><%= replay.title %></span>
+  </div>
+  <div style="display:flex;flex-direction:column;height:calc(100vh - 48px);background:#0a0f1a;align-items:center;justify-content:center">
+    <video controls style="max-width:100%;max-height:100%" autoplay>
+      <source src="/recordings/<%= replay.recorded_file %>" type="<%= String(replay.recorded_file || '').toLowerCase().endsWith('.mp4') ? 'video/mp4' : 'video/webm' %>">
+      您的浏览器不支持视频播放
+    </video>
+  </div>
+<% } else { %>
+<div class="replay-nav">
+    <span class="brand"><svg viewBox="0 0 340 300" role="img" aria-label="承泽教育"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
+<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
+<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg>承泽在线</span>
+    <a href="/live/student" class="back">← 返回课程</a>
+    <h1><%= courseTitle %></h1>
+    <span class="replay-badge">回放</span>
+    <span style="font-size:13px;color:rgba(255,255,255,0.3)"><%= replay.title %></span>
+  </div>
+
+  <div class="replay-stage">
+    <div class="replay-canvas-wrap">
+      <canvas id="replayCanvas" width="960" height="540"></canvas>
+    </div>
+    <div class="replay-sidebar">
+      <h3>直播时间线</h3>
+      <div id="timelineList">
+        <% if (timeline.length === 0) { %>
+          <p style="color:rgba(255,255,255,0.3);font-size:13px">暂无时间线记录</p>
+        <% } else { %>
+          <% timeline.forEach((t, i) => { %>
+            <div class="replay-timeline-item" data-time="<%= t.time %>" data-slide="<%= t.slideIndex %>">
+              第 <%= t.slideIndex + 1 %> 页 · <%= Math.floor(t.time/60) %>:<%= String(Math.floor(t.time%60)).padStart(2,'0') %>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="replay-controls">
+    <button class="replay-btn" id="playBtn">▶</button>
+    <span class="replay-time" id="timeDisplay">00:00</span>
+    <div class="replay-progress" id="progressBar">
+      <div class="replay-progress-fill" id="progressFill"></div>
+    </div>
+    <span class="replay-info">直播回放</span>
+  </div>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById('replayCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // Get timeline data from the server
+      const timeline = <%- JSON.stringify(timeline) %>;
+      const duration = <%= replay.duration || 0 %>;
+
+      // We need slides data - fetch the first available lesson or use timeline
+      let slides = [];
+      let currentSlideIdx = 0;
+      let currentTime = 0;
+      let isPlaying = false;
+      let animId = null;
+
+      function fmt(s) { const m=Math.floor(s/60), s2=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(s2).padStart(2,'0'); }
+
+      function drawFrame(time) {
+        const w = canvas.width, h = canvas.height;
+        const grad = ctx.createLinearGradient(0,0,0,h);
+        grad.addColorStop(0,'#0f172a'); grad.addColorStop(0.6,'#1e293b'); grad.addColorStop(1,'#0f172a');
+        ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+        for(let x=0;x<w;x+=40) for(let y=0;y<h;y+=40){ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill()}
+        ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.font = '600 18px "Noto Sans SC",sans-serif';
+        ctx.textAlign = 'center';
+        if (slides.length === 0) {
+          ctx.fillText('📹 直播回放', w/2, h/2 - 20);
+          ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = '14px "Noto Sans SC",sans-serif';
+          ctx.fillText('回放时间: ' + fmt(time), w/2, h/2 + 20);
+          return;
+        }
+        // Find slide
+        let slide = slides[0];
+        for(let i=slides.length-1;i>=0;i--){if(time>=slides[i].time){slide=slides[i];break}}
+        if(slide) {
+          const barY=50; ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.fillRect(60,barY,w-120,2);
+          const ds = duration || 1;
+          slides.forEach(s=>{const p=(s.time*60)/ds;const mx=60+p*(w-120);
+            ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.beginPath();ctx.arc(mx,barY,3,0,Math.PI*2);ctx.fill()});
+          const pct=Math.min(time/ds,1);const dx=60+pct*(w-120);
+          ctx.fillStyle='#6366f1'; ctx.beginPath();ctx.arc(dx,barY,6,0,Math.PI*2);ctx.fill();
+          ctx.fillStyle='rgba(99,102,241,0.25)'; ctx.beginPath();ctx.arc(dx,barY,12,0,Math.PI*2);ctx.fill();
+          ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='12px Inter,monospace'; ctx.textAlign='right';
+          ctx.fillText(fmt(time),w-60,42);
+          ctx.fillStyle='#6366f1'; ctx.font='600 14px "Noto Sans SC",sans-serif'; ctx.textAlign='left';
+          ctx.fillText('📺 回放: '+ (slide.title||''),60,95);
+          const sy=140,lh=38;
+          (slide.lines||[]).forEach((line,i)=>{if(!line)return;const y=sy+i*lh;
+            if(line.startsWith('Example:')){ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='400 14px "Noto Sans SC",sans-serif'}
+            else if(line.startsWith('答案')){ctx.fillStyle='#10b981';ctx.font='600 16px "Noto Sans SC",sans-serif'}
+            else if(line.startsWith('If ')||line.startsWith('I ')||line.startsWith('It ')){ctx.fillStyle='#93c5fd';ctx.font='500 17px "Noto Sans SC",sans-serif'}
+            else{ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='400 16px "Noto Sans SC",sans-serif'}
+            ctx.textAlign='left';ctx.fillText(line,60,y)});
+          ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.font='600 14px "Noto Sans SC",sans-serif';
+          ctx.textAlign='right'; ctx.fillText('承泽在线 · 直播回放',w-60,h-30);
+        }
+        document.getElementById('progressFill').style.width = Math.min(time/(duration||1),1)*100+'%';
+      }
+
+      document.getElementById('playBtn').addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        document.getElementById('playBtn').textContent = isPlaying ? '⏸' : '▶';
+        if (isPlaying && !animId) {
+          let lastTs = null;
+          function loop(ts) {
+            if (!isPlaying) return;
+            if (lastTs === null) lastTs = ts;
+            currentTime = Math.min(currentTime + (ts-lastTs)/1000, duration);
+            lastTs = ts;
+            document.getElementById('timeDisplay').textContent = fmt(currentTime);
+            drawFrame(currentTime);
+            if (currentTime >= duration) { isPlaying=false; document.getElementById('playBtn').textContent='▶'; return; }
+            animId = requestAnimationFrame(loop);
+          }
+          animId = requestAnimationFrame(loop);
+        }
+      });
+
+      document.getElementById('progressBar').addEventListener('click', (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const pct = (e.clientX - rect.left) / rect.width;
+        currentTime = pct * duration;
+        document.getElementById('timeDisplay').textContent = fmt(currentTime);
+        drawFrame(currentTime);
+      });
+
+      // Fetch first lesson's slides for demo display
+      fetch('/live/student/api/lesson/1').then(r=>r.json()).then(d=>{slides=d.slides_data||[];drawFrame(0)}).catch(()=>drawFrame(0));
+    })();
+  </script>
+<% } %>
+</body>
+</html>

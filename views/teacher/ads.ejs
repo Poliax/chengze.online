@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %><div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<div class="course-detail-header">
+<h2>广告管理</h2>
+</div>
+<% if (msg) { %><div style="background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:14px"><%= msg %></div><% } %>
+<form method="POST" action="/admin/ads-manage">
+<div class="form-card"><h3>课程中心广告位</h3>
+<div class="form-grid">
+<div class="form-group full-width" style="display:flex;align-items:center;gap:8px">
+<input type="checkbox" name="enabled" id="adEnabled" value="on" <%= ad.enabled ? 'checked' : '' %>>
+<label for="adEnabled" style="margin:0">启用广告</label>
+</div>
+<div class="form-group"><label>标题</label><input name="title" value="<%= ad.title || '' %>" placeholder="例如：2027 专升本备考季"></div>
+<div class="form-group"><label>副标题</label><input name="subtitle" value="<%= ad.subtitle || '' %>" placeholder="例如：系统课 + 公开课，按考期备考"></div>
+<div class="form-group full-width"><label>图片地址</label><input name="image" value="<%= ad.image || '' %>" placeholder="可留空，只显示文字广告"></div>
+<div class="form-group full-width"><label>跳转链接</label><input name="link" value="<%= ad.link || '' %>" placeholder="点击广告后跳转的网址"></div>
+</div>
+</div>
+<div class="form-actions">
+<a href="/admin/dashboard" class="btn btn-outline">取消</a>
+<button type="submit" class="btn btn-primary">保存</button>
+</div>
+</form>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

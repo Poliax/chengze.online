@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/teacher.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-icon stat-icon--blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="stat-info"><strong id="totalTeachers"><%= totalTeachers %></strong><span>教师总数</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon stat-icon--purple">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <div class="stat-info"><strong><%= totalCourses %></strong><span>总课程数</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon stat-icon--green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-info"><strong><%= totalHours %></strong><span>总课时(h)</span></div>
+        </div>
+      </div>
+
+      <div class="list-header">
+        <h2>师资列表</h2>
+        <div class="list-tools">
+          <form method="GET" action="/admin/teachers-manage" id="staffSearchForm" class="toolbar-form" data-client-filter="1">
+            <input name="q" id="sq" value="<%= q || '' %>" placeholder="姓名/科目/手机号" class="toolbar-input" style="min-width:240px">
+          </form>
+          <a href="/admin/teachers-manage/new" class="btn-primary--sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            添加教师
+          </a>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>姓名</th><th>科目</th><th>手机</th><th>入职日期</th><th>教师ID</th><th>课时(h)</th><th>课程数</th><th>状态</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="staffTbody">
+            <% if (staff.length === 0) { %>
+              <tr><td colspan="9" class="empty">暂无教师信息</td></tr>
+            <% } %>
+            <% staff.forEach(s => { %>
+            <tr>
+              <td><%= s.real_name %></td>
+              <td><span class="badge badge-<%= s.subject||'未分类' %>"><%= s.subject||'-' %></span></td>
+              <td><%= s.phone||'-' %></td>
+              <td><%= s.hire_date||'-' %></td>
+              <td><%= s.teacher_no || ('T' + String(s.id).padStart(3,'0')) %></td>
+              <td><strong><%= s.total_hours||0 %></strong></td>
+              <td><%= s.course_count||0 %></td>
+              <td><span class="badge <%= s.status==='disabled' ? 'badge-disabled' : 'badge-active' %>"><%= s.status==='disabled' ? '停用' : '启用' %></span></td>
+              <td>
+                <a href="/admin/teachers-manage/<%= s.id %>" class="btn-table">查看</a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    function escHtml(v){
+      return String(v == null ? '' : v)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function loadStaff(){
+      var q=document.getElementById('sq').value.trim();
+      var url='/admin/api/teachers-manage'+(q?'?q='+encodeURIComponent(q):'');
+      fetch(url).then(function(r){return r.json();}).then(function(data){
+        document.getElementById('totalTeachers').textContent=data.total;
+        var tb=document.getElementById('staffTbody');
+        if(data.rows.length===0){
+          tb.innerHTML='<tr><td colspan="9" class="empty">暂无教师信息</td></tr>';
+          return;
+        }
+        tb.innerHTML=data.rows.map(function(s){
+          return '<tr><td>'+escHtml(s.real_name)+'</td>'+
+            '<td><span class="badge badge-'+(escHtml(s.subject)||'未分类')+'">'+escHtml(s.subject||'-')+'</span></td>'+
+            '<td>'+escHtml(s.phone||'-')+'</td><td>'+escHtml(s.hire_date||'-')+'</td><td>'+escHtml(s.teacher_no || ('T' + String(s.id).padStart(3,'0')))+'</td>'+
+            '<td><strong>'+(s.total_hours||0)+'</strong></td><td>'+(s.course_count||0)+'</td>'+'<td><span class="badge '+(s.status==='disabled'?'badge-disabled':'badge-active')+'">'+(s.status==='disabled'?'停用':'启用')+'</span></td>'+
+            '<td><a href="/admin/teachers-manage/'+s.id+'" class="btn-table">查看</a></td></tr>';
+        }).join('');
+      });
+    }
+    function clearStaff(){
+      document.getElementById('sq').value='';
+      loadStaff();
+    }
+    document.addEventListener('DOMContentLoaded',function(){
+      document.getElementById('staffSearchForm').addEventListener('submit',function(e){e.preventDefault();loadStaff();});
+      var _sqDebounce;
+      document.getElementById('sq').addEventListener('input',function(){
+        clearTimeout(_sqDebounce);
+        _sqDebounce=setTimeout(loadStaff,250);
+      });
+      document.getElementById('menuToggle')?.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open');});
+    });
+  </script>
+</body>
+</html>

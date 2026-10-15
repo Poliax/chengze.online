@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title><%= title %></title>
+
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+<%- include('partials/sidebar') %>
+<div class="teacher-main"><%- include('partials/header') %><div class="teacher-content">
+<% function fmtDT(v){ if(!v) return '-'; try{ return new Date(String(v).replace(' ','T')+'Z').toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}); }catch(e){ return v; } } %>
+<div class="stats">
+<div class="stat"><div class="stat-icon stat-icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="stat-info"><strong><%= openCount %></strong><span>待回答</span></div></div>
+<div class="stat"><div class="stat-icon stat-icon--green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="stat-info"><strong><%= answeredCount %></strong><span>已回答</span></div></div>
+<div class="stat"><div class="stat-icon stat-icon--purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div class="stat-info"><strong><%= totalQuestions %></strong><span>全部问题</span></div></div>
+</div>
+
+<div class="list-header">
+<h2>答疑列表</h2>
+<div class="list-tools">
+<a href="/admin/qa-manage?filter=<%= filter==='open'?'all':'open' %>" class="toolbar-btn" style="text-decoration:none">
+<%= filter==='open'?'显示全部':'待回答' %><% if (openCount > 0) { %> (<%= openCount %>)<% } %>
+</a>
+</div>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>问题</th><th>学员</th><th>课程</th><th>优先级</th><th>状态</th><th>提问时间</th><th>操作</th></tr></thead>
+<tbody>
+<% if (questions.length === 0) { %><tr><td colspan="7" class="empty">暂无答疑问题</td></tr><% } %>
+<% questions.forEach(q => { %>
+<tr style="<%= q.status==='open'?'background:#fffbeb;':'' %>">
+<td>
+<a href="/admin/qa-manage/<%= q.id %>" class="link"><%= q.title %></a>
+<br><span style="font-size:12px;color:var(--muted)"><%= q.content ? q.content.substring(0,60)+(q.content.length>60?'...':'') : '' %></span>
+</td>
+<td><%= q.student_name||'未知' %></td>
+<td><%= q.course_title||'-' %></td>
+<td>
+<% if (q.priority === 'high') { %><span class="badge" style="background:#fef2f2;color:#dc2626">紧急</span>
+<% } else { %><span class="badge" style="background:#f1f5f9;color:#64748b">普通</span><% } %>
+</td>
+<td>
+<% if (q.status === 'open') { %><span class="status-dot status-draft"></span>待回答
+<% } else { %><span class="status-dot status-published"></span>已回答<% } %>
+</td>
+<td style="color:var(--muted);font-size:13px"><%= fmtDT(q.created_at) %></td>
+<td><a href="/admin/qa-manage/<%= q.id %>" class="btn-table">回答</a></td>
+</tr>
+<% }) %>
+</tbody>
+</table>
+</div>
+</div></div>
+<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
+</body></html>

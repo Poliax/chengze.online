@@ -1,0 +1,15 @@
+<!-- Admin Top Header Bar -->
+<header class="teacher-topbar">
+  <div class="topbar-left">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+    <button type="button" class="topbar-back" id="topbarBack" aria-label="返回" onclick="if(history.length>1){history.back()}else{location.href='/admin/dashboard'}">← 返回</button>
+  </div>
+  <div class="topbar-right">
+    <div class="teacher-info">
+      <div class="teacher-avatar"><%= teacherName ? teacherName[0] : '师' %></div>
+      <span><%= teacherName %></span>
+    </div>
+  </div>
+</header>

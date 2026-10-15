@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="20" fill="#4F6EF7"/>
+  <!-- Hair -->
+  <path d="M50 80 Q50 20 100 15 Q150 20 150 80 Q155 60 145 45 Q130 25 100 20 Q70 25 55 45 Q45 60 50 80Z" fill="#2C2C54"/>
+  <!-- Side hair left -->
+  <path d="M50 80 Q48 95 50 115 Q52 130 56 140" fill="none" stroke="#2C2C54" stroke-width="6" stroke-linecap="round"/>
+  <!-- Side hair right -->
+  <path d="M150 80 Q152 95 150 115 Q148 130 144 140" fill="none" stroke="#2C2C54" stroke-width="6" stroke-linecap="round"/>
+  <!-- Face -->
+  <ellipse cx="100" cy="90" rx="45" ry="48" fill="#FCE4D6"/>
+  <!-- Eyes (big anime) -->
+  <ellipse cx="80" cy="88" rx="14" ry="16" fill="#fff"/>
+  <ellipse cx="120" cy="88" rx="14" ry="16" fill="#fff"/>
+  <ellipse cx="80" cy="88" rx="10" ry="13" fill="#4A4A8A"/>
+  <ellipse cx="120" cy="88" rx="10" ry="13" fill="#4A4A8A"/>
+  <ellipse cx="80" cy="86" rx="6" ry="8" fill="#2C2C54"/>
+  <ellipse cx="120" cy="86" rx="6" ry="8" fill="#2C2C54"/>
+  <!-- Eye shine -->
+  <ellipse cx="85" cy="82" rx="3" ry="3" fill="#fff" opacity="0.8"/>
+  <ellipse cx="125" cy="82" rx="3" ry="3" fill="#fff" opacity="0.8"/>
+  <circle cx="78" cy="92" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="118" cy="92" r="1.5" fill="#fff" opacity="0.5"/>
+  <!-- Eyebrows -->
+  <path d="M66 70 Q80 64 95 70" fill="none" stroke="#2C2C54" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M105 70 Q120 64 134 70" fill="none" stroke="#2C2C54" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Nose -->
+  <path d="M100 100 Q102 105 98 107" fill="none" stroke="#E8B890" stroke-width="2" stroke-linecap="round"/>
+  <!-- Mouth (smile) -->
+  <path d="M88 115 Q100 124 112 115" fill="none" stroke="#E07070" stroke-width="2" stroke-linecap="round"/>
+  <!-- Blush -->
+  <ellipse cx="64" cy="110" rx="10" ry="5" fill="#FFB5B5" opacity="0.3"/>
+  <ellipse cx="136" cy="110" rx="10" ry="5" fill="#FFB5B5" opacity="0.3"/>
+  <!-- Glasses -->
+  <rect x="62" y="74" width="34" height="28" rx="6" fill="none" stroke="#666" stroke-width="2.5"/>
+  <rect x="104" y="74" width="34" height="28" rx="6" fill="none" stroke="#666" stroke-width="2.5"/>
+  <line x1="96" y1="88" x2="104" y2="88" stroke="#666" stroke-width="2"/>
+  <line x1="62" y1="80" x2="52" y2="73" stroke="#666" stroke-width="2"/>
+  <line x1="138" y1="80" x2="148" y2="73" stroke="#666" stroke-width="2"/>
+</svg>

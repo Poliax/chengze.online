@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+  <style>
+    .pkg-hd { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+    .pkg-hd h2 { font-size:18px; font-weight:800; margin:0 0 4px; }
+    .pkg-meta { font-size:13px; color:#64748b; display:flex; gap:12px; flex-wrap:wrap; }
+    .pkg-tools { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .child-card { display:flex; align-items:center; gap:12px; padding:12px 16px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; margin-bottom:8px; }
+    .child-card .info { flex:1; min-width:0; }
+    .child-card .name { font-weight:600; font-size:14px; color:#0f172a; }
+    .child-card .meta { font-size:12px; color:#94a3b8; margin-top:2px; }
+    .course-card { display:flex; align-items:center; gap:12px; padding:10px 14px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; margin-bottom:6px; }
+    .course-card .info { flex:1; min-width:0; }
+    .course-card .title { font-weight:600; font-size:14px; color:#0f172a; }
+    .course-card .meta { font-size:12px; color:#94a3b8; margin-top:2px; }
+  </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<body class="teacher-body">
+  <%- include('partials/sidebar') %>
+  <div class="teacher-main">
+    <%- include('partials/header') %>
+    <div class="teacher-content">
+      <div class="pkg-hd">
+        <div>
+          <h2><%= pkg.title %></h2>
+          <div class="pkg-meta">
+            <span><%= pkg.year || '--' %>年</span>
+            <span><%= pkg.province || '--' %></span>
+            <span><%= pkg.class_type || '--' %></span>
+            <span>价格 ¥<%= pkg.price || '0' %></span>
+            <% if (parentTitle) { %><span>上级：<%= parentTitle %></span><% } %>
+          </div>
+        </div>
+        <div class="pkg-tools">
+          <span class="badge <%= pkg.status %>"><%= pkg.status === 'published' ? '上架' : '下架' %></span>
+          <a href="/admin/packages-manage" class="btn btn-outline btn-sm">返回</a>
+          <a href="/admin/packages-manage/<%= pkg.id %>/edit" class="btn btn-primary btn-sm">调整</a>
+          <form method="POST" action="/admin/packages-manage/<%= pkg.id %>/delete" style="display:inline" onsubmit="return confirm('确认删除该课程包？')">
+            <button type="submit" class="btn btn-danger btn-sm">删除</button>
+          </form>
+        </div>
+      </div>
+
+      <p style="font-size:13px;color:#64748b;margin-bottom:16px"><%= pkg.description || '暂无描述' %></p>
+
+      <% if (!pkg.parent_id) { %>
+      <div class="form-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+          <h3 style="margin:0">二级课包（<%= children.length %>）</h3>
+          <a href="/admin/packages-manage/new?parent_id=<%= pkg.id %>" class="btn-primary--sm">+ 新建二级课包</a>
+        </div>
+        <% if (children.length === 0) { %>
+          <p style="color:var(--color-text-muted);font-size:13px;margin:0">暂无二级课包，请先新建。</p>
+        <% } %>
+        <% children.forEach(c => { %>
+        <div class="child-card">
+          <div class="info">
+            <a class="name" href="/admin/packages-manage/<%= c.id %>"><%= c.title %></a>
+            <div class="meta"><%= c.year || '--' %>年 · <%= c.province || '--' %> · <%= c.course_count %>门科目课 · <%= c.status === 'published' ? '上架' : '下架' %></div>
+          </div>
+          <a href="/admin/packages-manage/<%= c.id %>/edit" class="btn-table">调整</a>
+        </div>
+        <% }) %>
+      </div>
+      <% if (courses.length > 0) { %>
+      <div class="form-card">
+        <h3>旧数据：直接挂载的科目课</h3>
+        <p style="color:var(--color-text-muted);font-size:13px;margin:8px 0 12px">这些科目课建议移动到二级课包中。</p>
+        <% courses.forEach(c => { %>
+        <div class="course-card">
+          <div class="info">
+            <a class="title" href="/admin/courses-manage/<%= c.id %>"><%= c.title %></a>
+            <div class="meta"><%= c.category || '未分类' %> · <%= c.status === 'published' ? '上架' : '下架' %></div>
+          </div>
+          <a href="/admin/courses-manage/<%= c.id %>" class="btn-table">管理</a>
+          <form method="POST" action="/admin/packages-manage/<%= pkg.id %>/courses/<%= c.id %>/remove" style="display:inline" onsubmit="return confirm('确认从课程包移除该科目课？')">
+            <button type="submit" class="btn-table btn-table-danger">移除</button>
+          </form>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+      <% } else { %>
+      <div class="form-card">
+        <h3>科目课（<%= courses.length %>）</h3>
+        <% if (courses.length === 0) { %>
+          <p style="color:var(--color-text-muted);font-size:13px;margin:12px 0">暂无科目课</p>
+        <% } %>
+        <% courses.forEach(c => { %>
+        <div class="course-card">
+          <div class="info">
+            <a class="title" href="/admin/courses-manage/<%= c.id %>"><%= c.title %></a>
+            <div class="meta"><%= c.category || '未分类' %> · <%= c.status === 'published' ? '上架' : '下架' %></div>
+          </div>
+          <a href="/admin/courses-manage/<%= c.id %>" class="btn-table">管理</a>
+          <form method="POST" action="/admin/packages-manage/<%= pkg.id %>/courses/<%= c.id %>/remove" style="display:inline" onsubmit="return confirm('确认从课程包移除该科目课？')">
+            <button type="submit" class="btn-table btn-table-danger">移除</button>
+          </form>
+        </div>
+        <% }) %>
+        <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <form method="POST" action="/admin/packages-manage/<%= pkg.id %>/courses" style="display:flex;gap:8px;align-items:center">
+            <select name="course_id" required class="toolbar-select" style="min-width:260px">
+              <option value="">选择已有科目课</option>
+              <% (availableCourses || []).forEach(c => { %><option value="<%= c.id %>"><%= c.title %>（<%= c.category || '未分类' %>）</option><% }) %>
+            </select>
+            <button type="submit" class="toolbar-btn">添加科目课</button>
+          </form>
+          <a href="/admin/courses-manage/new?package_id=<%= pkg.id %>" class="btn-primary--sm">+ 新建科目课</a>
+        </div>
+      </div>
+
+      <% if (scheduleRows && scheduleRows.length) { %>
+      <div class="form-card">
+        <h3>共用课表（<%= scheduleRows.length %>）</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>课程</th><th>课次</th><th>上课时间</th><th>视频地址</th></tr>
+            </thead>
+            <tbody>
+              <% scheduleRows.forEach(l => { %>
+              <tr>
+                <td><%= l.course_title || '-' %></td>
+                <td><%= l.title || '-' %></td>
+                <td><%= l.schedule_time || '待排课' %></td>
+                <td style="word-break:break-all"><%= l.video_url || '-' %></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <% } %>
+      <% } %>
+    </div>
+  </div>
+  <script>
+    ['menuToggle','sidebarToggle'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open');});
+    });
+  </script>
+</body>
+</html>
