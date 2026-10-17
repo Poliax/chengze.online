@@ -40,6 +40,7 @@ const sessionMiddleware = session({
   cookie: { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'lax' }
 });
 app.use(sessionMiddleware);
+app.use(require('./middleware/admin-domain'));
 app.use(require('./middleware/media-signing'));
 
 // ── Make session user available in templates ──
@@ -51,7 +52,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ── 学习中心（原官网，左侧菜单布局）──
+// ── 承泽在线（原官网，左侧菜单布局）──
 function renderLearningCenter(req, res) {
   const courses = db.query(`SELECT c.*, t.display_name as teacher_name,
     (SELECT COUNT(*) FROM lessons WHERE course_id = c.id) as lesson_count
@@ -264,7 +265,7 @@ function renderLearningCenter(req, res) {
   } catch(e) {}
   let adConfig = {};
   try { adConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'ad-config.json'), 'utf8')); } catch(e) {}
-  res.render('student/home', { title: '承泽在线 · 学习中心', courses, packages, independentCourses, student, guest: req.session.guest || false, overview, myCourses, upcomingLessons, totalLessons, initialView: 'home', homeProvinceData, childrenByParent, coursesByParent, coursesByPackage, packageDetails, courseDetails, adConfig, provinces });
+  res.render('student/home', { title: '承泽在线', courses, packages, independentCourses, student, guest: req.session.guest || false, overview, myCourses, upcomingLessons, totalLessons, initialView: 'home', homeProvinceData, childrenByParent, coursesByParent, coursesByPackage, packageDetails, courseDetails, adConfig, provinces });
 }
 app.get('/learning', renderLearningCenter);
 
@@ -320,6 +321,10 @@ const adsRoutes = require('./routes/ads');
 const questionsRoutes = require('./routes/questions');
 const courseMaterialsRoutes = require('./routes/course-materials');
 
+app.use('/admin', require('./middleware/admin-access'));
+app.use('/admin/technical-center', require('./routes/technical-center'));
+app.use('/admin/accounts-manage', require('./routes/admin-accounts'));
+
 // ── 旧地址兼容跳转 ──
 app.get('/admin/staff', (req, res) => res.redirect('/admin/teachers-manage'));
 app.get('/admin/staff/new', (req, res) => res.redirect('/admin/teachers-manage/new'));
@@ -338,6 +343,7 @@ app.use('/admin', teacherRoutes);
 app.use('/admin/ads-manage', adsRoutes);
 app.use('/admin/questions-manage', questionsRoutes);
 app.use('/admin/course-materials', courseMaterialsRoutes);
+app.use('/teach', require('./middleware/admin-domain').portal);
 app.use('/teach', teacherPortalRoutes);
 app.get('/admin', (req, res) => res.redirect('/admin/login'));
 

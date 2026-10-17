@@ -14,6 +14,9 @@ for (const relative of Object.keys(manifest.files)) {
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.copyFileSync(source, target);
 }
+for (const folder of ['lib','middleware','routes','views','db/migrations']) {
+  fs.cpSync(path.join(root,folder),path.join(runtime,folder),{recursive:true});
+}
 // The production server binds to all interfaces; local development stays loopback only.
 const entry = path.join(runtime, 'server.js');
 fs.writeFileSync(entry, fs.readFileSync(entry, 'utf8').replace('server.listen(PORT, "0.0.0.0", "0.0.0.0",', 'server.listen(PORT, "127.0.0.1",'));

@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const DB_PATH = path.join(__dirname, 'chengze.db');
 
 let db = null;
+let inTransaction = false;
 
 async function getDb() {
   if (db) return db;
@@ -23,13 +24,15 @@ async function getDb() {
   db.run('PRAGMA journal_mode=WAL');
   db.run('PRAGMA foreign_keys=ON');
   // Existing production databases must not be reseeded during a code restart.
-  // Schema migrations for an existing database are an explicit deployment step.
+  // Historical data migrations remain explicit; the additive account table below is idempotent.
   if (!existingDatabase) {
     initSchema();
     seedData();
     ensureStudentUids();
     saveDb();
   }
+  require('./migrations/002-admin-accounts')(db);
+  saveDb();
   return db;
 }
 
@@ -743,7 +746,7 @@ function run(sql, params = []) {
     const rows = query('SELECT last_insert_rowid() as id');
     if (rows.length > 0) lastId = rows[0].id;
   } catch(e) {}
-  saveDb();
+  if (!inTransaction) saveDb();
   return lastId;
 }
 
@@ -752,4 +755,10 @@ function get(sql, params = []) {
   return rows.length > 0 ? rows[0] : null;
 }
 
-module.exports = { getDb, query, run, get, saveDb };
+function atomic(fn) {
+  if (inTransaction) throw new Error('Nested transaction is not supported');
+  db.run('BEGIN IMMEDIATE'); inTransaction = true;
+  try { const result = fn(); db.run('COMMIT'); inTransaction = false; saveDb(); return result; }
+  catch (error) { if (inTransaction) db.run('ROLLBACK'); inTransaction = false; throw error; }
+}
+module.exports = { getDb, query, run, get, saveDb, atomic };

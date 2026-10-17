@@ -4,7 +4,12 @@ function allowed(session, courseId) {
  const course=db.get('SELECT * FROM courses WHERE id=?',[id(courseId)]);
  if(!course) return false;
  const teacherId=id(session && (session.teacherId || session.teacherPortalId));
- if(teacherId){const t=db.get('SELECT id, username, status FROM teachers WHERE id=?',[teacherId]);if(t && t.status!=='disabled' && ((session.teacherId && t.username==='admin') || Number(course.teacher_id)===teacherId))return true;}
+ if(teacherId){const t=db.get('SELECT id, username, status FROM teachers WHERE id=?',[teacherId]);if(t && t.status!=='disabled') {
+ const access=require('../lib/admin-access');
+ const configured=access.load(db,teacherId);
+ if(session.teacherId) {const account=access.sessionAccount(db,session);if(account && access.can(account,'courses') && (account.role==='ceo'||Number(course.teacher_id)===teacherId))return true;}
+ else if ((!configured || (access.sessionAccount(db,session,true) && access.canTeach(configured))) && Number(course.teacher_id)===teacherId)return true;
+ }}
  const studentId=id(session && session.studentId);
  if(!studentId || course.status!=='published')return false;
  const student=db.get('SELECT id, status FROM students WHERE id=?',[studentId]);

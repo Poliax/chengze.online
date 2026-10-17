@@ -64,10 +64,10 @@
     .exit:hover { background:rgba(2,6,23,.85); border-color:rgba(255,255,255,.35); }
     @media (max-width:900px) { body { overflow:auto; } .page { flex-direction:column; padding:14px; height:auto; min-height:calc(100vh - 56px); } .right-col { width:100%; height:auto; max-height:none; } .chat-col { min-height:240px; } .player-main { width:100%; } }
   </style>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-round.png?v=20261015-green9"><link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon-green-v9.ico"></head>
+<link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head>
 <body>
   <div class="watch-header">
-    <a class="watch-brand" href="/"><img src="/public/images/logo.svg" alt="承泽教育">承泽教育</a>
+    <a class="watch-brand" href="/"><img src="/public/images/logo.svg" alt="承泽在线">承泽在线</a>
     <span class="watch-course"><%= course.title %><% if (lessonTitle) { %> · <%= lessonTitle %><% } %></span>
   </div>
   <a class="exit" href="/live/student/courses/<%= course.id %>">返回课程</a>

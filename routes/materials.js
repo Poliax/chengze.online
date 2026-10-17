@@ -6,7 +6,9 @@ const multer = require('multer');
 const crypto = require('crypto');
 
 function requireAdmin(req, res, next) {
-  if (req.session && req.session.teacherId) return next();
+  const access=require('../lib/admin-access');
+  const account=access.sessionAccount(require('../db'),req.session);
+  if (account && access.can(account,'materials',true)) return next();
   return res.status(401).json({ ok: false, error: '请先登录管理后台' });
 }
 function safeUpload(extensions) {

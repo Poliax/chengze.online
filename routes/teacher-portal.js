@@ -24,25 +24,28 @@ function genUserSig(appId, secretKey, userId, expire) {
 // ── 授课后台登录 ──
 router.get('/login', (req, res) => {
   if (req.session && req.session.teacherPortalId) return res.redirect('/teach');
-  res.render('teacher-portal/login', { title: '授课后台 · 承泽教育', error: null });
+  res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: null });
 });
 
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.render('teacher-portal/login', { title: '授课后台 · 承泽教育', error: '请输入用户名和密码' });
+    return res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: '请输入用户名和密码' });
   }
   const teacher = db.get('SELECT * FROM teachers WHERE username = ? OR phone = ?', [username, username]);
   if (!teacher) {
-    return res.render('teacher-portal/login', { title: '授课后台 · 承泽教育', error: '用户名或密码错误' });
+    return res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: '用户名或密码错误' });
   }
   if (teacher.status === 'disabled') {
-    return res.render('teacher-portal/login', { title: '授课后台 · 承泽教育', error: '该教师账号已停用，请联系管理员' });
+    return res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: '该教师账号已停用，请联系管理员' });
   }
   const valid = bcrypt.compareSync(password, teacher.password_hash || '');
   if (!valid) {
-    return res.render('teacher-portal/login', { title: '授课后台 · 承泽教育', error: '用户名或密码错误' });
+    return res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: '用户名或密码错误' });
   }
+  const access=require('../lib/admin-access'), configured=access.load(db,teacher.id);
+  if (configured && (configured.status!=='active' || !access.canTeach(configured))) return res.status(403).send('该账号没有授课权限');
+  req.session.portalAdminVersion = configured ? configured.session_version : null;
   req.session.teacherPortalId = teacher.id;
   req.session.portalTeacherName = teacher.real_name || teacher.display_name;
   res.redirect('/teach');
@@ -75,7 +78,7 @@ router.get('/', requirePortal, (req, res) => {
   let studentCount = 0;
   try { studentCount = db.get('SELECT COUNT(DISTINCT e.student_id) as c FROM enrollments e JOIN courses c2 ON e.course_id=c2.id WHERE c2.teacher_id=?', [teacher.id]).c || 0; } catch(e) {}
   res.render('teacher-portal/dashboard', {
-    title: '授课后台 · 承泽教育',
+    title: '授课后台 · 承泽在线',
     teacherName: teacher.real_name || teacher.display_name,
     teacher: teacher,
     rows,

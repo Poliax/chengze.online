@@ -11,7 +11,15 @@ function teacher(db, session) {
   if (!id) return null;
   const row = db.get('SELECT * FROM teachers WHERE id=?', [id]);
   if (!row || row.status === 'disabled') return null;
-  return { ...row, admin: Boolean(session.teacherId && row.username === 'admin') };
+  const access = require('../lib/admin-access');
+  const configured = access.load(db,id);
+  if (session.teacherId) {
+    const account=access.sessionAccount(db,session);
+    if (!account) return null;
+    return { ...row, admin: account.role==='ceo' || (!access.assignedRoles(account).includes('teacher') && access.can(account,'live',true)), backendAccount:account };
+  }
+  if (configured && (!access.sessionAccount(db,session,true) || !access.canTeach(configured))) return null;
+  return { ...row, admin:false };
 }
 
 function controls(db, session, courseId) {
@@ -19,7 +27,7 @@ function controls(db, session, courseId) {
   if (!id) return false;
   const course = db.get('SELECT * FROM courses WHERE id=?', [id]);
   const person = teacher(db, session);
-  return Boolean(course && person && (person.admin || Number(course.teacher_id) === Number(person.id)));
+  return Boolean(course && person && (!person.backendAccount || require('../lib/admin-access').can(person.backendAccount,'live',true)) && (person.admin || Number(course.teacher_id) === Number(person.id)));
 }
 
 function liveHttpGuard(db) {
@@ -27,8 +35,9 @@ function liveHttpGuard(db) {
     const person = teacher(db, req.session);
     if (!person) return res.status(401).json({ error: '请先登录授课或管理后台' });
     if (person.admin) return next();
+    if (req.adminAccount && !/^\/(live\/studio|teaching)\//.test(req.path) && !/^\/live-manage\/\d+\/status/.test(req.path)) return next();
     let id = null;
-    const studio = req.path.match(/^\/live\/studio\/([1-9]\d*)(?:\/(?:upload|state|upload-status\/[^/]+))?\/?$/);
+    const studio = req.path.match(/^\/(?:live\/studio|teaching)\/([1-9]\d*)(?:\/(?:upload|state|upload-status\/[^/]+))?\/?$/);
     if (studio && ['GET', 'POST'].includes(req.method)) id = studio[1];
     const stream = req.path.match(/^\/live-manage\/([1-9]\d*)\/status\/?$/);
     if (stream && req.method === 'POST') {
