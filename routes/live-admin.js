@@ -289,26 +289,30 @@ router.get('/live/studio/:courseId/upload-status/:jobId', (req, res) => {
 });
 
 const stateDir = path.join(__dirname, '..', 'data');
-function stateFile(courseId) {
-  return path.join(stateDir, 'studio-state-' + String(courseId).replace(/[^\w-]/g, '_') + '.json');
+function stateFile(courseId,lessonId) {
+  return path.join(stateDir,'studio-state-'+courseId+'-lesson-'+lessonId+'.json');
 }
-
-router.post('/live/studio/:courseId/state', (req, res) => {
-  try {
-    fs.mkdirSync(stateDir, { recursive: true });
-    fs.writeFileSync(stateFile(req.params.courseId), JSON.stringify(req.body || {}), 'utf8');
-    res.json({ ok: true });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+function stateLesson(req,res) {
+  const courseId=Number(req.params.courseId),lessonId=Number(req.query.lesson);
+  if(!Number.isSafeInteger(courseId)||courseId<=0||!Number.isSafeInteger(lessonId)||lessonId<=0){res.status(400).json({error:'请选择有效课次'});return null;}
+  if(!db.get('SELECT id FROM lessons WHERE id=? AND course_id=?',[lessonId,courseId])){res.status(404).json({error:'课次不属于当前课程'});return null;}
+  return {courseId,lessonId};
+}
+router.post('/live/studio/:courseId/state', (req,res)=>{
+ const scope=stateLesson(req,res);if(!scope)return;
+ if(req.body?.lessonId!=null&&Number(req.body.lessonId)!==scope.lessonId)return res.status(400).json({error:'课次不匹配'});
+ try{
+  fs.mkdirSync(stateDir,{recursive:true});
+  const file=stateFile(scope.courseId,scope.lessonId),temp=file+'.'+crypto.randomBytes(8).toString('hex')+'.tmp';
+  try{fs.writeFileSync(temp,JSON.stringify({...req.body,courseId:scope.courseId,lessonId:scope.lessonId,savedAt:new Date().toISOString()}),'utf8');fs.renameSync(temp,file);}finally{if(fs.existsSync(temp))fs.unlinkSync(temp);}
+  res.set('Cache-Control','private, no-store').json({ok:true});
+ }catch(error){res.status(500).json({error:'课次存档保存失败'});}
 });
-
-router.get('/live/studio/:courseId/state', (req, res) => {
-  try {
-    res.json(JSON.parse(fs.readFileSync(stateFile(req.params.courseId), 'utf8')));
-  } catch (e) {
-    res.json({ empty: true });
-  }
+router.get('/live/studio/:courseId/state',(req,res)=>{
+ const scope=stateLesson(req,res);if(!scope)return;
+ res.set('Cache-Control','private, no-store');
+ try{res.json(JSON.parse(fs.readFileSync(stateFile(scope.courseId,scope.lessonId),'utf8')));}
+ catch(error){if(error.code==='ENOENT')res.json({empty:true,lessonId:scope.lessonId});else res.status(500).json({error:'课次存档读取失败'});}
 });
 
 module.exports = router;

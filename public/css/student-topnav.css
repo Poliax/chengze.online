@@ -1,0 +1,42 @@
+/* Horizontal student navigation; existing views and actions remain unchanged. */
+.student-top-layout { --student-nav-height:72px; }
+.student-top-layout .app { display:block; }
+.student-top-layout .student-topnav { position:sticky;top:0;left:auto;bottom:auto;width:100%;height:var(--student-nav-height);display:flex;flex-direction:row;align-items:center;gap:30px;padding:0 max(24px,calc((100vw - 1280px)/2));background:#fff;color:#252A28;border-bottom:1px solid #DEE4DF;z-index:60; }
+.student-top-layout .logo { height:auto;padding:0;border:0;flex:none; }
+.student-top-layout .logo .chengze-wordmark { width:130px!important;display:block!important; }
+.student-top-layout .logo .chengze-mobile-mark { display:none!important; }
+.student-top-layout .menu-group,.student-top-layout .foot-glow { display:none; }
+.student-top-layout .menu-scroll { display:flex;align-self:stretch;align-items:stretch;flex:1;min-width:0;gap:22px;padding:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none; }
+.student-top-layout .menu-scroll::-webkit-scrollbar { display:none; }
+.student-top-layout .menu-item { flex:none;width:auto;margin:0;padding:0 1px;border-radius:0;white-space:nowrap;font-size:14px;color:#626B66;gap:7px; }
+.student-top-layout .menu-item svg { display:none; }
+.student-top-layout .menu-item:hover { color:#28554A;background:none;transform:none; }
+.student-top-layout .menu-item.on { color:#28554A;background:none;font-weight:600; }
+.student-top-layout .menu-item.on::after { content:'';position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:#28554A; }
+.student-top-layout .sidebar-foot { flex:none;padding:0;border:0;overflow:visible; }
+.student-top-layout .sidebar-foot .auth-btn { width:auto;padding:8px 14px;background:#28554A;color:#fff;border:1px solid #28554A;border-radius:7px;box-shadow:none;font-size:12px;letter-spacing:0;white-space:nowrap; }
+.student-top-layout .sidebar-foot .auth-btn:hover { background:#21483E;transform:none; }
+.student-top-layout .sidebar-user { gap:8px; }
+.student-top-layout .sidebar-user .avatar { background:#EDF2EF;color:#28554A;width:30px;height:30px; }
+.student-top-layout .sidebar-user a { color:#626B66; }
+.student-top-layout .sidebar-user .u-name { max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.student-top-layout .main { margin-left:0; }
+.student-top-layout .main-header { position:static;height:54px;padding:0 max(24px,calc((100vw - 1180px)/2 + 26px));backdrop-filter:none;background:#fff; }
+.student-top-layout .menu-item:focus-visible { outline:2px solid #28554A;outline-offset:-4px; }
+@media(max-width:1150px){
+ .student-top-layout{--student-nav-height:108px}
+ .student-top-layout .student-topnav{display:grid;grid-template-columns:1fr auto;grid-template-rows:60px 48px;gap:0 16px;padding:0 24px}
+ .student-top-layout .menu-scroll{grid-column:1/-1;grid-row:2;gap:30px;width:100%}
+ .student-top-layout .sidebar-foot{grid-column:2;grid-row:1}
+}
+@media(max-width:640px){
+ .student-top-layout .student-topnav{padding:0 16px;grid-template-rows:56px 44px;height:100px}
+ .student-top-layout .logo .chengze-wordmark{width:118px!important}
+ .student-top-layout .menu-scroll{gap:24px}
+ .student-top-layout .menu-item{font-size:13px}
+ .student-top-layout .main-header{height:auto;min-height:52px;padding:10px 16px;gap:8px;flex-wrap:wrap}
+ .student-top-layout .header-time{display:none}
+ .student-top-layout .header-right{width:100%}
+ .student-top-layout .global-filter{width:100%;gap:7px;flex-wrap:wrap}
+ .student-top-layout .sidebar-user .u-name{max-width:65px}
+}

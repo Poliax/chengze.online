@@ -242,7 +242,7 @@ router.get('/', (req, res) => {
 
 // ── Course Detail Page ──
 router.get('/courses/:id', (req, res) => {
-  res.redirect('/learning');
+  res.redirect('/');
 });
 
 // ── Watch Lesson ──

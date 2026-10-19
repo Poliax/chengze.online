@@ -62,5 +62,13 @@ test('授课工作台位于管理域名下，独立登录和课堂接口保持�
  const assets='<link href="/css/teacher-backend.css?v=20260812"><img src="/public/images/teachers/avatar.png"><a href="/teaching">已有入口</a>';
  assert.equal(domain.teachingURLs(assets),assets);
  assert.equal(domain.teachingURLs('<a href="/teach">目录</a><a href="/teach/calendar">日历</a>'),'<a href="/teaching">目录</a><a href="/teaching/calendar">日历</a>');
- for(const page of ['dashboard','calendar','profile']){const fs=require('fs');const html=domain.teachingURLs(fs.readFileSync(require('path').join(__dirname,'../views/teacher-portal',page+'.ejs'),'utf8'));assert.ok(html.includes('/css/teacher-backend.css?v=20260812'));assert.ok(!html.includes('teachinger-backend'));}
+ for(const page of ['dashboard','calendar','profile']){const fs=require('fs');const html=domain.teachingURLs(fs.readFileSync(require('path').join(__dirname,'../views/teacher-portal',page+'.ejs'),'utf8'));assert.ok(html.includes('/css/teacher-backend.css?v=20261019-popup9'));assert.ok(!html.includes('teachinger-backend'));}
  });
+
+test('后台统一字体覆盖完整页面，局部图表更新和学员端不注入样式',()=>{
+ const font=require('../middleware/admin-domain').backendTypography;
+ const full=font('<html><head><title>教师端</title></head><body>示例</body></html>');
+ assert.ok(full.includes('id="backend-ui-font"'));assert.equal(font(full),full);
+ assert.equal(font('<section>局部图表</section>'),'<section>局部图表</section>');
+ const fs=require('fs');for(const file of ['css/backend.css','css/teacher-backend.css','public/css/teacher-backend.css'])assert.ok(!fs.readFileSync(require('path').join(__dirname,'..',file),'utf8').includes('Noto Serif SC'));
+});

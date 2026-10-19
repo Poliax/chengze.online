@@ -1,20 +1,20 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html><html lang="zh-CN"><head><script>if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>个人信息 · 授课后台</title>
+<title>个人信息 · 教师端</title>
 
-<link rel="stylesheet" href="/css/teacher-backend.css?v=20260812">
-<style>
+<link rel="stylesheet" href="/css/teacher-backend.css?v=20261019-popup9">
+<style id="teacherViewStyles">
 .profile-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; max-width: 600px; }
 .profile-avatar-wrap { padding: 28px 24px 20px; text-align: center; }
 .profile-photo {
   width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 16px;
-  background: linear-gradient(135deg,#2563eb,#7c3aed);
+  background: #445650;
   display: flex; align-items: center; justify-content: center;
-  font-size: 44px; font-weight: 700; color: #fff;
-  border: 4px solid #fff; box-shadow: 0 4px 16px rgba(37,99,235,0.2);
+  font-size: 44px; font-weight: 500; color: #DCE6E2;
+  border: 0; box-shadow: none;
 }
 .profile-name-big { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-.profile-subject { font-size: 14px; color: #2563eb; font-weight: 500; margin-bottom: 4px; }
+.profile-subject { font-size: 14px; color: #52776B; font-weight: 500; margin-bottom: 4px; }
 .profile-bio-text { font-size: 13px; color: #475569; line-height: 1.6; padding: 0 12px; }
 .profile-stats { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid #f1f5f9; }
 .profile-stat { padding: 14px 12px; text-align: center; border-right: 1px solid #f1f5f9; }
@@ -45,7 +45,7 @@
 <div class="main"><%- include('partials/header') %>
 <div class="content">
 
-<div class="watermark" id="watermark"></div>
+<div class="watermark" id="watermark" data-name="<%= teacher.real_name || teacher.display_name || '' %>"></div>
 
 <div class="profile-card">
 
@@ -132,28 +132,5 @@
 
 </div></div>
 
-<script>
-document.getElementById('menuToggle')?.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open')});
 
-// Watermark
-(function(){
-  var name = '<%= (teacher.real_name || teacher.display_name).replace(/'/g, "\\'") %>';
-  if (!name) return;
-  var wm = document.getElementById('watermark');
-  var spacing = 140;
-  var cols = Math.ceil(window.innerWidth / spacing) + 2;
-  var rows = Math.ceil(window.innerHeight / spacing) + 2;
-  for (var r = 0; r < rows; r++) {
-    for (var c = 0; c < cols; c++) {
-      var el = document.createElement('div');
-      el.textContent = name;
-      el.style.cssText = 'position:absolute;left:' + (c * spacing) + 'px;top:' + (r * spacing) + 'px;'
-        + 'font-size:18px;font-weight:700;color:rgba(0,0,0,0.06);'
-        + 'font-family:"Noto Serif SC",sans-serif;white-space:nowrap;'
-        + 'transform:rotate(-25deg);transform-origin:left center;user-select:none;pointer-events:none;';
-      wm.appendChild(el);
-    }
-  }
-})();
-</script>
-</body></html>
+<script src="/js/teacher-navigation.js?v=20261019-nav24" defer></script></body></html>

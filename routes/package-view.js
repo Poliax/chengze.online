@@ -5,7 +5,7 @@ const db = require('../db');
 // ── Student: View package → second-level package or courses ──
 router.get('/:id', (req, res) => {
   const pkg = db.get('SELECT * FROM course_packages WHERE id = ? AND status = ?', [req.params.id, 'published']);
-  if (!pkg) return res.redirect('/learning');
+  if (!pkg) return res.redirect('/');
 
   const children = db.query(`SELECT p.*,
     (SELECT COUNT(*) FROM course_package_courses pc WHERE pc.package_id = p.id) as course_count

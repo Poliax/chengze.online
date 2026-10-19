@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>承泽在线</title>
+<meta name="description" content="承泽在线，服务专升本学员的在线学习平台，提供课程学习、直播授课、课后回放与备考资料。">
+<link rel="canonical" href="https://www.chengze.online/">
+<meta property="og:url" content="https://www.chengze.online/">
+<meta property="og:site_name" content="承泽在线">
 
 <style>
   :root {
@@ -460,8 +464,8 @@
     .header-sub { display:none; }
   }
 </style>
-<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head>
-<body>
+<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"><link rel="stylesheet" href="/public/css/student-topnav.css?v=20261018-topnav1"></head>
+<body class="student-top-layout">
 <%
   var totalLessons = (courses || []).reduce(function(s, c){ return s + (c.lesson_count || 0); }, 0);
   var initialView = typeof initialView !== 'undefined' ? initialView : 'home';
@@ -471,11 +475,11 @@
   var upList = typeof upcomingLessons !== 'undefined' ? upcomingLessons : [];
 %>
 <div class="app">
-  <aside class="sidebar">
+  <header class="sidebar student-topnav">
     <div class="logo">
-      <img class="chengze-wordmark" src="/public/images/brand-green/online-light.svg?v=20261017-brand1" alt="承泽在线" style="width:144px;max-width:100%;height:auto;display:block;flex:none"><img class="chengze-mobile-mark" src="/public/images/brand-green/app-rounded.svg?v=20261017-brand1" alt="承泽在线" style="width:32px;height:32px">
+      <img class="chengze-wordmark" src="/public/images/brand-green/online-dark.svg?v=20261017-brand1" alt="承泽在线" style="width:144px;max-width:100%;height:auto;display:block;flex:none"><img class="chengze-mobile-mark" src="/public/images/brand-green/app-rounded.svg?v=20261017-brand1" alt="承泽在线" style="width:32px;height:32px">
     </div>
-    <div class="menu-scroll">
+    <nav class="menu-scroll" aria-label="学员主导航">
       <div class="menu-group"><div class="group-title"><span class="group-dot"></span>专升本在线学习平台</div></div>
       <button type="button" class="menu-item" data-view="home" onclick="switchView('home')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -505,7 +509,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0V9"/><line x1="10" y1="6" x2="20" y2="6"/><line x1="10" y1="10" x2="20" y2="10"/></svg>
         考情资讯
       </button>
-    </div>
+    </nav>
     <div class="sidebar-foot">
       <div class="foot-glow"></div>
       <% if (student) { %>
@@ -524,7 +528,7 @@
         <button type="button" class="auth-btn" onclick="openAuthModal()">登录 / 注册</button>
       <% } %>
     </div>
-  </aside>
+  </header>
 
   <main class="main">
     <header class="main-header">
@@ -594,7 +598,7 @@
         </div>
         <div class="pkg-grid">
           <% packages.slice(0, 6).forEach(p => { %>
-          <div class="pkg-card" onclick="showChildren('<%= p.id %>')" data-id="<%= p.id %>" data-title="<%= p.title %>" data-year="<%= p.year||'' %>" data-type="<%= (function(){ var _t=p.class_type||''; return (_t==='公开课'||_t==='免费课'||_t==='公共课') ? '公开课' : (_t==='专项集训课' ? '专项集训' : (_t==='押题密训课' ? '冲刺密训' : '系统学习')) })() %>">
+          <div class="pkg-card" onclick="showChildren('<%= p.id %>')" data-id="<%= p.id %>" data-title="<%= p.title %>" data-year="<%= p.year||'' %>" data-type="<%= (function(){ var _t=p.class_type||''; return (_t==='公开课'||_t==='免费课'||_t==='公共课') ? '公开课' : (['专项提升','专项提升课','专项集训','专项集训课','冲刺密训','押题密训课'].includes(_t) ? '专项提升' : '系统学习') })() %>">
             <div class="pkg-top">
               <div class="pkg-tags">
                 <span><%= p.province||'全国' %></span>
@@ -695,8 +699,7 @@
         <div class="toolbar">
           <div class="seg" id="typeFilter">
             <button class="active" data-t="系统学习">系统学习</button>
-            <button data-t="专项集训">专项集训</button>
-            <button data-t="冲刺密训">冲刺密训</button>
+            <button data-t="专项提升">专项提升</button>
             <button data-t="公开课">公开课</button>
           </div>
           <button type="button" class="back-btn" id="childBackBtn" style="display:none" onclick="backToPackages()">← 返回</button>
@@ -709,7 +712,7 @@
         <% if (packages && packages.length > 0) { %>
         <div class="pkg-grid" id="mainPkgGrid">
           <% packages.forEach(p => { %>
-          <div class="pkg-card" onclick="showChildren('<%= p.id %>')" data-id="<%= p.id %>" data-province="<%= p.province||'' %>" data-title="<%= p.title||'' %>" data-year="<%= p.year||'' %>" data-type="<%= (function(){ var _t=p.class_type||''; return (_t==='公开课'||_t==='免费课'||_t==='公共课') ? '公开课' : (_t==='专项集训课' ? '专项集训' : (_t==='押题密训课' ? '冲刺密训' : '系统学习')) })() %>">
+          <div class="pkg-card" onclick="showChildren('<%= p.id %>')" data-id="<%= p.id %>" data-province="<%= p.province||'' %>" data-title="<%= p.title||'' %>" data-year="<%= p.year||'' %>" data-type="<%= (function(){ var _t=p.class_type||''; return (_t==='公开课'||_t==='免费课'||_t==='公共课') ? '公开课' : (['专项提升','专项提升课','专项集训','专项集训课','冲刺密训','押题密训课'].includes(_t) ? '专项提升' : '系统学习') })() %>">
             <div class="pkg-top">
               <div class="pkg-tags">
                 <span><%= p.province||'全国' %></span>
@@ -801,22 +804,22 @@
           <div class="ai-card">
             <div class="head"><span class="avatar" style="background:linear-gradient(135deg,#5c0d24,#c8a35a)">英</span><div><h4>英语 AI</h4><span class="tag">7×24 在线</span></div></div>
             <p>词汇、语法、阅读、写作全方位辅导。</p>
-            <a class="action" href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener">开始提问 →</a>
+            <a class="action" href="https://www.chengze.online/AI-tutor/" target="_blank" rel="noopener">开始提问 →</a>
           </div>
           <div class="ai-card">
             <div class="head"><span class="avatar" style="background:linear-gradient(135deg,#5c0d24,#c8a35a)">数</span><div><h4>数学 AI</h4><span class="tag">7×24 在线</span></div></div>
             <p>高等数学、统计问题即时解答。</p>
-            <a class="action" href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener">开始提问 →</a>
+            <a class="action" href="https://www.chengze.online/AI-tutor/" target="_blank" rel="noopener">开始提问 →</a>
           </div>
           <div class="ai-card">
             <div class="head"><span class="avatar" style="background:linear-gradient(135deg,#059669,#b02a48)">语</span><div><h4>语文 AI</h4><span class="tag">7×24 在线</span></div></div>
             <p>文学常识、古文翻译、作文指导。</p>
-            <a class="action" href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener">开始提问 →</a>
+            <a class="action" href="https://www.chengze.online/AI-tutor/" target="_blank" rel="noopener">开始提问 →</a>
           </div>
           <div class="ai-card">
             <div class="head"><span class="avatar" style="background:linear-gradient(135deg,#c8a35a,#c8a35a)">计</span><div><h4>计算机 AI</h4><span class="tag">7×24 在线</span></div></div>
             <p>Office、网络、数据结构等课程问题。</p>
-            <a class="action" href="https://chengze.online/AI-tutor/" target="_blank" rel="noopener">开始提问 →</a>
+            <a class="action" href="https://www.chengze.online/AI-tutor/" target="_blank" rel="noopener">开始提问 →</a>
           </div>
         </div>
       </section>
@@ -1037,8 +1040,7 @@
   function escHtml(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function typeLabel(t){
     if (t === '公开课' || t === '免费课' || t === '公共课') return '公开课';
-    if (t === '专项集训课') return '专项集训';
-    if (t === '押题密训课') return '冲刺密训';
+    if (['专项提升','专项提升课','专项集训','专项集训课','冲刺密训','押题密训课'].includes(t)) return '专项提升';
     return '系统学习';
   }
   function backToChildren(){

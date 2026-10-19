@@ -124,4 +124,18 @@ test('后台账号生命周期与服务器权限隔离',async t=>{
  });
  await t.test('账号页面模板可渲染且不输出密码哈希',async()=>{const html=await require('ejs').renderFile(require('path').join(__dirname,'../views/teacher/accounts.ejs'),{title:'账号管理',cssVer:1,path:'/admin/accounts-manage',teacherName:'主管',teacherId:1,accountCsrf:csrf,canAdminPath:()=>true,canAdmin:()=>true,accounts:adapter.query('SELECT a.*,t.username,t.display_name FROM admin_accounts a JOIN teachers t ON t.id=a.teacher_id'),staff:[],access,error:'',message:''});assert.match(html,/新建账号/);assert.ok(!html.includes('$2a$'));});
  await t.test('十一种身份权限与特殊路由映射',()=>{for(const role of Object.keys(access.roles)){const a={role,status:'active',permissions:JSON.stringify(access.defaults[role])};assert.equal(access.can(a,'accounts'),role==='ceo');}assert.equal(access.routeModule('/admin/api/orders'),'orders');assert.equal(access.routeModule('/admin/api/teachers-manage'),'teachers');});
+ await t.test('经营控制台仅超级账号可访问，其他岗位只能进入普通工作台',async()=>{
+  assert.equal((await supervisor('/admin/dashboard')).status,200);
+  let id=100;
+  for(const role of Object.keys(access.roles).filter(r=>r!=='ceo')){
+   const uid=id++;adapter.run('INSERT INTO teachers(id,username,password_hash,display_name) VALUES(?,?,?,?)',[uid,'guard'+uid,bcrypt.hashSync(password,4),'权限测试']);
+   adapter.run("INSERT INTO admin_accounts(teacher_id,role,status,permissions,session_version) VALUES(?,?,'active','{}',1)",[uid,role]);
+   const c=client(),r=await login(c,'guard'+uid);assert.equal(r.headers.get('location'),'/admin/workspace');
+   assert.equal((await c('/admin/dashboard')).status,403,role);
+   assert.equal((await c('/admin/dashboard?days=90')).status,403,role);
+   assert.equal((await c('/admin/dashboard/data?days=90')).status,403,role);
+   const workspace=await c('/admin/workspace');assert.equal(workspace.status,200);assert.equal((await workspace.json()).view,'teacher/account-dashboard');
+  }
+ });
+
 });

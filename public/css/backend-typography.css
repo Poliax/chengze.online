@@ -1,0 +1,13 @@
+/* Shared UI typography for the management site, teacher portal and teaching studio. */
+:root{
+ --admin-ui-font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+ --font-cn:var(--admin-ui-font)!important;
+ --font:var(--admin-ui-font)!important;
+}
+body{font-family:var(--admin-ui-font)!important;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body :where(h1,h2,h3,h4,h5,h6,p,a,button,input,select,option,textarea,label,table,thead,tbody,tfoot,tr,th,td,summary,details,ul,ol,li,dl,dt,dd,span,div,small,strong,b,em,i,legend,fieldset,figcaption,time,output,svg text):not(.katex):not(.katex *):not(.MathJax):not(.MathJax *):not(.fa):not(.fas):not(.far):not(.fab):not(.material-icons):not(pre *):not(code *){
+ font-family:var(--admin-ui-font)!important;
+}
+/* Code samples and mathematical typesetting retain their specialized fonts. */
+
+.sidebar-logo:has(.backend-app-icon){justify-content:center}.backend-app-icon{object-fit:contain;border-radius:9px;flex-shrink:0}

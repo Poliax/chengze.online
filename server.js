@@ -267,23 +267,12 @@ function renderLearningCenter(req, res) {
   try { adConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'ad-config.json'), 'utf8')); } catch(e) {}
   res.render('student/home', { title: '承泽在线', courses, packages, independentCourses, student, guest: req.session.guest || false, overview, myCourses, upcomingLessons, totalLessons, initialView: 'home', homeProvinceData, childrenByParent, coursesByParent, coursesByPackage, packageDetails, courseDetails, adConfig, provinces });
 }
-app.get('/learning', renderLearningCenter);
-
-// ── 官网首页 ──
-// Public resource mounts are installed below after access checks.
+// 承泽在线为唯一主站，旧官网及学习中心地址已停用。
+app.use(require('./middleware/primary-site'));
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'site', 'index.html'));
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  return renderLearningCenter(req, res);
 });
-app.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'site', 'about.html'));
-});
-app.get('/contact', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'site', 'contact.html'));
-});
-app.get('/feedback', (req, res) => res.sendFile(path.join(__dirname, 'public', 'site', 'feedback.html')));
-app.get('/learning-center', (req, res) => res.sendFile(path.join(__dirname, 'public', 'site', 'learning.html')));
-app.get('/courses', (req, res) => res.sendFile(path.join(__dirname, 'public', 'site', 'courses.html')));
-app.get('/teachers', (req, res) => res.sendFile(path.join(__dirname, 'public', 'site', 'teachers.html')));
 app.use((req, res, next) => {
   const p = req.path;
   if (p.startsWith('/css/') || p.startsWith('/js/') || p.startsWith('/public/') || p.startsWith('/data/')) {
@@ -347,7 +336,7 @@ app.use('/teach', require('./middleware/admin-domain').portal);
 app.use('/teach', teacherPortalRoutes);
 app.get('/admin', (req, res) => res.redirect('/admin/login'));
 
-app.get('/live/student', (req, res) => res.redirect('/learning'));
+app.get('/live/student', (req, res) => res.redirect('/'));
 app.use('/live/student', studentRoutes);
 app.use('/live', liveRoutes);
 

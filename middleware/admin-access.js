@@ -25,11 +25,13 @@ module.exports = function(req, res, next) {
   res.locals.teacherName = account.display_name;
   res.locals.adminAccount = account;
   res.locals.canAdmin = (key, write) => access.can(account, key, write);
-  res.locals.canAdminPath = url => url === '/admin/dashboard' || access.can(account, access.routeModule(url));
+  res.locals.canAdminPath = url => url === '/admin/dashboard' ? account.role === 'ceo' : url === '/admin/workspace' || access.can(account, access.routeModule(url));
   if (!req.session.accountCsrf) req.session.accountCsrf = crypto.randomBytes(32).toString('hex');
   res.locals.accountCsrf = req.session.accountCsrf;
+  res.set('Cache-Control','private, no-store');
+  if (req.path === '/workspace') return res.render('teacher/account-dashboard', { title:'工作台 · 管理后台', access });
   if (req.path === '/' || req.path === '/dashboard') {
-    if (account.role !== 'ceo') return res.render('teacher/account-dashboard', { title:'控制台 · 承泽在线', access });
+    if (account.role !== 'ceo') return res.status(403).send('控制台仅限超级账号访问。<a href="/workspace">进入工作台</a>');
     return next();
   }
   const key = access.routeModule('/admin' + req.path);

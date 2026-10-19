@@ -15,10 +15,10 @@ module.exports=function publicAssets(root){
   });
  }
  for(const directory of ['css','js','assets','player'])mount('/'+directory,directory);
- for(const directory of ['css','images','site','materials','courseware','recordings','live','provinces'])mount('/public/'+directory,'public/'+directory,['site','provinces'].includes(directory));
- mount('/site','public/site',true);mount('/materials','public/materials');mount('/courseware','public/courseware');mount('/recordings','public/recordings');mount('/data','data',false,true);
+ for(const directory of ['css','images','materials','courseware','recordings','live','provinces'])mount('/public/'+directory,'public/'+directory,['site','provinces'].includes(directory));
+ mount('/materials','public/materials');mount('/courseware','public/courseware');mount('/recordings','public/recordings');mount('/data','data',false,true);
  router.use((req,res,next)=>{
-  if(req.path==='/index.html'||/^\/(?:favicon(?:-[\w-]+)?\.(?:ico|png|svg)|apple-touch-icon(?:-[\w-]+)?\.png)$/.test(req.path))return res.sendFile(path.join(root,req.path.slice(1)));
+  if(/^\/(?:favicon(?:-[\w-]+)?\.(?:ico|png|svg)|apple-touch-icon(?:-[\w-]+)?\.png)$/.test(req.path))return res.sendFile(path.join(root,req.path.slice(1)));
   next();
  });
  return router;

@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>课程目录 · 授课后台</title>
+<!DOCTYPE html><html lang="zh-CN"><head><script>if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no,url=no"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>课程目录 · 教师端</title>
 
-<link rel="stylesheet" href="/css/teacher-backend.css?v=20260812">
-<style>
+<link rel="stylesheet" href="/css/teacher-backend.css?v=20261019-popup9">
+<style id="teacherViewStyles">
 html { overflow-y: scroll; }
 .lesson-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:16px; overflow:hidden; }
 .lesson-card-hd { display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--border-light); }
@@ -39,33 +39,58 @@ html { overflow-y: scroll; }
 .badge-done { background:#dcfce7; color:#15803d; }
 .badge-wait { background:#eff6ff; color:#2563eb; }
 .badge-none { background:#f1f5f9; color:#94a3b8; }
+/* One restrained surface per subject, with divided course rows. */
+.course-group-list{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px}
+.main .course-group-list .lesson-card{margin:0;border:0;border-bottom:1px solid var(--border-light);border-radius:0;box-shadow:none;background:transparent}
+.main .course-group-list .lesson-card:last-child{border-bottom:0}
+.course-group-list .lesson-card-hd{padding:16px 20px;border-bottom:0;transition:background .15s}
+.course-group-list .lesson-card-hd:hover{background:#f5f7f6}
+.course-group-list .lesson-card.open .lesson-card-hd{background:#f5f7f6;border-bottom:1px solid var(--border-light)}
+.course-group-list .lesson-card-title{font-size:14px;font-weight:600;color:#303943}
+.course-group-list .lesson-card-meta{font-size:12px;color:#89929b;margin-top:5px}
+.course-group-list .arrow{color:#98a29f;font-size:10px}
+.group-count{background:transparent;padding:0;color:#929b98;font-size:12px}
+/* Neutral expanded course details. */
+.course-group-list .lesson-card-hd:hover,.course-group-list .lesson-card.open .lesson-card-hd{background:#f6f6f5}
+.main .course-group-list .lesson-table thead th{background:#f3f3f2;color:#727670;box-shadow:0 1px 0 #e6e7e4;border-color:#e6e7e4}
+.course-group-list .lesson-table td{color:#454a46;border-color:#eceeea}
+.course-group-list .lesson-card-meta{color:#8b8f89}
+.course-group-list .badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;line-height:1.5;border:1px solid transparent}
+.course-group-list .badge-done{background:#e4f1e8;color:#2f6d45;border-color:#cce2d3}.course-group-list .badge-makeup{background:#fff0d5;color:#925b12;border-color:#eed3a3}.course-group-list .badge-wait{background:#eaf0f5;color:#50657c;border-color:#d5dfe9}.course-group-list .badge-live{background:#426453;color:#fff;border-color:#426453}.course-group-list .badge-none{background:#f0f1f2;color:#79817d;border-color:#e2e5e3}
+.course-group-list .lesson-card-meta,.course-group-list .lesson-card-meta a,.course-group-list .lesson-card-meta a[x-apple-data-detectors]{color:#8b8f89!important;text-decoration:none!important;border-bottom:0!important;box-shadow:none!important}
+.course-group-list{background:#fff;border-color:#dce3de}.main .course-group-list .lesson-card{background:#f3f5f4;border-bottom-color:#dce3de}.course-group-list .lesson-card-hd:hover,.course-group-list .lesson-card.open .lesson-card-hd{background:#eaf0ec}.course-group-list .lesson-card-title{color:#303943}.group-name{color:#46584d}.course-group-list .arrow{color:#779383}.course-group-list .lesson-body{background:#fff}.main .course-group-list .lesson-table thead th{background:#eef2ef;color:#617368;border-color:#dce3de;box-shadow:0 1px 0 #dce3de}.course-group-list .lesson-table td{color:#454f48;border-color:#e8ece8}
+
+.course-group-list{background:#fff;border-color:#e0e2e5}.main .course-group-list .lesson-card{background:#f5f5f6;border-bottom-color:#e0e2e5}.course-group-list .lesson-card-hd:hover,.course-group-list .lesson-card.open .lesson-card-hd{background:#eeeff1}.group-name{color:#303943}.course-group-list .arrow{color:#91979e}.main .course-group-list .lesson-table thead th{background:#f2f3f4;color:#697078;border-color:#e0e2e5;box-shadow:0 1px 0 #e0e2e5}.course-group-list .lesson-table td{color:#454b52;border-color:#eceef0}
+.course-term-section{margin-bottom:30px}.course-term-title{font-size:17px;font-weight:600;color:#303943;margin:0 0 14px}.course-term-section .group-hd{margin-top:12px}.term-empty{padding:22px 20px;border:1px solid #e3e5e8;border-radius:8px;background:#fff;color:#92989f;font-size:13px}
+.main .course-group-list .lesson-card{border-left:3px solid hsl(var(--course-hue) 30% 55%)}
+.course-group-list .lesson-card-title{color:hsl(var(--course-hue) 38% 35%)}.main .course-group-list .lesson-card{border-left:0}
+.course-group-list .lesson-table{min-width:1080px}.course-group-list .lesson-table th:nth-child(1){width:50px}.course-group-list .lesson-table th:nth-child(2){width:140px}.course-group-list .lesson-table th:nth-child(3){width:65px}.course-group-list .lesson-table th:nth-child(4){width:170px}.course-group-list .lesson-table th:nth-child(5){width:240px}.course-group-list .lesson-table th:nth-child(6){width:145px}.course-group-list .lesson-table th:nth-child(7){width:90px}.course-group-list .lesson-table th:nth-child(8){width:110px}.course-group-list .lesson-table td{height:auto;padding-top:10px;padding-bottom:10px;vertical-align:middle}.lesson-topic-cell form{white-space:normal}.lesson-topic-cell textarea{display:block;width:100%;min-height:46px;resize:vertical;border:1px solid #dde1e5;border-radius:5px;padding:7px 8px;background:#fafafa;color:#454b52;font:inherit;font-size:12px;line-height:1.5}.lesson-topic-cell textarea:focus{outline:1px solid #a0abb6;background:#fff}.topic-actions{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:5px}.topic-status{font-size:10px;color:#8a929b;white-space:normal}.topic-actions button,.lesson-live-entry{display:inline-block;border:1px solid #dce0e4;border-radius:4px;background:#f7f8f9;color:#535d66;padding:4px 8px;font:inherit;font-size:11px;cursor:pointer;text-decoration:none}.topic-actions button:disabled{opacity:.5;cursor:default}.lesson-live-entry:hover,.topic-actions button:hover{background:#eceef0}
+.lesson-topic-cell form{display:flex;align-items:center;gap:6px;position:relative}.lesson-topic-cell input{display:block;flex:1;min-width:0;width:0;height:28px;border:1px solid #dde1e5;border-radius:4px;padding:0 7px;background:#fafafa;color:#454b52;font:inherit;font-size:12px}.lesson-topic-cell input:focus{outline:1px solid #a0abb6;background:#fff}.topic-actions{display:flex;flex:none;margin:0}.topic-status{position:absolute;right:0;bottom:calc(100% + 2px);padding:0 3px;background:#fff;font-size:9px;pointer-events:none}.course-group-list .lesson-table td{padding-top:6px;padding-bottom:6px;height:40px}.topic-actions button{white-space:nowrap;height:28px;padding:0 7px}
+.course-group-list .lesson-table{min-width:1000px;width:100%}.course-group-list .lesson-table th:nth-child(4){width:155px}.course-group-list .lesson-table th:nth-child(5){width:180px}.lesson-topic-cell form{max-width:180px}
+.course-group-list .lesson-table th:nth-child(3){width:110px}.course-group-list .lesson-table td:nth-child(3){white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.5}
+.lesson-topic-cell form{display:block}.lesson-topic-cell input{width:100%;height:28px}.topic-actions{position:absolute;right:3px;bottom:calc(100% + 2px)}.topic-status{position:static}.topic-retry{font:inherit;font-size:10px;padding:0 4px;border:0;background:transparent;color:#88612c;cursor:pointer}
+.course-group-list .lesson-table{min-width:1100px}.course-group-list .lesson-table th:nth-child(4){width:110px}.course-group-list .lesson-table th:nth-child(5){width:75px}.course-group-list .lesson-table th:nth-child(6){width:180px}.course-group-list .lesson-table th:nth-child(7){width:145px}.course-group-list .lesson-table th:nth-child(8){width:90px}.course-group-list .lesson-table th:nth-child(9){width:110px}.course-group-list .lesson-table td:nth-child(4){white-space:normal;overflow:visible;text-overflow:clip}
+.course-group-list .lesson-table th:nth-child(4){width:78px}.course-group-list .lesson-table th:nth-child(5){width:65px}.course-group-list .lesson-table th:nth-child(4),.course-group-list .lesson-table td:nth-child(4){padding-right:4px}.course-group-list .lesson-table th:nth-child(5),.course-group-list .lesson-table td:nth-child(5){padding-left:4px}
 </style>
 <link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head><body>
 <%- include('partials/sidebar') %>
 <div class="main"><%- include('partials/header') %>
 <div class="content">
-<div class="page-hd"><h2>课程目录</h2><p style="font-size:14px;color:var(--muted)">欢迎，<%= teacherName %> 老师</p></div>
 
-<div class="stats">
-<div class="stat"><div class="stat-icon stat-icon--blue">
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-</div><div class="stat-info"><strong><%= courseCount %></strong><span>我的课程</span></div></div>
-<div class="stat"><div class="stat-icon stat-icon--green">
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-</div><div class="stat-info"><strong><%= lessonCount %></strong><span>总课时</span></div></div>
-<div class="stat"><div class="stat-icon stat-icon--purple">
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-</div><div class="stat-info"><strong><%= studentCount %></strong><span>在学学员</span></div></div>
-</div>
 
 <% if (!rows || rows.length === 0) { %>
 <div class="empty-box">暂无分配课程，请联系管理员在课程管理中分配给你</div>
 <% } %>
-<% (groups||[]).forEach(g => { %>
-<div class="group-hd"><span class="group-name"><%= g.province %><%= teacher.subject || "" %></span><span class="group-count"><%= g.courses.length %>门课</span></div>
+
+<% courseSections.forEach(section => { %>
+<section class="course-term-section"><h2 class="course-term-title"><%= section.title %></h2>
+<% if(!section.groups.length){ %><div class="term-empty">暂无<%= section.title %></div><% } %>
+<% section.groups.forEach(g => { %>
+
+<div class="course-group-list">
 <% (g.courses||[]).forEach(r => { %>
-<div class="lesson-card" id="card-<%= r.course.id %>">
-<div class="lesson-card-hd" onclick="toggleLessons(<%= r.course.id %>)">
+<div class="lesson-card" style="--course-hue:<%= Math.round(Number(r.course.id)*137.508)%360 %>" id="card-<%= r.course.id %>">
+<div class="lesson-card-hd" data-course-toggle="<%= r.course.id %>">
 <div>
 <div class="lesson-card-title"><%= r.course.title %></div>
 <div class="lesson-card-meta"><%= r.course.year||'--' %>年 · <%= r.course.province||'--' %> · <%= r.course.class_type||'--' %> · <%= r.lessons.length %>次课</div>
@@ -74,27 +99,31 @@ html { overflow-y: scroll; }
 </div>
 <div class="lesson-body">
 <table class="lesson-table">
-<thead><tr><th>序号</th><th>年份/省份/考试</th><th>科目</th><th>课次名称</th><th>上课时间</th><th>状态</th></tr></thead>
+<thead><tr><th>序号</th><th>年份/省份/考试</th><th>科目</th><th>阶段</th><th>课次</th><th>课程名称</th><th>上课时间</th><th>状态</th><th>直播入口</th></tr></thead>
 <tbody>
 <% (r.lessons||[]).forEach((l, i) => { %>
 <tr>
 <td><%= i + 1 %></td>
 <td><%= r.course.year||'--' %> / <%= r.course.province||'--' %> / <%= r.course.exam_type||'专升本' %></td>
 <td><%= r.course.category||'-' %></td>
-<td><%= l.title %></td>
+<% const lessonTitle=String(l.title||'');const titleParts=lessonTitle.match(/^(.*?)[\s·—–-]*(第[0-9０-９一二三四五六七八九十百零两]+[讲节课次])\s*$/);const stageLabel=(titleParts&&titleParts[1].trim())||l.stage||'—';const lessonLabel=titleParts?titleParts[2]:lessonTitle||'—'; %>
+<td><%= stageLabel %></td><td><%= lessonLabel %></td>
+<td class="lesson-topic-cell"><form data-lesson-topic="<%= l.id %>"><input type="text" name="content" maxlength="2000" aria-label="<%= l.title %>的课程名称" value="<%= l.description || '' %>"><div class="topic-actions"><span class="topic-status" role="status" aria-live="polite"></span></div></form></td>
 <td><%= l.schedule_time || '待排课' %></td>
 <%
 var st = l.schedule_time || '';
 var stText = '未排课';
 var stCls = 'badge-none';
-if (st) {
-  try {
-    if (new Date(st.replace(' ', 'T')) < new Date()) { stText = '已完成'; stCls = 'badge-done'; }
-    else { stText = '待上课'; stCls = 'badge-wait'; }
-  } catch(e) { stText = '待上课'; stCls = 'badge-wait'; }
+if (l.has_live_session) { stText = '授课中'; stCls = 'badge-live'; }
+else if (l.has_taught_session) { stText = '已授课'; stCls = 'badge-done'; }
+else if (st) {
+  var scheduledAt = new Date(st.replace(' ', 'T') + (/Z$|[+-]\d{2}:?\d{2}$/.test(st) ? '' : '+08:00'));
+  if (!isNaN(scheduledAt.getTime()) && scheduledAt < new Date()) { stText = '待补课'; stCls = 'badge-makeup'; }
+  else { stText = '待上课'; stCls = 'badge-wait'; }
 }
 %>
 <td><span class="badge <%= stCls %>"><%= stText %></span></td>
+<td><a class="lesson-live-entry" href="/teach/live/<%= r.course.id %>?lesson=<%= l.id %>" target="_blank" rel="noopener">进入直播间</a></td>
 </tr>
 <% }) %>
 </tbody>
@@ -102,13 +131,11 @@ if (st) {
 </div>
 </div>
 <% }) %>
+</div>
+<% }) %>
+</section>
 <% }) %>
 </div></div>
-<script>
-function toggleLessons(id) {
-  var card = document.getElementById('card-' + id);
-  if (card) card.classList.toggle('open');
-}
-</script>
-<script>document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open')});</script>
-</body></html>
+
+
+<script src="/js/teacher-navigation.js?v=20261019-nav24" defer></script></body></html>

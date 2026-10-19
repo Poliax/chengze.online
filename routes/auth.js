@@ -6,7 +6,8 @@ const db = require('../db');
 // Teacher login page
 router.get('/login', (req, res) => {
   if (req.session.teacherId) {
-    return res.redirect('/admin/dashboard');
+    const account=require('../lib/admin-access').sessionAccount(db,req.session);
+    return res.redirect(account && account.role==='ceo'?'/admin/dashboard':'/admin/workspace');
   }
   res.render('teacher/login', { title: '承泽在线 - 管理后台', error: null });
 });
@@ -44,7 +45,7 @@ router.post('/login', (req, res) => {
   
   req.session.save(err => {
     if (err) return res.status(500).send('登录失败，请重试');
-    res.redirect('/admin/dashboard');
+    res.redirect(account.role==='ceo'?'/admin/dashboard':'/admin/workspace');
   });
   });
 });

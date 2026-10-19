@@ -25,13 +25,18 @@ function htmlURLs(html) {
  // Match URL tokens in HTML attributes and inline scripts, preserving unrelated prose.
  return html.replace(/\/admin(?:\/[A-Za-z0-9_./%:-]*)?(?:\?[^\s"'<>`]*)?/g,url=>external(url));
 }
+function backendTypography(html) {
+ if (!/<\/head>/i.test(html) || html.includes('id="backend-ui-font"')) return html;
+ html=html.replace(/<link\b[^>]*\brel=["'](?:icon|apple-touch-icon)["'][^>]*>/gi,'');
+ return html.replace(/<\/head>/i,'<link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261019-backend-icon1"><link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261019-backend-icon1"><link id="backend-ui-font" rel="stylesheet" href="/public/css/backend-typography.css?v=20261019-ui2"></head>');
+}
 function wrapRender(req,res,transform,next) {
  const render=res.render.bind(res);
  res.render=function(view,options,callback){
   if(typeof options==='function'){callback=options;options={};}
   return render(view,options||{},(error,html)=>{
    if(error){if(callback)return callback(error);return next(error);}
-   const result=transform(html);
+   const result=req.hostname===HOST?backendTypography(transform(html)):transform(html);
    if(callback)return callback(null,result);
    res.send(result);
   });
@@ -92,3 +97,5 @@ module.exports.teachingExternal=teachingExternal;
 module.exports.teachingURLs=teachingURLs;
 module.exports.htmlURLs=htmlURLs;
 module.exports.portal=portal;
+
+module.exports.backendTypography=backendTypography;

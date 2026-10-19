@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="zh-CN"><head><script>if('scrollRestoration' in history)history.scrollRestoration='manual';</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>首页 · 教师端</title><link rel="stylesheet" href="/css/teacher-backend.css?v=20261019-popup9">
+<style id="teacherViewStyles">
+.home-section{margin-bottom:28px}.home-heading{display:flex;align-items:center;gap:10px;margin-bottom:14px}.home-heading h2{font-size:17px;color:#303943;font-weight:600}.home-heading span{font-size:12px;color:#929a95}.home-panel{border:1px solid var(--border);border-radius:8px;background:var(--surface);overflow:hidden}.home-lesson{display:flex;align-items:center;gap:20px;padding:18px 20px;border-bottom:1px solid var(--border-light)}.home-lesson:last-child{border:0}.home-time{font-size:17px;font-weight:600;color:#52776b;font-variant-numeric:tabular-nums;flex:none}.home-info{flex:1;min-width:0}.home-info strong{display:block;font-size:14px;font-weight:600;color:#303943}.home-info small{display:block;font-size:12px;color:#929a95;margin-top:4px}.home-enter{padding:7px 12px;border:1px solid #dce4df;border-radius:6px;background:#eef3f0;color:#49685b;font-size:12px;text-decoration:none;white-space:nowrap}.home-enter:hover{background:#e2ebe5}.home-empty{padding:28px 20px;color:#929a95;font-size:13px}.week-day{display:grid;grid-template-columns:110px minmax(0,1fr);border-bottom:1px solid var(--border-light)}.week-day:last-child{border:0}.week-date{padding:20px;font-size:13px;color:#59655e;background:#f8f9f7}.week-date small{display:block;color:#929a95;margin-top:3px}.week-day .home-lesson{padding:16px 20px}.home-status{color:#83948b;font-size:11px;margin-left:8px}@media(max-width:650px){.week-day{grid-template-columns:1fr}.week-date{padding:10px 16px;display:flex;gap:10px}.week-date small{margin:0}.home-lesson{gap:12px;padding:16px 12px}.home-enter{padding:6px 8px}.home-time{font-size:14px}.home-info strong{font-size:13px}}
+/* Vertical agenda with compact empty days. */
+.week-day{display:block;padding:14px 20px;border-bottom:1px solid var(--border-light)}
+.week-date{display:flex;align-items:center;gap:10px;padding:0 0 8px;background:transparent;font-weight:500;color:#59655e}
+.week-date small{display:inline;margin:0;font-weight:400;font-size:11px}
+.week-day .home-lesson{padding:12px 0;gap:18px}
+.week-day.is-empty{display:flex;align-items:center;gap:22px;padding:13px 20px}
+.week-day.is-empty .week-date{padding:0;min-width:160px}
+.week-day .home-empty{padding:0;font-size:12px;color:#a0a6a1}
+@media(max-width:650px){.week-day{padding:12px 14px}.week-day.is-empty{padding:12px 14px;gap:10px}.week-day.is-empty .week-date{min-width:0;flex-wrap:wrap}.week-day .home-lesson{gap:10px}.week-date{font-size:12px}}
+.week-scroll{max-height:440px;max-height:min(440px,60vh);overflow-y:auto;overscroll-behavior-y:auto;scrollbar-width:thin;scrollbar-color:#c7ceca transparent}.week-scroll::-webkit-scrollbar{width:6px}.week-scroll::-webkit-scrollbar-thumb{background:#c7ceca;border-radius:4px}.week-scroll:focus-visible{outline:2px solid #a5b9af;outline-offset:2px}
+/* Horizontal week agenda: one column per day. */
+.week-scroll{display:flex;align-items:stretch;max-height:none;overflow-x:auto;overflow-y:visible;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin}
+.week-scroll .week-day,.week-scroll .week-day.is-empty{display:flex;flex-direction:column;flex:0 0 230px;min-width:0;padding:0;gap:0;border-bottom:0;border-right:1px solid var(--border);scroll-snap-align:start}
+.week-scroll .week-day:last-child{border-right:0}
+.week-scroll .week-date,.week-scroll .week-day.is-empty .week-date{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px 16px;background:#f6f7f5;border-bottom:1px solid var(--border);font-size:12px}
+.week-scroll .week-date small{font-size:14px;color:#4c5d53;font-weight:500}
+.week-scroll .week-day>div:last-child{padding:10px;min-height:155px}
+.week-scroll .home-lesson{display:flex;align-items:flex-start;flex-wrap:wrap;gap:7px;padding:12px 6px;border-bottom:1px solid var(--border-light)}
+.week-scroll .home-time{width:100%;font-size:15px}.week-scroll .home-info{flex-basis:100%}.week-scroll .home-info strong{font-size:13px}.week-scroll .home-info small{font-size:11px;line-height:1.6}.week-scroll .home-enter{margin-top:4px;font-size:11px}.week-scroll .home-empty{padding:15px 6px}
+.week-scroll::-webkit-scrollbar{height:6px;width:6px}
+.week-scroll .week-day,.week-scroll .week-day.is-empty{align-items:stretch}
+.week-scroll .week-date,.week-scroll .week-day.is-empty .week-date{width:100%;min-height:72px;flex:none;box-sizing:border-box}
+.week-scroll .week-day>div:last-child{width:100%;box-sizing:border-box}
+.week-scroll .week-day,.week-scroll .week-day.is-empty{flex:0 0 calc(100% / 7);width:calc(100% / 7)}
+.week-scroll .week-date,.week-scroll .week-day.is-empty .week-date{padding:12px 10px;gap:4px}.week-scroll .week-day>div:last-child{padding:6px}.week-scroll .home-lesson{padding:10px 4px}.week-scroll .home-info strong{overflow-wrap:anywhere}.week-scroll .home-status{display:block;margin:6px 0 0;font-size:10px}.week-actions{display:flex;gap:5px;margin-left:auto}.week-actions button{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:4px 9px;color:#617368;font:inherit;font-size:12px;cursor:pointer}.week-actions button:hover{background:#edf1ee}
+@media(max-width:900px){.week-scroll .week-day,.week-scroll .week-day.is-empty{flex-basis:calc(100% / 3);width:calc(100% / 3)}}
+@media(max-width:500px){.week-scroll .week-day,.week-scroll .week-day.is-empty{flex-basis:calc(100% / 2);width:calc(100% / 2)}.home-heading{flex-wrap:wrap}}
+.week-scroll [data-week-start="true"] .week-date{background:#edf2ee}.week-scroll [data-week-start="true"] .week-date small{color:#426452}
+.week-scroll [data-week-start="true"] .week-date{background:#dfeae3;box-shadow:inset 0 3px 0 #638573;color:#355342}.week-scroll [data-week-start="true"] .week-date small{color:#355342}
+.week-scroll [data-week-start="true"]{background:#f0f5f1}.week-scroll [data-week-start="true"] .week-date{background:#445f52;color:#f4f7f5;box-shadow:none}.week-scroll [data-week-start="true"] .week-date small{color:#fff}
+.week-scroll .week-day[data-week-start="true"] .week-date,.week-scroll .week-day.is-empty[data-week-start="true"] .week-date{background:#445f52;color:#f4f7f5;box-shadow:none}.week-scroll .week-day[data-week-start="true"] .week-date small{color:#fff}
+.home-info .home-status,.week-scroll .home-info .home-status{display:inline-block;margin:8px 0 0;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;line-height:1.5;border:1px solid transparent}.home-info .status-taught{background:#e4f1e8;color:#2f6d45;border-color:#cce2d3}.home-info .status-makeup{background:#fff0d5;color:#925b12;border-color:#eed3a3}.home-info .status-upcoming{background:#eaf0f5;color:#50657c;border-color:#d5dfe9}.home-info .status-live{background:#426453;color:#fff;border-color:#426453}
+.week-scroll{cursor:grab;touch-action:pan-x pan-y pinch-zoom;-webkit-overflow-scrolling:touch;scroll-snap-type:none}.week-scroll.is-dragging{cursor:grabbing;user-select:none}.week-scroll.is-dragging *{cursor:grabbing!important;user-select:none}.week-scroll a{cursor:pointer}
+.week-scroll{overscroll-behavior-y:auto;touch-action:pan-x pan-y pinch-zoom}
+/* Compact course agenda: time/status, title, course, action. */
+.week-scroll .week-day>div:last-child{padding:8px}
+.week-scroll .home-lesson{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:0;padding:12px 10px;margin-bottom:8px;background:#fefefd;border:1px solid #e8ece8;border-radius:6px}
+.week-scroll .home-lesson:last-child{border-bottom:1px solid #e8ece8;margin-bottom:0}
+.week-scroll .home-time{width:auto;padding-right:56px;font-size:14px;line-height:22px;font-weight:600;color:#52776b}
+.week-scroll .home-info{width:100%;flex:none;margin-top:10px}
+.week-scroll .home-info strong{font-size:13px;line-height:1.6;color:#303943;font-weight:600}
+.week-scroll .home-info small{font-size:10px;line-height:1.7;color:#919b94;margin-top:5px;overflow-wrap:anywhere}
+.week-scroll .home-info .home-status{position:absolute;top:12px;right:8px;margin:0;padding:2px 5px;font-size:9px;line-height:16px;white-space:nowrap}
+.week-scroll .home-enter{display:flex;justify-content:center;align-items:center;width:100%;margin-top:12px;padding:6px 8px;border-color:#e0e7e1;background:#f3f6f3;color:#557262;border-radius:4px;font-size:11px;line-height:18px}
+.week-scroll .home-enter:hover{background:#e7eee8;border-color:#bdcfc2;color:#355844}
+.week-scroll .week-day .week-date,.week-scroll .week-day.is-empty .week-date{align-items:center;text-align:center;justify-content:center}
+.week-scroll .week-day.is-empty>div:last-child{flex:1;display:flex;align-items:center;justify-content:center}.week-scroll .week-day.is-empty .home-empty{width:100%;text-align:center}
+.week-scroll .home-info>small:first-child{margin:0 0 5px}.week-scroll .home-info>strong{margin:0}
+.week-scroll .week-day[data-week-start="true"] .week-date,.week-scroll .week-day.is-empty[data-week-start="true"] .week-date{background:#dce8e0;color:#426452;box-shadow:inset 0 3px 0 #87a593}.week-scroll .week-day[data-week-start="true"] .week-date small{color:#426452}.week-scroll .week-day[data-week-start="true"]{background:#f5f8f5}
+.week-scroll .week-day{background:#f3f5f4}.week-scroll .week-day[data-week-start="true"]{background:#edf3ee}.week-scroll .home-lesson,.week-scroll .home-lesson:last-child{background:#fff;border:1px solid #dce3de;box-shadow:0 2px 5px rgba(35,53,42,.06);border-radius:7px;margin-bottom:10px}.week-scroll .home-lesson:last-child{margin-bottom:0}.week-scroll .home-lesson:hover{border-color:#b8cbbf;box-shadow:0 3px 9px rgba(35,53,42,.09)}
+.week-scroll .week-day{background:#fff}.week-scroll .week-day[data-week-start="true"]{background:#f5f8f5}.week-scroll .home-lesson,.week-scroll .home-lesson:last-child{background:#f3f5f4}
+
+.week-scroll .week-day{background:#fff}.week-scroll .week-date,.week-scroll .week-day.is-empty .week-date{background:#f5f5f6;color:#62676d}.week-scroll .week-date small{color:#454b52}.week-scroll .home-lesson,.week-scroll .home-lesson:last-child{background:#f5f5f6;border-color:#e0e2e5;box-shadow:0 2px 5px rgba(30,35,40,.04)}.week-scroll .home-lesson:hover{border-color:#c6cbd0;box-shadow:0 3px 8px rgba(30,35,40,.06)}.week-scroll .home-time,.home-time{color:#555f68}.week-scroll .home-info small{color:#92969b}.week-scroll .home-enter,.home-enter{background:#fafafa;color:#535d66;border-color:#dce0e4}.week-scroll .home-enter:hover,.home-enter:hover{background:#eceef0;border-color:#c7cdd2;color:#303943}.week-scroll .week-day[data-week-start="true"]{background:#f5f7f5}.week-actions button{color:#626971;border-color:#e0e2e5}.week-actions button:hover{background:#eceef0}
+.home-lesson[style],.week-scroll .home-lesson[style],.week-scroll .home-lesson[style]:last-child{border-left:3px solid hsl(var(--course-hue) 30% 55%)}
+.home-lesson[style] .home-info>small,.week-scroll .home-lesson[style] .home-info>small{color:hsl(var(--course-hue) 38% 35%)}.home-lesson[style],.week-scroll .home-lesson[style],.week-scroll .home-lesson[style]:last-child{border-left:1px solid #e0e2e5}
+.week-scroll{position:relative;isolation:isolate;overflow-anchor:none}.week-scroll .week-day,.week-scroll .week-day.is-empty{position:relative;contain:layout paint;overflow:hidden}.week-scroll .week-date{flex-shrink:0}.week-scroll .week-day>div:last-child{flex-shrink:0}
+</style></head><body><%- include('partials/sidebar') %><div class="main"><%- include('partials/header') %><div class="content">
+<section class="home-section"><div class="home-heading"><h2>今日课程</h2></div><div class="home-panel">
+<% if(!today.lessons.length){ %><div class="home-empty">今天暂无排课，可在下方查看近期课程。</div><% } %>
+<% today.lessons.forEach(l=>{ %><div class="home-lesson" style="--course-hue:<%= Math.round(Number(l.course_id)*137.508)%360 %>"><time class="home-time"><%= l.schedule_time.slice(11,16) %></time><div class="home-info"><strong><%= l.title %><% if(l.is_live){ %><span class="home-status status-live">授课中</span><% }else if(l.is_taught){ %><span class="home-status status-taught">已授课</span><% } %></strong><small><%= l.course_title %></small></div><a class="home-enter" href="/teach/live/<%= l.course_id %>?lesson=<%= l.id %>" target="_blank" rel="noopener">进入直播间</a></div><% }) %>
+</div></section>
+<section class="home-section"><div class="home-heading"><h2>近期课程</h2><div class="week-actions"><button type="button" data-week-step="-1" aria-label="上一周">‹</button><button type="button" data-week-today>今天</button><button type="button" data-week-step="1" aria-label="下一周">›</button></div></div><div class="home-panel week-scroll" tabindex="0" role="region" aria-label="近期课表，左右滑动查看">
+<% const todayIndex=days.findIndex(d=>d.date===today.date);const windowStart=Math.max(0,todayIndex-3);const windowEnd=Math.min(days.length,windowStart+7); %>
+<% days.slice(windowStart,windowEnd).forEach(day=>{ %><%- include('partials/week-day',{day,today}) %><% }) %>
+</div>
+<template id="weekBefore"><% days.slice(0,windowStart).forEach(day=>{ %><%- include('partials/week-day',{day,today}) %><% }) %></template>
+<template id="weekAfter"><% days.slice(windowEnd).forEach(day=>{ %><%- include('partials/week-day',{day,today}) %><% }) %></template>
+</section></div></div><script src="/js/teacher-navigation.js?v=20261019-nav24" defer></script></body></html>

@@ -87,35 +87,16 @@ router.use(requireTeacher);
 
 // ── Dashboard ──
 router.get('/dashboard', (req, res) => {
-  // ── 全局统计（面向管理视角） ──
-  const totalTeachers = db.get('SELECT COUNT(*) as count FROM teachers').count;
-  const totalStudents = db.get('SELECT COUNT(DISTINCT e.student_id) as count FROM enrollments e').count;
-  const totalCourses = db.get('SELECT COUNT(*) as count FROM courses').count;
-  const totalLessons = db.get('SELECT COUNT(*) as count FROM lessons').count;
-  const openQaCount = db.get("SELECT COUNT(*) as count FROM qa_questions WHERE status='open'").count;
-  const totalAssistants = db.get("SELECT COUNT(*) as count FROM assistants WHERE status='active'").count;
-  const pendingLogistics = db.get("SELECT COUNT(*) as count FROM logistics WHERE status='pending'").count;
-  const deliveredLogistics = db.get("SELECT COUNT(*) as count FROM logistics WHERE status='delivered'").count;
-  const totalEnrollments = db.get('SELECT COUNT(*) as count FROM enrollments').count;
-
-  const recentCourses = db.query(`SELECT c.*, t.real_name as teacher_name\n    FROM courses c LEFT JOIN teachers t ON c.teacher_id=t.id\n    ORDER BY c.created_at DESC LIMIT 5`);
-  const recentPackages = db.query(`SELECT p.*,\n    (SELECT COUNT(*) FROM course_packages cp WHERE cp.parent_id=p.id) as child_count,\n    (SELECT COUNT(*) FROM course_package_courses pc WHERE pc.package_id=p.id) as course_count,\n    (SELECT title FROM course_packages pp WHERE pp.id=p.parent_id) as parent_title\n    FROM course_packages p ORDER BY p.created_at DESC LIMIT 5`);
-
-  res.render('teacher/dashboard', {
-    title: '承泽教育 - 管理后台',
-    teacherName: req.session.teacherName,
-    totalTeachers,
-    totalStudents,
-    totalCourses,
-    totalLessons,
-    totalAssistants,
-    totalEnrollments,
-    openQaCount,
-    pendingLogistics,
-    deliveredLogistics,
-    recentCourses,
-    recentPackages
+  if (!req.adminAccount || req.adminAccount.role !== 'ceo') return res.status(403).send('控制台仅限超级账号访问');
+  res.set('Cache-Control','private, no-store');
+  res.render('teacher/dashboard', { title:'管理后台', teacherName:req.session.teacherName, dashboard:require('../lib/business-dashboard')(db,req.query.days) });
 });
+
+// Same server-side role check applies to every partial refresh request.
+router.get('/dashboard/data', (req, res) => {
+  if (!req.adminAccount || req.adminAccount.role !== 'ceo') return res.status(403).send('控制台仅限超级账号访问');
+  res.set('Cache-Control','private, no-store');
+  res.render('teacher/partials/business-overview', { dashboard:require('../lib/business-dashboard')(db,req.query.days) });
 });
 
 // ── 排课总览 ──

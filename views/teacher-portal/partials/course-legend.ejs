@@ -1,0 +1,4 @@
+<% const courseLegendItems=Array.from(new Map(legendCourses.filter(c=>c.id).map(c=>[c.id,c])).values()); %>
+<% if(courseLegendItems.length){ %><div class="course-color-legend" aria-label="课程颜色图例" style="display:flex;flex-wrap:wrap;gap:10px 20px;margin:0 0 16px">
+<% courseLegendItems.forEach(c=>{const hue=Math.round(Number(c.id)*137.508)%360; %><span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;line-height:1.6;color:hsl(<%= hue %> 38% 35%)"><span aria-hidden="true" style="display:inline-block;width:16px;height:3px;border-radius:2px;background:currentColor"></span><%= c.title %></span><% }) %>
+</div><% } %>

@@ -71,7 +71,7 @@ const recordingUpload = multer({ dest: os.tmpdir(), limits: { fileSize: 100 * 10
 router.post('/teacher/save-recording', (req,res,next)=>{
   const person=req.session && req.session.teacherId && db.get('SELECT id,status FROM teachers WHERE id=?',[req.session.teacherId]);
   const access=require('../lib/admin-access'), account=access.sessionAccount(db,req.session);
-  if(!person||person.status==='disabled'||!account||!access.can(account,'live',true))return res.status(401).json({ok:false,error:'请先登录授课后台'});
+  if(!person||person.status==='disabled'||!account||!access.can(account,'live',true))return res.status(401).json({ok:false,error:'请先登录教师端'});
   next();
 }, recordingUpload.single('recording'), async (req,res,next)=>{
   if(!req.file)return res.status(400).json({ok:false,error:'请选择 MP4 或 WebM 视频'});

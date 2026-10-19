@@ -29,7 +29,7 @@
     .wrap { max-width:none; width:100%; margin:0; padding:6px 12px; display:flex; gap:12px; height:calc(100vh - 64px); align-items:stretch; }
     .main-col { flex:1; min-width:0; min-height:0; display:flex; flex-direction:column; overflow:hidden; position:relative; background:#2B2F36; border:0; border-radius:0; }
     .stage-main { flex:1; min-height:0; padding:0; display:flex; align-items:center; justify-content:center; }
-    .stage { position:relative; width:100%; height:100%; flex:none; background:#000; border:0; border-radius:10px; overflow:hidden; box-shadow:none; }
+    .stage { position:relative; width:100%; height:100%; flex:none; background:#fff; border:0; border-radius:10px; overflow:hidden; box-shadow:none; }
     /* The whole workspace supplies explicit dimensions for Safari. */
     .stage::before { display:none; }
     .pen-toolbar { position:absolute; left:8px; top:50%; transform:translateY(-50%); width:40px; height:calc(100% - 24px); max-height:500px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:8px 3px; background:rgba(15,23,42,.5); border:1px solid rgba(255,255,255,.08); border-radius:12px; box-shadow:0 8px 22px rgba(0,0,0,.25); z-index:10; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); opacity:.85; transition:opacity .2s ease, background .2s ease; pointer-events:none; }
@@ -60,7 +60,7 @@
     .pen-color { width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,.28); cursor:pointer; transition:transform .15s ease; }
     .pen-color:hover { transform:scale(1.15); }
     .pen-color.active { border-color:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.35); }
-    #localPreview { position:absolute; left:0; top:0; width:100%; height:100%; }
+    #localPreview { position:absolute; left:0; top:0; width:100%; height:100%; background:#fff; }
     #localPreview video { width:100%; height:100%; object-fit:contain; transform:none !important; -webkit-transform:none !important; }
     .right-col { width:200px; flex:0 0 200px; min-height:0; display:flex; flex-direction:column; gap:10px; }
     .camera-box { flex:0 0 auto; position:relative; background:#0a0f1a; border:1px solid rgba(255,255,255,.12); border-radius:10px; overflow:hidden; }
@@ -139,16 +139,14 @@
     .cam-video-wrap,.camera-box video,.camera-box .cam-placeholder { height:112.5px; }
     .msgbar { position:absolute; height:24px; border-top:0; padding:0; background:transparent; }
     #localPreview canvas { object-fit:contain!important; }
-  </style>
+  .chat-col{background:#30353b;border-color:#42484e}.chat-tabs{background:#2d3238;border-bottom-color:#42484e}.chat-tab{color:#929ca4}.chat-tab:hover{color:#dbe2df}.chat-tab.active{color:#dce7e1;background:#343d3a;border-bottom-color:#8fac9b}.chat-msg .who{color:#b0c7bb}.chat-msg .time{color:#7f8a91}.chat-msg .txt{color:#dce1e4}.chat-input-row{border-top-color:#42484e;background:#2e3339}.chat-input-row input{background:#393f45;border-color:#505960;color:#e3e9e6;border-radius:6px}.chat-input-row input::placeholder{color:#8d989f}.chat-input-row input:focus{border-color:#87a593}.chat-input-row button{background:#577563;color:#f1f5f2;border:1px solid #65836f;border-radius:6px}.chat-input-row button:hover{background:#65836f}.online-avatar{background:#445650;color:#dce6e2}
+.chat-tab.active{color:#f0f1f2;background:#3a3e43;border-bottom-color:#a1a6ad}.chat-tab:hover{color:#e1e3e6}.chat-msg .who{color:#c3c7cd}.chat-msg .txt{color:#dce0e5}.chat-input-row input{color:#e5e7eb}.chat-input-row input:focus{border-color:#9ba2ab}.chat-input-row button{background:#555c65;border-color:#68717b;color:#f4f5f6}.chat-input-row button:hover{background:#626b76}.online-avatar{background:#4a5058;color:#dce0e5}
+</style>
 <link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head>
 <body>
   <div class="topbar">
     <div class="topbar-left" style="display:flex;align-items:center;gap:10px">
-      <span class="brand" style="display:inline-flex;align-items:center;gap:10px;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:22px;font-weight:400;line-height:1;letter-spacing:.5px;white-space:nowrap;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale">
-      <svg width="28" height="28" viewBox="0 0 340 300" role="img" aria-label="承泽在线"><g transform="translate(-4.112999999999998,0) scale(1.15,1)" fill="#16423C"><g transform="translate(-23.04501671122989,-27.417098512700477) scale(1.1768883689839569) rotate(-90,130.28,150.751)" fill="#16423C"><g transform="translate(58.472,63.352) scale(.528,.4416)"><path d="M0 159.4036001950587 V136 A136 141.39886578449904 0 0 1 272 136 V215.06373702550277 L211.9054092171854 170.76277997795341 V136 A75.9054092171854 78.91866742807555 0 0 0 60.094590782814606 136 V200.55471855344743 Z" />
-<path d="M0 173.3 L211.9054092171854 348.26776907840997 V187.58258597083147 L272 241 V419.2871559633028 Q272 427.2871559633028 266 422.3330275229358 L60.094590782814606 252.3193868848928 V429 Q60.094590782814606 435 54.094590782814606 435 H6 Q0 435 0 429 Z" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" />
-<path d="M60.094590782814606 222.91938688489282 L211.9054092171854 348.26776907840997 L211.9054092171854 377.66776907840995 L60.094590782814606 252.3193868848928 Z" fill="#C8A96A" transform="translate(0,35.07155753926529) scale(1,0.8293354864269329)" /></g></g></g></svg>承泽在线<span class="brand-tag">直播授课端</span>
-    </span>
+      <span class="brand"><img src="/public/images/brand-green/app-rounded.svg?v=20261019-backend-icon1" alt="承泽在线" width="36" height="36" style="width:36px;height:36px;border-radius:8px;display:block"></span>
       <span class="course"><%= course.title %></span>
     <select id="lessonSelect" class="lesson-select" title="选择本次课次">
       <option value="">选择本次课次</option>
@@ -339,7 +337,7 @@
       if (lid) {
         if (sel) sel.value = lid;
       } else if (sel && sel.options.length > 0) {
-        sel.selectedIndex = 0;
+        sel.selectedIndex = sel.options.length > 1 ? 1 : 0;
       }
     })();
 
@@ -400,10 +398,12 @@
     var CW = 1920, CH = 1080;
     var canvas = document.createElement('canvas'); canvas.width = CW; canvas.height = CH;
     var ctx = canvas.getContext('2d');
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,CW,CH);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
     var publishCanvas = document.createElement('canvas'); publishCanvas.width = 1280; publishCanvas.height = 720;
     var publishCtx = publishCanvas.getContext('2d');
+    publishCtx.fillStyle='#fff';publishCtx.fillRect(0,0,publishCanvas.width,publishCanvas.height);
     publishCtx.lineCap = 'round'; publishCtx.lineJoin = 'round';
     publishCtx.imageSmoothingEnabled = true; publishCtx.imageSmoothingQuality = 'high';
     var mode = 'none';
@@ -1344,7 +1344,7 @@
     function initCanvasPreview() {
       var previewBox = document.getElementById('localPreview');
       previewBox.innerHTML = '';
-      canvas.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;background:#000;';
+      canvas.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;background:#fff;';
       previewBox.appendChild(canvas);
     }
 
@@ -1846,6 +1846,7 @@
       if (el) el.textContent = '';
     }
     async function start() {
+      if(!stateLoaded){setMsg('请等待当前课次板书加载完成后再开课','err');return;}
       var lessonSel = document.getElementById('lessonSelect');
       if (lessonSel && !lessonSel.value) {
         setMsg('请先选择本次课次', 'err');
@@ -2234,10 +2235,33 @@
     newWhiteboardPage();
     var stateLoaded = false;
     var stateSaveTimer = null;
+    var activeLessonId = document.getElementById('lessonSelect').value;
+    var pendingStudioState = null;
+    var stateWriteChain = Promise.resolve();
+    function studioStateURL(){return '/admin/live/studio/'+COURSE_ID+'/state?lesson='+encodeURIComponent(activeLessonId);}
+    function flushStudioState(){
+      if(stateSaveTimer){clearTimeout(stateSaveTimer);stateSaveTimer=null;}
+      if(!pendingStudioState)return stateWriteChain;
+      var payload=pendingStudioState,url=studioStateURL();pendingStudioState=null;
+      stateWriteChain=stateWriteChain.catch(function(){}).then(async function(){
+        var response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        if(!response.ok){pendingStudioState=pendingStudioState||payload;throw new Error('课次存档保存失败');}
+      });
+      stateWriteChain.catch(function(){setMsg('板书未保存，请检查网络后重试','err');});
+      return stateWriteChain;
+    }
+    document.getElementById('lessonSelect').addEventListener('change',async function(){
+      var selected=this.value;if(selected===activeLessonId)return;
+      if(publishing||!stateLoaded||!selected){this.value=activeLessonId;setMsg(publishing?'请先结束本次直播再切换课次':'课次尚未加载完成','err');return;}
+      this.disabled=true;
+      try{saveStudioState();await flushStudioState();var url=new URL(location.href);url.searchParams.set('lesson',selected);location.assign(url.href);}
+      catch(error){this.value=activeLessonId;this.disabled=false;setMsg('保存未成功，已保留当前课次，请重试','err');}
+    });
     function saveStudioState() {
       if (!stateLoaded) return;
       try {
         var state = {
+          lessonId: Number(activeLessonId),
           mode: mode,
           docIndex: docIndex,
           wbPageIndex: wbPageIndex,
@@ -2256,13 +2280,8 @@
           })
         };
         if (stateSaveTimer) clearTimeout(stateSaveTimer);
-        stateSaveTimer = setTimeout(function() {
-          fetch('/admin/live/studio/' + COURSE_ID + '/state', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(state)
-          }).catch(function(){});
-        }, 800);
+        pendingStudioState=state;
+        stateSaveTimer=setTimeout(function(){flushStudioState().catch(function(){});},800);
       } catch(e) {}
     }
     function canvasFromDataURL(url) {
@@ -2383,10 +2402,10 @@
     initCanvasPreview();
     setMode('whiteboard');
     (function loadStudioState() {
-      fetch('/admin/live/studio/' + COURSE_ID + '/state')
-        .then(function(r) { return r.json(); })
-        .then(function(saved) { restoreStudioState(saved); })
-        .catch(function() { stateLoaded = true; setMode('whiteboard'); });
+      fetch(studioStateURL(),{cache:'no-store'})
+        .then(function(r) { if(!r.ok)throw new Error('读取失败');return r.json(); })
+        .then(function(saved) { return restoreStudioState(saved); })
+        .catch(function() { stateLoaded=false;setMsg('当前课次存档加载失败，请刷新重试，暂不保存以保护原板书','err'); });
     })();
     setupPen();
     var capChecks = [];

@@ -8,9 +8,9 @@ const staticFiles = require('../middleware/static-files');
 
 test('serves browser assets without exposing server files or datasets', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'chengze-static-'));
-  const publicFiles = ['index.html', 'css/style.css', 'js/main.js', 'public/images/logo.svg',
+  const publicFiles = ['css/style.css', 'js/main.js', 'public/images/logo.svg',
     'favicon-16-v18.png', 'data/exam.pdf'];
-  const privateFiles = ['server.js', 'package.json', 'db/chengze.db', 'backups/export.zip',
+  const privateFiles = ['index.html', 'public/site/index.html', 'site/about.html', 'server.js', 'package.json', 'db/chengze.db', 'backups/export.zip',
     'routes/auth.js', 'views/student/index.ejs', 'data/questions.json', '.env'];
   for (const file of [...publicFiles, ...privateFiles]) {
     fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });

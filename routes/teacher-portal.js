@@ -21,51 +21,94 @@ function genUserSig(appId, secretKey, userId, expire) {
   return deflated.replace(/\+/g, '*').replace(/\//g, '-').replace(/=/g, '_');
 }
 
-// ── 授课后台登录 ──
+// ── 教师端登录 ──
 router.get('/login', (req, res) => {
   if (req.session && req.session.teacherPortalId) return res.redirect('/teach');
-  res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: null });
+  res.render('teacher-portal/login', { title: '教师端 · 承泽在线', error: null });
 });
 
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: '请输入用户名和密码' });
+    return res.render('teacher-portal/login', { title: '教师端 · 承泽在线', error: '请输入用户名和密码' });
   }
   const teacher = db.get('SELECT * FROM teachers WHERE username = ? OR phone = ?', [username, username]);
   if (!teacher) {
-    return res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: '用户名或密码错误' });
+    return res.render('teacher-portal/login', { title: '教师端 · 承泽在线', error: '用户名或密码错误' });
   }
   if (teacher.status === 'disabled') {
-    return res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: '该教师账号已停用，请联系管理员' });
+    return res.render('teacher-portal/login', { title: '教师端 · 承泽在线', error: '该教师账号已停用，请联系管理员' });
   }
   const valid = bcrypt.compareSync(password, teacher.password_hash || '');
   if (!valid) {
-    return res.render('teacher-portal/login', { title: '授课后台 · 承泽在线', error: '用户名或密码错误' });
+    return res.render('teacher-portal/login', { title: '教师端 · 承泽在线', error: '用户名或密码错误' });
   }
   const access=require('../lib/admin-access'), configured=access.load(db,teacher.id);
   if (configured && (configured.status!=='active' || !access.canTeach(configured))) return res.status(403).send('该账号没有授课权限');
   req.session.portalAdminVersion = configured ? configured.session_version : null;
+  delete req.session.teacherPortalView;
   req.session.teacherPortalId = teacher.id;
   req.session.portalTeacherName = teacher.real_name || teacher.display_name;
   res.redirect('/teach');
 });
 
 router.get('/logout', (req, res) => {
+  delete req.session.teacherPortalView;
   delete req.session.teacherPortalId;
   delete req.session.portalTeacherName;
   res.redirect('/teach/login');
 });
 
+// Restore the last teacher view directly on a full refresh of the unified URL.
+router.use((req,res,next)=>{
+ res.locals.cache=true;
+ if(req.method!=='GET'||!req.session?.teacherPortalId)return next();
+ const allowed=value=>typeof value==='string'&&/^\/(?:courses|calendar|profile)?(?:\?[^#\r\n]*)?$/.test(value);
+ if(req.path==='/'&&req.get('X-Teacher-Navigation')!=='1'&&allowed(req.session.teacherPortalView))req.url=req.session.teacherPortalView;
+ if(allowed(req.url)){req.session.teacherPortalView=req.url;res.locals.path='/teach'+(req.path==='/'?'':req.path);res.locals.teacherRenderedView='/teach'+(req.url==='/'?'':req.url);}
+ next();
+});
+
+function lessonActivity(teacherId){
+ const rows=db.query(`SELECT s.course_id,s.lesson_id,
+ MAX(CASE WHEN s.status='live' THEN 1 ELSE 0 END) AS is_live,
+ MAX(CASE WHEN s.status='ended' AND s.ended_at IS NOT NULL THEN 1 ELSE 0 END) AS is_taught,
+ MAX(CASE WHEN s.status='ended' AND s.started_at IS NOT NULL AND s.ended_at IS NOT NULL THEN 1 ELSE 0 END) AS has_taught_session
+ FROM live_sessions s JOIN courses c ON c.id=s.course_id WHERE c.teacher_id=? AND s.lesson_id IS NOT NULL GROUP BY s.course_id,s.lesson_id`,[teacherId]);
+ return new Map(rows.map(row=>[row.course_id+':'+row.lesson_id,row]));
+}
+// Teacher home: Beijing calendar days, only this teacher's assigned lessons.
+router.get('/', requirePortal, (req,res)=>{
+ const teacher=db.get('SELECT * FROM teachers WHERE id=?',[req.session.teacherPortalId]);
+ if(!teacher)return res.redirect('/teach/login');
+ const start=new Date(Date.now()+8*3600000);start.setUTCHours(0,0,0,0);
+ const todayDate=start.toISOString().slice(0,10);
+ const weekOffset=(start.getUTCDay()+6)%7;start.setUTCDate(start.getUTCDate()-weekOffset-14);
+ const bounds=db.get(`SELECT MIN(substr(l.schedule_time,1,10)) AS first_day,MAX(substr(l.schedule_time,1,10)) AS last_day FROM lessons l JOIN courses c ON c.id=l.course_id WHERE c.teacher_id=? AND l.schedule_time IS NOT NULL AND l.schedule_time<>'' AND date(substr(l.schedule_time,1,10)) IS NOT NULL`,[teacher.id]);
+ const defaultEnd=start.getTime()+42*86400000;
+ const first=bounds?.first_day?Date.parse(bounds.first_day+'T00:00:00Z'):NaN;
+ const last=bounds?.last_day?Date.parse(bounds.last_day+'T00:00:00Z')+86400000:NaN;
+ if(Number.isFinite(first)&&first<start.getTime())start.setTime(first);
+ const rangeEnd=Number.isFinite(last)?Math.max(defaultEnd,last):defaultEnd;
+ const days=Array.from({length:Math.ceil((rangeEnd-start.getTime())/86400000)},(_,i)=>{const d=new Date(start.getTime()+i*86400000);return {date:d.toISOString().slice(0,10),weekday:['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][d.getUTCDay()],lessons:[]};});
+ const end=new Date(rangeEnd).toISOString().slice(0,10);
+ const lessons=db.query(`SELECT l.id,l.title,l.course_id,l.schedule_time,c.title AS course_title
+ FROM lessons l JOIN courses c ON c.id=l.course_id WHERE c.teacher_id=? AND substr(l.schedule_time,1,10)>=? AND substr(l.schedule_time,1,10)<? ORDER BY l.schedule_time,l.id`,[teacher.id,days[0].date,end]);
+ const activity=lessonActivity(teacher.id),byDate=new Map(days.map(d=>[d.date,d]));
+ for(const lesson of lessons){Object.assign(lesson,activity.get(lesson.course_id+':'+lesson.id)||{});const day=byDate.get(lesson.schedule_time.slice(0,10));if(day)day.lessons.push(lesson);}
+ res.render('teacher-portal/home',{teacherName:teacher.real_name||teacher.display_name,days,today:days.find(d=>d.date===todayDate),weekCount:lessons.length});
+});
+
 // ── 教师课表 ──
-router.get('/', requirePortal, (req, res) => {
+router.get('/courses', requirePortal, (req, res) => {
   const teacher = db.get('SELECT * FROM teachers WHERE id=?', [req.session.teacherPortalId]);
   if (!teacher) return res.redirect('/teach/login');
   const courses = db.query('SELECT c.*, (SELECT COUNT(*) FROM lessons WHERE course_id=c.id) as lesson_count FROM courses c WHERE c.teacher_id=? ORDER BY c.created_at DESC', [teacher.id]);
-  const rows = courses.map(c => ({
-    course: c,
-    lessons: db.query('SELECT * FROM lessons WHERE course_id=? ORDER BY order_index ASC', [c.id])
-  }));
+  const activity=lessonActivity(teacher.id);
+  const allLessons=db.query('SELECT l.* FROM lessons l JOIN courses c ON c.id=l.course_id WHERE c.teacher_id=? ORDER BY l.order_index ASC',[teacher.id]);
+  const lessonsByCourse=new Map();
+  for(const lesson of allLessons){const status=activity.get(lesson.course_id+':'+lesson.id)||{};Object.assign(lesson,{has_live_session:status.is_live||0,has_taught_session:status.has_taught_session||0});if(!lessonsByCourse.has(lesson.course_id))lessonsByCourse.set(lesson.course_id,[]);lessonsByCourse.get(lesson.course_id).push(lesson);}
+  const rows=courses.map(course=>({course,lessons:lessonsByCourse.get(course.id)||[]}));
   const groupMap = {};
   rows.forEach(function(r) {
     var prov = r.course.province || '未分组';
@@ -73,21 +116,26 @@ router.get('/', requirePortal, (req, res) => {
     groupMap[prov].courses.push(r);
   });
   const groups = Object.values(groupMap);
+  const courseSections=[{title:'本学期课程',groups:[]},{title:'往期课程',groups:[]}];
+  for(const group of groups){for(let i=0;i<2;i++){const subset=group.courses.filter(row=>{const archived=['archived','disabled'].includes(row.course.status);return i===0?!archived:archived;});if(subset.length)courseSections[i].groups.push({...group,courses:subset});}}
   const courseCount = courses.length;
   const lessonCount = rows.reduce((sum, r) => sum + r.lessons.length, 0);
   let studentCount = 0;
   try { studentCount = db.get('SELECT COUNT(DISTINCT e.student_id) as c FROM enrollments e JOIN courses c2 ON e.course_id=c2.id WHERE c2.teacher_id=?', [teacher.id]).c || 0; } catch(e) {}
   res.render('teacher-portal/dashboard', {
-    title: '授课后台 · 承泽在线',
+    title: '教师端 · 承泽在线',
     teacherName: teacher.real_name || teacher.display_name,
     teacher: teacher,
     rows,
     groups,
+    courseSections,
     courseCount,
     lessonCount,
     studentCount
   });
 });
+
+router.post('/lessons/:lessonId/content',requirePortal,require('../lib/lesson-topic')(db));
 
 // ── 课程日历 ──
 router.get('/calendar', requirePortal, (req, res) => {
@@ -177,7 +225,7 @@ router.get('/profile', requirePortal, (req, res) => {
   try { studentCount = db.get('SELECT COUNT(DISTINCT e.student_id) as c FROM enrollments e JOIN courses c2 ON e.course_id=c2.id WHERE c2.teacher_id=?', [teacherId]).c || 0; } catch(e) {}
   const historyCourses = db.query('SELECT id, title, category FROM courses WHERE teacher_id=? ORDER BY created_at DESC', [teacherId]);
   res.render('teacher-portal/profile', {
-    title: '个人信息 · 授课后台',
+    title: '个人信息 · 教师端',
     teacherName: teacher.real_name || teacher.display_name,
     teacher: teacher,
     courseCount: courseCount,
