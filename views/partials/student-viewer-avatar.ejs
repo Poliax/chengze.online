@@ -1,0 +1,5 @@
+<% if (typeof viewerStudent !== 'undefined' && viewerStudent) { %>
+<span class="student-viewer-avatar" title="我的头像">
+  <% if (viewerStudent.avatar) { %><img src="<%= viewerStudent.avatar %>" alt="学员头像" width="32" height="32"><% } else { %><span role="img" aria-label="学员头像"><%= (viewerStudent.nickname || viewerStudent.name || '学').charAt(0) %></span><% } %>
+</span>
+<% } %>

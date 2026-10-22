@@ -1,0 +1,24 @@
+/* Shared by the teacher studio and course replay. */
+.classroom-ui {
+  --classroom-font:'Noto Serif SC','宋体','SimSun','Songti SC',Georgia,'Times New Roman',serif;
+  font-family:var(--classroom-font);
+  font-size:15px;
+  color:#fff;
+  background:#2B2F36;
+}
+.classroom-ui :is(button,input,select,textarea) { font-family:var(--classroom-font); }
+.classroom-ui :is(.course,.playback-course-title) { font-size:14px; font-weight:500; line-height:1.5; color:rgba(255,255,255,.72); }
+.classroom-ui :is(.chat-tab,.chat-hd) { font-size:12px; font-weight:600; line-height:1.5; }
+.classroom-ui :is(.chat-tab.active,.chat-hd) { color:#f0f1f2; background:#3a3e43; border-bottom:2px solid #a1a6ad; }
+.classroom-ui .chat-col { background:#30353b; border:1px solid #42484e; border-radius:10px; box-shadow:none; }
+.classroom-ui .chat-msgs { padding:10px; }
+.classroom-ui .chat-msg { margin-bottom:9px; font-size:11px; line-height:1.55; }
+.classroom-ui .chat-msg .head { display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
+.classroom-ui .chat-msg .who { font-size:11px; font-weight:600; color:#c3c7cd; }
+.classroom-ui .chat-msg .time { min-width:0; font-size:9px; font-weight:400; color:#7f8a91; }
+.classroom-ui .chat-msg .txt { display:block; font-size:11px; font-weight:400; line-height:1.5; color:#dce0e5; word-break:break-word; }
+.classroom-ui :is(.classroom-placeholder,.cam-placeholder,.empty) { display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:400; line-height:1.5; letter-spacing:1px; color:rgba(255,255,255,.42); }
+.classroom-ui :is(.cam-ctrl,.ctrl-btn) { width:30px; height:30px; flex:none; border:1px solid rgba(255,255,255,.15); border-radius:8px; background:rgba(255,255,255,.06); color:#cbd5e1; font-size:12px; line-height:1; box-shadow:none; }
+.classroom-ui :is(.cam-ctrl,.ctrl-btn):hover { background:rgba(255,255,255,.14); color:#fff; transform:none; box-shadow:none; }
+.classroom-ui .ctrl-btn.wide { width:auto; min-width:44px; }
+.classroom-ui :is(button,input,select):focus-visible { outline:2px solid #a1a6ad; outline-offset:2px; }

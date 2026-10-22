@@ -222,7 +222,7 @@ router.post('/teachers-manage/new', requireTeacher, uploadAvatar, (req, res) => 
   const formData = {
     username: username,
     teacher_no: (req.body.teacher_no || '').trim() || nextTeacherNo(),
-    display_name: (req.body.username || '').trim() || '教师',
+    display_name: (req.body.display_name || '').trim() || (req.body.real_name || '').trim() || username,
     real_name: (req.body.real_name || '').trim(),
     phone: (req.body.phone || '').trim(),
     subject: req.body.subject || '',
@@ -294,7 +294,7 @@ router.post('/teachers-manage/:id', requireTeacher, uploadAvatar, (req, res) => 
   const formData = {
     username: (req.body.username || '').trim() || staff.username,
     teacher_no: (req.body.teacher_no || '').trim() || staff.teacher_no,
-    display_name: (req.body.username || '').trim() || staff.display_name,
+    display_name: (req.body.display_name || '').trim() || staff.display_name,
     real_name: (req.body.real_name || '').trim(),
     phone: (req.body.phone || '').trim(),
     subject: req.body.subject || '',
@@ -309,7 +309,7 @@ router.post('/teachers-manage/:id', requireTeacher, uploadAvatar, (req, res) => 
   const { password } = req.body;
   const unameExist = db.get('SELECT id FROM teachers WHERE username=? AND id<>?', [formData.username, req.params.id]);
   if (!formData.username || unameExist) {
-    return res.render('teacher/staff-form', { title: '编辑教师 · 管理后台', teacherName: req.session.teacherName, staff, formData, subjects: TEACHER_SUBJECTS, error: unameExist ? '教师昵称已存在' : '教师昵称不能为空' });
+    return res.render('teacher/staff-form', { title: '编辑教师 · 管理后台', teacherName: req.session.teacherName, staff, formData, subjects: TEACHER_SUBJECTS, error: unameExist ? '登录账号已存在' : '登录账号不能为空' });
   }
   if (password) {
     if (String(password).length < 6) {

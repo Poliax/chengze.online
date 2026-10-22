@@ -10,4 +10,43 @@ body :where(h1,h2,h3,h4,h5,h6,p,a,button,input,select,option,textarea,label,tabl
 }
 /* Code samples and mathematical typesetting retain their specialized fonts. */
 
-.sidebar-logo:has(.backend-app-icon){justify-content:center}.backend-app-icon{object-fit:contain;border-radius:9px;flex-shrink:0}
+.sidebar-logo:has(.backend-app-icon){justify-content:flex-start}.backend-app-icon{object-fit:contain;border-radius:9px;flex-shrink:0}
+
+/* One core shell for management and teacher portals. */
+:root{--backend-sidebar-width:180px;--backend-header-height:64px}
+body>:is(.teacher-sidebar,.sidebar){width:var(--backend-sidebar-width);min-width:var(--backend-sidebar-width);flex:0 0 var(--backend-sidebar-width);background:#2b2f36}
+body>:is(.teacher-sidebar,.sidebar) .sidebar-logo{height:var(--backend-header-height);min-height:var(--backend-header-height);flex-shrink:0;padding:0 12px 0 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+body>:is(.teacher-sidebar,.sidebar) .sidebar-nav{padding:8px 12px;overflow-x:hidden}
+body>:is(.teacher-sidebar,.sidebar) .sidebar-footer{padding:10px 12px;border-top:0;flex-shrink:0}
+:is(.teacher-main,.main)>:is(.teacher-topbar,.teacher-light-header){height:var(--backend-header-height);min-height:var(--backend-header-height);padding:0 24px;background:#fefefd;border-bottom:1px solid #e6e8ec;position:sticky;top:0;z-index:80}
+:is(.teacher-main,.main)>:is(.teacher-topbar,.teacher-light-header) :is(#adminHeaderDate,.teacher-header-label){font-size:14px;font-weight:500;color:#526174}
+body :is(.admin-account-menu summary,.teacher-account-trigger){display:flex;align-items:center;gap:9px;width:100%;padding:7px 4px;border:0;border-radius:8px;background:transparent;color:#e4e8ed;font:inherit;text-align:left;cursor:pointer}
+body :is(.admin-account-avatar,.teacher-sidebar-avatar){display:grid;place-items:center;width:27px;height:27px;flex:none;border-radius:50%;font-size:11px;font-weight:500;color:#dce6e2;background:#445650}
+body :is(.admin-account-name,.teacher-account-name){font-size:12px;font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body :is(.admin-account-menu summary:hover,.admin-account-menu[open] summary,.teacher-account-trigger:hover,.teacher-account-trigger[aria-expanded="true"]){background:rgba(255,255,255,.03)}
+@media(max-width:768px){.main>.teacher-light-header{padding-left:56px;padding-right:12px}.teacher-main>.teacher-topbar{padding-left:16px;padding-right:12px}}
+
+/* Compact account popovers blend into both dark sidebars. */
+body :is(.admin-account-popover,.teacher-account-popover){left:0;right:auto;bottom:calc(100% + 6px);width:140px;max-width:100%;padding:4px;border:1px solid #484e56;border-radius:7px;background:#353a41;box-shadow:0 4px 12px rgba(0,0,0,.16)}
+body :is(.admin-account-popover,.teacher-account-popover) a{padding:7px 8px;gap:8px;border-radius:4px;color:#dce0e5;font-size:12px;line-height:1.5}
+body :is(.admin-account-popover,.teacher-account-popover) a:hover{background:#434950;color:#fff}
+body :is(.admin-account-popover,.teacher-account-popover) a svg{width:15px;height:15px;flex:none}
+body :is(.admin-account-popover,.teacher-account-popover) a:focus-visible{outline:1px solid #9aa6af;outline-offset:-1px}
+
+/* Account menu resets are shared rather than dependent on individual page CSS. */
+body .admin-account-menu{position:relative}
+body .admin-account-menu summary{list-style:none}
+body .admin-account-menu summary::-webkit-details-marker{display:none}
+body .admin-account-menu summary::marker{content:''}
+
+/* Management uses the same mobile drawer interaction as the teacher portal. */
+.admin-mobile-menu,.admin-nav-overlay{display:none}
+@media(max-width:768px){
+ .teacher-topbar .admin-mobile-menu{display:grid;place-items:center;flex:none;width:32px;height:32px;padding:0;border:1px solid #DDE4EB;border-radius:6px;background:#fff;color:#56697E;cursor:pointer}
+ .teacher-topbar .admin-mobile-menu svg{display:block;flex:none}
+ .teacher-main>.admin-nav-overlay:not([hidden]){display:block;position:fixed;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:0;z-index:99;background:rgba(16,28,40,.22);cursor:pointer;-webkit-tap-highlight-color:transparent}
+ /* One drawer motion for both portals: closed left, then slide in/out. */
+ body>:is(.teacher-sidebar,.sidebar){position:fixed;top:0;left:0;bottom:0;height:100vh;height:100dvh;max-width:calc(100vw - 48px);transform:translateX(-100%);transition:transform .3s ease}
+ body>:is(.teacher-sidebar,.sidebar).open{transform:translateX(0)}
+ html.admin-drawer-open,body.admin-drawer-open{overflow:hidden}
+}

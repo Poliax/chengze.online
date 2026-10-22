@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title><%= title %></title>
 
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
+<%- include('partials/core-styles') %>
 <style>
   .prov-back { font-size:12px; color:#64748b; text-decoration:none; }
   .prov-back:hover { color:#2563eb; }
@@ -57,7 +56,7 @@
   #examScheduleRows .sch-row .es-date { width:120px; flex:0 0 120px; }
   .hint { font-size:11px; color:#94a3b8; margin-top:3px; }
 </style>
-<link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head>
+<%- include('../partials/brand-icons') %></head>
 <body class="teacher-body">
 <%- include('partials/sidebar') %>
 <div class="teacher-main">

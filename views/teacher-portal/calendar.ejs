@@ -7,7 +7,7 @@
 .content{padding:20px 24px;height:auto;min-height:calc(100vh - 64px);overflow:visible}
 .cal-toolbar{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin-bottom:18px;flex-wrap:wrap}.cal-toolbar h2{font-size:18px;font-weight:600;color:#263447;margin-right:auto}.cal-toolbar select{height:32px;padding:0 28px 0 10px;border:1px solid #DDE3EA;border-radius:6px;font-size:12px;font-family:inherit;background:#fff;color:#59697B}.view-toggle{display:flex;background:#E8EDF2;border-radius:6px;padding:3px}.view-toggle a{padding:4px 12px;font-size:11px;text-decoration:none;color:#7A8796;border-radius:4px}.view-toggle a.active{background:#fff;color:#3E5773;box-shadow:0 1px 3px #22364a0d}
 .cal-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:16px;align-items:start}.cal-main{min-width:0}.month-wrap{background:#fff;border:1px solid #E0E6EC;border-radius:10px;overflow:hidden}.month-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid #E8EDF2}.month-hd h3{font-size:16px;font-weight:600;color:#2C3C50;letter-spacing:.2px}.month-nav{display:flex;align-items:center;gap:6px}.month-nav a{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 9px;border:1px solid #E2E7EE;border-radius:5px;color:#65768A;background:#fff;font-size:12px;text-decoration:none;box-shadow:none}.month-nav a:hover{background:#F4F7FA;border-color:#C8D4DF}.month-nav a:first-child,.month-nav a:last-child{font-size:17px;width:28px;padding:0}.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.cal-hdr{background:#FAFBFC;color:#8B97A4;font-size:11px;font-weight:500;text-align:left;padding:9px 10px;border-bottom:1px solid #EDF0F4}.cal-hdr:first-child,.cal-hdr:last-child{color:#9A9FA9}.cal-day{position:relative;min-width:0;min-height:105px;padding:8px 7px;border-right:1px solid #EDF0F4;border-bottom:1px solid #EDF0F4;cursor:pointer;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;background:#fff;transition:background .12s}.cal-day:last-child{border-right:0}.cal-grid:last-child .cal-day{border-bottom:0}.cal-day:hover{background:#F8FAFC}.cal-day.other{background:#FAFBFC;cursor:default}.cal-day-num{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;margin:0 0 6px;font-size:13px;line-height:1;font-weight:500;color:#526174;border-radius:6px;flex:none;align-self:flex-start}.cal-day.today .cal-day-num{background:#405F81;color:#fff}.cal-day.selected{background:#F1F5F8;box-shadow:inset 0 0 0 1px #9AB1C7}.cal-day:focus-visible{outline:2px solid #879FB8;outline-offset:-2px}.cal-ev{display:flex;align-items:center;gap:5px;min-width:0;font-size:11px;line-height:18px;padding:1px 5px;margin-bottom:3px;color:#526D8B;background:#EEF3F8;border-radius:3px;border-left:2px solid #9FB4CC;white-space:nowrap;overflow:hidden}.cal-ev time{font-size:10px;flex:none;color:#6E86A0;font-variant-numeric:tabular-nums}.cal-ev span{overflow:hidden;text-overflow:ellipsis}.cal-more{font-size:9px;color:#8393A4;padding:1px 5px;line-height:16px}
-.cal-side{background:#fff;border:1px solid #E0E6EC;border-radius:10px;padding:17px 16px;position:sticky;top:20px;min-width:0}.cal-side-hd{font-size:13px;font-weight:600;color:#33485E;padding-bottom:12px;margin-bottom:2px;border-bottom:1px solid #EDF0F4}.cal-side-empty{font-size:12px;line-height:1.7;color:#9AA5B1;text-align:center;padding:40px 4px}.cal-side-item{display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:9px;row-gap:6px;padding:14px 0;border-bottom:1px solid #EDF0F4}.cal-side-item:last-child{border:0;padding-bottom:0}.cal-side-time{font-size:11px;line-height:20px;color:#617F9A;font-weight:600}.cal-side-title{font-size:12px;line-height:20px;font-weight:500;color:#34495F}.cal-side-course{font-size:10px;line-height:1.6;color:#94A0AC;margin-top:3px;overflow-wrap:anywhere}.cal-side-link{grid-column:2;justify-self:start;padding:4px 9px;font-size:10px;color:#526F89;background:#F1F5F8;border:1px solid #DFE7EF;border-radius:4px;text-decoration:none}.cal-side-link:hover{background:#E7EEF4;color:#354F68}.cal-legend{display:flex;gap:16px;margin-top:12px;font-size:10px;color:#8C99A6;flex-wrap:wrap}.cal-legend>span{display:flex;align-items:center;gap:5px}.cal-legend .dot{width:6px;height:6px;border-radius:2px;display:inline-block}.cal-legend>span:first-child .dot{background:#9FB4CC!important}.cal-legend>span:nth-child(2) .dot{background:#A9BDAE!important}.cal-legend>span:nth-child(3) .dot{background:#D6B98C!important}
+.cal-side{background:#fff;border:1px solid #E0E6EC;border-radius:10px;padding:17px 16px;position:sticky;top:calc(var(--backend-header-height,64px) + 16px);min-width:0}.cal-side-hd{font-size:13px;font-weight:600;color:#33485E;padding-bottom:12px;margin-bottom:2px;border-bottom:1px solid #EDF0F4}.cal-side-empty{font-size:12px;line-height:1.7;color:#9AA5B1;text-align:center;padding:40px 4px}.cal-side-item{display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:9px;row-gap:6px;padding:14px 0;border-bottom:1px solid #EDF0F4}.cal-side-item:last-child{border:0;padding-bottom:0}.cal-side-time{font-size:11px;line-height:20px;color:#617F9A;font-weight:600}.cal-side-title{font-size:12px;line-height:20px;font-weight:500;color:#34495F}.cal-side-course{font-size:10px;line-height:1.6;color:#94A0AC;margin-top:3px;overflow-wrap:anywhere}.cal-side-link{grid-column:2;justify-self:start;padding:4px 9px;font-size:10px;color:#526F89;background:#F1F5F8;border:1px solid #DFE7EF;border-radius:4px;text-decoration:none}.cal-side-link:hover{background:#E7EEF4;color:#354F68}.cal-legend{display:flex;gap:16px;margin-top:12px;font-size:10px;color:#8C99A6;flex-wrap:wrap}.cal-legend>span{display:flex;align-items:center;gap:5px}.cal-legend .dot{width:6px;height:6px;border-radius:2px;display:inline-block}.cal-legend>span:first-child .dot{background:#9FB4CC!important}.cal-legend>span:nth-child(2) .dot{background:#A9BDAE!important}.cal-legend>span:nth-child(3) .dot{background:#D6B98C!important}
 .year-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.year-month{background:#fff;border:1px solid #E0E6EC;border-radius:8px;overflow:hidden}.year-month-hd{padding:11px 12px;font-size:13px;font-weight:600;color:#52677D;border-bottom:1px solid #EDF0F4}.ym-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.ym-hdr{font-size:9px;color:#A0A9B4;text-align:center;padding:7px 0}.ym-day{display:flex;align-items:center;justify-content:center;min-height:25px;padding:4px 0;font-size:10px;color:#66768A}.ym-day.today{background:#EEF3F8;color:#3E6284;font-weight:600}.ym-day.has-ev{color:#476D90;font-weight:600}.ym-dot{display:inline-block;width:3px;height:3px;border-radius:50%;margin-left:2px;background:#91ABC4!important}
 @media(min-width:1600px){.cal-day{min-height:118px}.cal-layout{grid-template-columns:minmax(0,1fr) 290px}.cal-ev{font-size:11px;line-height:20px}}
 @media(max-width:1150px){.cal-layout{grid-template-columns:minmax(0,1fr) 235px;gap:12px}.cal-side{padding:14px 12px}.cal-day{padding:6px 4px}.cal-ev{font-size:9px;gap:3px;padding:1px 3px}.cal-ev time{font-size:8px}.year-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -19,8 +19,29 @@
 .cal-toolbar select,.month-hd h3,.cal-side-hd,.cal-side-title,.year-month-hd{color:#454d56}.view-toggle{background:#e9ebee}.view-toggle a{color:#868e97}.view-toggle a.active{color:#454d56}.cal-hdr{background:#f5f6f7;color:#93999f}.cal-day-num,.ym-day{color:#69737e}.cal-ev{background:#f0f1f3;color:#616b75;border-left-color:#b6bec6}.cal-ev time{color:#7c8792}.cal-side-time{color:#626d77}.cal-side-course,.cal-side-empty,.cal-legend{color:#959ca4}.main .cal-side-link{background:#f5f5f6;color:#626d77;border-color:#dfe2e6}.main .cal-side-link:hover{background:#eceef0;color:#454d56}.month-nav a{color:#69737e;border-color:#dfe2e6}.month-nav a:hover{background:#eceef0;border-color:#ccd1d6}.ym-day.has-ev{color:#69737e}.ym-dot{background:#a7b1bb!important}.cal-legend>span:first-child .dot{background:#b6bec6!important}
 .cal-ev[style]{background:hsl(var(--course-hue) 27% 95%);border-left-color:hsl(var(--course-hue) 30% 55%);color:hsl(var(--course-hue) 22% 37%)}.cal-ev[style] time{color:inherit}
 .cal-ev[style]{background:#f2f3f4;border-left:0;color:hsl(var(--course-hue) 38% 35%)}
+
+.cal-day-heading{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:6px;min-height:23px}.cal-day-heading .cal-day-num{margin-bottom:0}
+.main .cal-day.today{background:#fff;box-shadow:none}
+.main .cal-day.today:hover{background:#fff}
+.main .cal-day.today .cal-day-num{background:#d9e0ec;color:#3f4e69;font-weight:600;box-shadow:none}
+.main .ym-day.today{background:#d9e0ec;color:#3f4e69;border-radius:6px;font-weight:600}
+
+.main .cal-hdr,.main .cal-hdr:first-child,.main .cal-hdr:last-child{text-align:center;background:#e7ebf0;color:#4d596c;font-size:11px;font-weight:600;border-bottom:1px solid #cdd5df;padding-top:11px;padding-bottom:11px}
+.main .cal-day.other{background:#fafbfc}
+.cal-ev{align-items:flex-start;padding-top:4px;padding-bottom:4px}.cal-ev-text{display:flex;flex-direction:column;min-width:0;flex:1;gap:1px;line-height:16px}.cal-ev-text strong,.cal-ev-text span{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cal-ev-text strong{font-size:10px;font-weight:400;opacity:.85}.cal-ev-text span{font-size:11px;font-weight:600;opacity:1}
+
+.cal-side-title{font-size:11px;font-weight:400}.cal-side-course{font-size:13px;font-weight:600}
+
+.main .cal-day.selected,.main .cal-day.today.selected,.main .cal-day.today.selected:hover{background:#eef1f6;box-shadow:inset 0 0 0 1px #aebbd0,inset 0 0 8px rgba(69,82,108,.08)}
+
+.cal-dates-scroll{overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;max-height:calc(100vh - 240px);max-height:calc(100dvh - 240px);scrollbar-width:thin;scrollbar-color:#b8c1ce transparent}
+.cal-dates-scroll:focus-visible{outline:2px solid #aebbd0;outline-offset:-2px}
+.cal-side{max-height:calc(100vh - 96px);max-height:calc(100dvh - 96px);overflow-y:auto;overscroll-behavior-y:contain}
+
+.cal-side-actions{grid-column:2;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.cal-side-actions .cal-side-link{grid-column:auto}.lesson-entry-unavailable{font-size:11px;color:#939ba5}
+.cal-side-actions{flex-wrap:nowrap}.cal-side-actions .cal-side-link{white-space:nowrap;padding-left:7px;padding-right:7px}.cal-ev-text span,.cal-side-course{color:#303943}
 </style>
-<link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head><body>
+<%- include('../partials/brand-icons') %></head><body>
 <%- include('partials/sidebar') %>
 <div class="main"><%- include('partials/header') %>
 <div class="content">
@@ -66,24 +87,26 @@
 </div>
 
 <div class="cal-grid">
-<div class="cal-hdr">日</div><div class="cal-hdr">一</div><div class="cal-hdr">二</div><div class="cal-hdr">三</div><div class="cal-hdr">四</div><div class="cal-hdr">五</div><div class="cal-hdr">六</div>
+<div class="cal-hdr">星期日</div><div class="cal-hdr">星期一</div><div class="cal-hdr">星期二</div><div class="cal-hdr">星期三</div><div class="cal-hdr">星期四</div><div class="cal-hdr">星期五</div><div class="cal-hdr">星期六</div>
 </div>
 <% var ts = new Date(Date.now()+8*3600000).toISOString().slice(0,10); %>
+<div class="cal-dates-scroll" tabindex="0" role="region" aria-label="月历日期，可上下滚动">
 <% weeks.forEach(function(week) { %>
 <div class="cal-grid">
 <% week.forEach(function(day) { if (day === null) { %>
 <div class="cal-day other"></div>
 <% } else { var isToday = day.date === ts; %>
 <div class="cal-day <%= isToday?'today':'' %>" role="button" tabindex="0" aria-label="<%= day.date %>，<%= day.schedules.length %> 节课程" data-date="<%= day.date %>" data-ev='<%= JSON.stringify(day.schedules) %>'>
-<div class="cal-day-num"><%= day.day %></div>
+<div class="cal-day-heading"><div class="cal-day-num"><%= day.day %></div></div>
 <% day.schedules.slice(0,3).forEach(function(s) { %>
-<div class="cal-ev" style="--course-hue:<%= Math.round(Number(s.course_id)*137.508)%360 %>" title="<%= s.start_time %> · <%= s.title %> · <%= s.course_title || '' %>"><time><%= s.start_time.slice(0,5) %></time><span><%= s.title %></span></div>
+<div class="cal-ev" style="--course-hue:<%= Math.round(Number(s.course_id)*137.508)%360 %>" title="<%= s.start_time %> · <%= s.title %> · <%= s.course_title || '' %>"><time><%= s.start_time.slice(0,5) %></time><div class="cal-ev-text"><strong><%= s.course_title || s.title %></strong><span><%= s.title %></span></div></div>
 <% }) %>
 <% if(day.schedules.length>3){ %><div class="cal-more">另有 <%= day.schedules.length-3 %> 节课程</div><% } %>
 </div>
 <% }}) %>
 </div>
 <% }) %>
+</div>
 </div>
 </div>
 <div class="cal-side" id="calSide">
@@ -119,4 +142,4 @@
 
 </div></div>
 
-<script src="/js/teacher-navigation.js?v=20261019-nav24" defer></script></body></html>
+<script src="/js/teacher-navigation.js?v=20261022-nav33" defer></script></body></html>

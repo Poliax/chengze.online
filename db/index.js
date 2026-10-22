@@ -32,6 +32,9 @@ async function getDb() {
     saveDb();
   }
   require('./migrations/002-admin-accounts')(db);
+  require('./migrations/003-student-profile')(db);
+  require('./migrations/004-student-shipping')(db);
+  require('./migrations/005-student-education')(db);
   saveDb();
   return db;
 }
@@ -426,6 +429,12 @@ function seedData() {
     ['students', 'status', "TEXT DEFAULT 'active'"],
     ['students', 'real_name', "TEXT DEFAULT ''"],
     ['students', 'exam_year', "TEXT DEFAULT ''"],
+    ['students', 'province_code', "TEXT DEFAULT ''"],
+    ['students', 'nickname', "TEXT DEFAULT ''"],
+    ['students', 'avatar', "TEXT DEFAULT ''"],
+    ['students', 'recipient_name', "TEXT DEFAULT ''"],
+    ['students', 'recipient_phone', "TEXT DEFAULT ''"],
+    ['students', 'recipient_address', "TEXT DEFAULT ''"],
     ['questions', 'lesson_id', 'INTEGER DEFAULT 0'],
   ];
   for (const [tbl, col, def] of migs) {

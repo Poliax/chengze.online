@@ -1,0 +1,28 @@
+/* Match live-studio's 960×540 stage, 200px camera, and proportional workspace. */
+.replay-studio { overflow:hidden; }
+.replay-studio .page { position:absolute; width:1172px; max-width:none; height:540px; min-height:0; margin:0; padding:0; display:flex; flex-direction:row; align-items:flex-start; gap:12px; transform-origin:top left; }
+.replay-studio .player-col { width:960px; height:540px; flex:0 0 960px; justify-content:flex-start; overflow:visible; }
+.replay-studio .player-main { width:960px; height:540px; flex:none; margin:0; border:0; border-radius:10px; box-shadow:none; }
+.replay-studio .right-col { width:200px; height:540px; max-height:540px; flex:0 0 200px; gap:10px; }
+.replay-studio .cam-box { flex:none; height:112.5px; background:#0a0f1a; border:1px solid rgba(255,255,255,.12); border-radius:10px; box-shadow:none; backdrop-filter:none; }
+.replay-studio .cam-box video { height:112.5px; }
+.replay-studio .chat-col { min-height:0; background:#30353b; border:1px solid #42484e; border-radius:10px; box-shadow:none; backdrop-filter:none; }
+.replay-studio .chat-hd { padding:8px 0; text-align:center; font-size:12px; color:#f0f1f2; background:#3a3e43; border-bottom:2px solid #a1a6ad; }
+.replay-studio .chat-msgs { padding:10px; }
+.replay-studio .chat-msg { margin-bottom:9px; font-size:11px; }
+.replay-studio .chat-msg .who { color:#c3c7cd; font-size:11px; }
+.replay-studio .chat-msg .time { color:#7f8a91; font-size:9px; min-width:0; }
+.replay-studio .chat-msg .txt { color:#dce0e5; font-size:11px; }
+.replay-studio .controls { position:absolute; left:10px; right:10px; bottom:10px; z-index:10; width:auto; height:44px; margin:0; border:0; border-radius:0; box-shadow:none; background:transparent; backdrop-filter:none; -webkit-backdrop-filter:none; transition:opacity .2s ease; }
+.replay-studio .ctrl-btn:hover,.replay-studio .ctrl-btn.active { background:#555c65; border-color:#68717b; box-shadow:none; transform:none; }
+.replay-studio .rate-menu { background:#30353b; }
+.replay-studio .rate-menu button:hover,.replay-studio .rate-menu button.on { background:#555c65; }
+.replay-studio .progress-fill { background:#a1a6ad; }
+
+.replay-studio .player-main:fullscreen { width:100%; height:100%; }
+
+.replay-studio .controls.controls-hidden { opacity:0; pointer-events:none; }
+.replay-studio .controls .ctrl-btn { background:rgba(43,47,54,.45); color:#fff; border-color:rgba(255,255,255,.3); }
+.replay-studio .controls .time { color:#fff; text-shadow:0 1px 3px #000,0 0 2px #000; }
+.replay-studio .controls .progress,.replay-studio .controls .vol-slider { background:rgba(100,110,120,.65); }
+.replay-studio .controls .progress-fill { background:#e2e8f0; }

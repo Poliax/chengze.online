@@ -1,5 +1,6 @@
 // Public URL layout only. Existing authentication and permissions remain in charge.
 const HOST='admin.chengze.online';
+const brandIcons=require('../lib/brand-icons');
 const routes=[
  ['/admin/live/studio','/studio'],['/admin/course-materials','/course-materials'],
  ['/admin/accounts-manage','/accounts'],['/admin/technical-center','/technical-center'],
@@ -23,12 +24,13 @@ function external(url) {
 }
 function htmlURLs(html) {
  // Match URL tokens in HTML attributes and inline scripts, preserving unrelated prose.
- return html.replace(/\/admin(?:\/[A-Za-z0-9_./%:-]*)?(?:\?[^\s"'<>`]*)?/g,url=>external(url));
+ return html.replace(/\/admin(?=[/?#\s"'<>`]|$)(?:\/[A-Za-z0-9_./%:-]*)?(?:\?[^\s"'<>`]*)?/g,url=>external(url));
 }
-function backendTypography(html) {
+function backendTypography(html,tabTitle) {
+ if(tabTitle&&/<\/head>/i.test(html))html=html.replace(/<title\b[^>]*>[\s\S]*?<\/title>/i,'<title>'+tabTitle+'</title>');
  if (!/<\/head>/i.test(html) || html.includes('id="backend-ui-font"')) return html;
- html=html.replace(/<link\b[^>]*\brel=["'](?:icon|apple-touch-icon)["'][^>]*>/gi,'');
- return html.replace(/<\/head>/i,'<link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261019-backend-icon1"><link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261019-backend-icon1"><link id="backend-ui-font" rel="stylesheet" href="/public/css/backend-typography.css?v=20261019-ui2"></head>');
+ html=html.replace(/<link\b[^>]*\brel=["'](?:icon|shortcut icon|apple-touch-icon|apple-touch-icon-precomposed)["'][^>]*>/gi,'');
+ return html.replace(/<\/head>/i,brandIcons.markup+'<link id="backend-ui-font" rel="stylesheet" href="/public/css/backend-typography.css?v=20261021-shell7"></head>');
 }
 function wrapRender(req,res,transform,next) {
  const render=res.render.bind(res);
@@ -36,7 +38,7 @@ function wrapRender(req,res,transform,next) {
   if(typeof options==='function'){callback=options;options={};}
   return render(view,options||{},(error,html)=>{
    if(error){if(callback)return callback(error);return next(error);}
-   const result=req.hostname===HOST?backendTypography(transform(html)):transform(html);
+   const result=req.hostname===HOST?backendTypography(transform(html),/^\/(?:teaching|teach)(?:\/|$)/.test(req.originalUrl)?'教师端':'管理后台'):transform(html);
    if(callback)return callback(null,result);
    res.send(result);
   });
@@ -83,7 +85,7 @@ function middleware(req,res,next) {
  next();
 }
 function portal(req,res,next) {
- if(!/^\/(?:live\/studio\/[1-9]\d*(?:\/(?:upload|state|upload-status\/[^/]+))?|live-manage\/[1-9]\d*\/status)\/?$/.test(req.path))return next();
+ if(!/^\/(?:live\/studio\/[1-9]\d*(?:\/(?:upload|state|eligibility|upload-status\/[^/]+))?|live-manage\/[1-9]\d*\/status)\/?$/.test(req.path))return next();
  const redirect=res.redirect.bind(res);
  res.redirect=(status,url)=>{if(typeof status==='string')return redirect(status==='/admin/login'?'/teach/login':status);return redirect(status,url==='/admin/login'?'/teach/login':url);};
  const render=res.render.bind(res);

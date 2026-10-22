@@ -6,7 +6,7 @@
 <title><%= title %></title>
 
 <link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/teacher.css?v=<%= cssVer %>">
+<link rel="stylesheet" href="/css/backend.css?v=<%= cssVer %>">
 <style>
   .user-form { max-width: 820px; }
   .form-card { border-color: #dbe3ef; box-shadow: 0 1px 3px rgba(15,23,42,.05); margin-bottom: 12px; }
@@ -22,7 +22,7 @@
   .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
   @media (max-width:640px){ .form-grid { grid-template-columns: 1fr; } }
 </style>
-<link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head>
+<%- include('../partials/brand-icons') %></head>
 <body class="teacher-body">
 <%- include('partials/sidebar') %>
 <div class="teacher-main">

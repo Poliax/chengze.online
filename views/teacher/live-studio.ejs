@@ -142,8 +142,9 @@
   .chat-col{background:#30353b;border-color:#42484e}.chat-tabs{background:#2d3238;border-bottom-color:#42484e}.chat-tab{color:#929ca4}.chat-tab:hover{color:#dbe2df}.chat-tab.active{color:#dce7e1;background:#343d3a;border-bottom-color:#8fac9b}.chat-msg .who{color:#b0c7bb}.chat-msg .time{color:#7f8a91}.chat-msg .txt{color:#dce1e4}.chat-input-row{border-top-color:#42484e;background:#2e3339}.chat-input-row input{background:#393f45;border-color:#505960;color:#e3e9e6;border-radius:6px}.chat-input-row input::placeholder{color:#8d989f}.chat-input-row input:focus{border-color:#87a593}.chat-input-row button{background:#577563;color:#f1f5f2;border:1px solid #65836f;border-radius:6px}.chat-input-row button:hover{background:#65836f}.online-avatar{background:#445650;color:#dce6e2}
 .chat-tab.active{color:#f0f1f2;background:#3a3e43;border-bottom-color:#a1a6ad}.chat-tab:hover{color:#e1e3e6}.chat-msg .who{color:#c3c7cd}.chat-msg .txt{color:#dce0e5}.chat-input-row input{color:#e5e7eb}.chat-input-row input:focus{border-color:#9ba2ab}.chat-input-row button{background:#555c65;border-color:#68717b;color:#f4f5f6}.chat-input-row button:hover{background:#626b76}.online-avatar{background:#4a5058;color:#dce0e5}
 </style>
-<link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head>
-<body>
+<%- include('../partials/brand-icons') %><link rel="stylesheet" href="/public/css/classroom-ui.css?v=20261021-shared1">
+</head>
+<body class="classroom-ui">
   <div class="topbar">
     <div class="topbar-left" style="display:flex;align-items:center;gap:10px">
       <span class="brand"><img src="/public/images/brand-green/app-rounded.svg?v=20261019-backend-icon1" alt="承泽在线" width="36" height="36" style="width:36px;height:36px;border-radius:8px;display:block"></span>
@@ -151,7 +152,7 @@
     <select id="lessonSelect" class="lesson-select" title="选择本次课次">
       <option value="">选择本次课次</option>
       <% (lessons||[]).forEach(function(l){ %>
-      <option value="<%= l.id %>"><%= l.title %></option>
+      <option value="<%= l.id %>" <%= l.live_allowed === false ? 'disabled' : '' %>><%= l.title %><%= l.live_allowed === false ? '（当日开放）' : '' %></option>
       <% }); %>
     </select>
     </div>
@@ -1858,6 +1859,8 @@
         return;
       }
       try {
+        var eligibility=await fetch('/admin/live/studio/'+COURSE_ID+'/eligibility',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lesson_id:lessonSel.value})});
+        var eligibilityResult=await eligibility.json();if(!eligibility.ok||!eligibilityResult.ok)throw Error(eligibilityResult.error||'该课次暂未开放');
         if (client) { try { await client.leave(); } catch(e) {} }
         if (screenShareBusy) { setMsg('请先完成屏幕选择，再开始上课', ''); return; }
         if (!cameraStream && !sharing) { try { await initCamera(); } catch(e) {} }
@@ -1873,7 +1876,8 @@
         if (sharing) showScreenPreview(); else initCanvasPreview();
         await client.publish(localStream);
         publishing = true;
-        await fetch('/admin/live-manage/' + STREAM_ID + '/status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'start', lesson_id: document.getElementById('lessonSelect') ? document.getElementById('lessonSelect').value : '' }) });
+        var startResponse=await fetch('/admin/live-manage/' + STREAM_ID + '/status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'start', lesson_id: document.getElementById('lessonSelect') ? document.getElementById('lessonSelect').value : '' }) });
+        if(!startResponse.ok)throw Error('课次未开放或开课状态保存失败');
         var camErr = null;
         if (cameraStream && cameraStream.getVideoTracks().length) {
           try {

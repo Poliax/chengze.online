@@ -40,12 +40,14 @@ const sessionMiddleware = session({
   cookie: { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'lax' }
 });
 app.use(sessionMiddleware);
+app.use(require('./middleware/student-status'));
 app.use(require('./middleware/admin-domain'));
 app.use(require('./middleware/media-signing'));
 
 // ── Make session user available in templates ──
 app.use((req, res, next) => {
-  res.locals.teacherName = req.session.teacherName || null;
+  const signedTeacher=req.session.teacherId ? db.get('SELECT display_name,real_name,username FROM teachers WHERE id=?',[req.session.teacherId]) : null;
+  res.locals.teacherName = signedTeacher ? require('./lib/teacher-display-name')(signedTeacher) : null;
   res.locals.teacherId = req.session.teacherId || null;
   res.locals.path = req.path;
   res.locals.cssVer = CSS_VERSION;
@@ -84,7 +86,7 @@ function renderLearningCenter(req, res) {
   });
   const independentCourses = db.query("SELECT c.*, t.display_name as teacher_name, (SELECT COUNT(*) FROM lessons WHERE course_id=c.id) as lesson_count FROM courses c JOIN teachers t ON c.teacher_id=t.id WHERE c.status='published' ORDER BY c.student_count DESC");
   const provinces = db.query('SELECT * FROM provinces ORDER BY id');
-  const student = req.session.studentId ? db.get('SELECT id, name, username, phone, uid FROM students WHERE id=?', [req.session.studentId]) : null;
+  const student = req.session.studentId ? db.get('SELECT id, name, username, phone, uid, province_code, exam_year, nickname, avatar, recipient_name, recipient_phone, recipient_address, recipient_province, recipient_city, recipient_district, recipient_address_detail, junior_college, junior_major FROM students WHERE id=?', [req.session.studentId]) : null;
   const overview = { enrolled: 0, completed: 0, total: 0, upcoming: 0, minutes: 0 };
   const myCourses = [];
   const upcomingLessons = [];

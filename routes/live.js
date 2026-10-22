@@ -8,6 +8,7 @@ const fs = require("fs");
 const multer = require("multer");
 const crypto = require('crypto');
 const zlib = require('zlib');
+const replayPlayback = require('../lib/replay-playback');
 
 // ── 老师进入直播 ──
 // ── 学生看直播 ──
@@ -54,12 +55,8 @@ router.get('/api/replays/:courseId', access.course('courseId'), (req, res) => {
 
 // ── 学生看回放 ──
 router.get('/student/replay/:replayId', access.replay('replayId'), (req, res) => {
-  const replay = db.get('SELECT r.*, c.title as course_title FROM live_replays r JOIN courses c ON r.course_id = c.id WHERE r.id = ?', [req.params.replayId]);
-  if (!replay) return res.redirect('/live/student');
-  if (replay.video_url) return res.redirect('/live/student/vod-replay/' + replay.id);
-  let timeline = [];
-  try { timeline = JSON.parse(replay.slide_timeline || '[]'); } catch {}
-  res.render('student/replay', { title: `回放: ${replay.title}`, replay, timeline, courseTitle: replay.course_title });
+  // Keep shared/bookmarked URLs, but retire the separate timeline player.
+  return res.redirect('/live/student/vod-replay/' + encodeURIComponent(req.params.replayId));
 });
 
 
@@ -115,15 +112,15 @@ router.get('/student/live-watch/:courseId', access.course('courseId'), (req, res
       if (!isNaN(d.getTime())) streamStartedAt = d.toISOString();
     } catch(e) {}
   }
-  res.render('student/live-watch', { title: course.title + ' · 直播间', course, stream: stream || null, lessonTitle, streamStartedAt, serverNow: Date.now() });
+  res.render('student/live-watch', { viewerStudent: req.session.studentId ? db.get('SELECT nickname, name, avatar FROM students WHERE id=?', [req.session.studentId]) : null, title: course.title + ' · 直播间', course, stream: stream || null, lessonTitle, streamStartedAt, serverNow: Date.now() });
 });
 
 
 // ── 学生观看点播回放 ──
 router.get('/student/vod-replay/:id', access.replay('id'), (req, res) => {
   const replay = db.get('SELECT * FROM live_replays WHERE id=?', [req.params.id]);
-  if (!replay || !replay.video_url) return res.redirect('/live/student');
-  res.render('student/vod-replay', { title: '回放: ' + replay.title, replay });
+  if (!replay) return res.redirect('/live/student');
+  res.render('student/vod-replay', { viewerStudent: req.session.studentId ? db.get('SELECT nickname, name, avatar FROM students WHERE id=?', [req.session.studentId]) : null, title: '回放: ' + replay.title, ...replayPlayback(replay) });
 });
 
 
@@ -143,6 +140,7 @@ router.get('/student/replay-duo/:courseId', access.course('courseId'), (req, res
     lessonTitle = lesson ? lesson.title : '';
   }
   res.render('student/replay-duo', {
+    viewerStudent: req.session.studentId ? db.get('SELECT nickname, name, avatar FROM students WHERE id=?', [req.session.studentId]) : null,
     title: '直播回放 · ' + course.title,
     course: course,
     main: main,

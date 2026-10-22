@@ -1,0 +1,4 @@
+.playback-course-group{display:flex;align-items:center;gap:14px;min-width:0;flex:1;padding-left:14px;border-left:1px solid rgba(255,255,255,.16)}
+.playback-course-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(255,255,255,.75);font-size:14px;font-weight:500}
+.playback-kind{flex:none;color:rgba(255,255,255,.55);font-size:12px;white-space:nowrap}
+@media(max-width:600px){.playback-course-group{gap:8px;padding-left:10px}.playback-kind{font-size:11px}}

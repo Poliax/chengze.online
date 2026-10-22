@@ -7,6 +7,7 @@ const multer = require('multer');
 const { execFile } = require('child_process');
 const router = express.Router();
 const db = require('../db');
+const lessonEntry = require('../lib/teacher-lesson-entry');
 const { requireTeacher } = require('../middleware/auth');
 
 function portalOrAdmin(req, res, next) {
@@ -127,8 +128,9 @@ router.post('/live-manage/save', (req, res) => {
 
 router.post('/live-manage/:id/status', (req, res) => {
   const s = db.get('SELECT * FROM live_streams WHERE id=?', [req.params.id]);
-  const lessonId = req.body.lesson_id || req.query.lesson_id || '';
+  let lessonId = req.body.lesson_id || req.query.lesson_id || '';
   const action = req.body.action || req.query.action || '';
+  if(s && (action==='start'||(action!=='stop'&&s.status!=='live'))){try{if(!lessonId)return res.status(400).json({error:'请选择本次课次'});lessonId=lessonEntry.select(db,s.course_id,lessonId).id;}catch(error){return res.status(403).json({error:error.message});}}
   if (s) {
     if (action === 'start') {
       db.run("UPDATE live_streams SET status='live', started_at=CURRENT_TIMESTAMP, lesson_id=? WHERE id=?", [lessonId || null, s.id]);
@@ -192,16 +194,22 @@ router.post('/live-manage/autogen', (req, res) => {
 });
 
 
+router.post('/live/studio/:courseId/eligibility',(req,res)=>{
+ try{const lesson=lessonEntry.select(db,req.params.courseId,req.body.lesson_id);res.json({ok:true,lessonId:lesson.id});}
+ catch(error){res.status(403).json({error:error.message});}
+});
+
 router.get('/live/studio/:courseId', (req, res) => {
   const course = db.get('SELECT * FROM courses WHERE id=?', [req.params.courseId]);
   if (!course) return res.redirect('/admin/live-manage');
+  try{const selected=lessonEntry.select(db,course.id,req.query.lesson);req.query.lesson=String(selected.id);}catch(error){return res.status(403).send(error.message);}
   let stream = db.get('SELECT * FROM live_streams WHERE course_id=? ORDER BY id DESC LIMIT 1', [course.id]);
   if (!stream) {
     const streamName = 'cz' + course.id + '_' + Math.floor(1000 + Math.random() * 9000);
     db.run('INSERT INTO live_streams (course_id, stream_name, push_server, stream_key, play_url) VALUES (?,?,?,?,?)', [course.id, streamName, '', '', 'https://' + (LIVE_CONFIG.playDomain || 'play.chengze.online') + '/live/' + streamName + '.flv']);
     stream = db.get('SELECT * FROM live_streams WHERE course_id=? ORDER BY id DESC LIMIT 1', [course.id]);
   }
-  const lessons = db.query('SELECT id, title FROM lessons WHERE course_id = ? ORDER BY order_index ASC', [course.id]);
+  const lessons = db.query('SELECT id, title, schedule_time FROM lessons WHERE course_id = ? ORDER BY order_index ASC', [course.id]).map(l=>({...l,...lessonEntry.state(l)}));
   const backUrl = req.query.from === 'teacher' ? '/teacher' : '/admin/live-manage';
   const roomId = course.id;
   const userId = 'teacher_' + (req.session.teacherId || req.session.teacherPortalId || 3);

@@ -6,6 +6,9 @@ const path = require('path');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const db = require('../db');
+const courseOrder = require('../lib/teacher-course-order');
+const teacherDisplayName = require('../lib/teacher-display-name');
+const lessonEntry = require('../lib/teacher-lesson-entry');
 const { requirePortal } = require('../middleware/auth');
 
 const LIVE_CONFIG = (() => {
@@ -48,7 +51,7 @@ router.post('/login', (req, res) => {
   req.session.portalAdminVersion = configured ? configured.session_version : null;
   delete req.session.teacherPortalView;
   req.session.teacherPortalId = teacher.id;
-  req.session.portalTeacherName = teacher.real_name || teacher.display_name;
+  req.session.portalTeacherName = teacherDisplayName(teacher);
   res.redirect('/teach');
 });
 
@@ -62,20 +65,31 @@ router.get('/logout', (req, res) => {
 // Restore the last teacher view directly on a full refresh of the unified URL.
 router.use((req,res,next)=>{
  res.locals.cache=true;
+ if(req.session?.teacherPortalId){const account=db.get('SELECT display_name,real_name,username FROM teachers WHERE id=?',[req.session.teacherPortalId]);if(account)res.locals.teacherName=teacherDisplayName(account);}
  if(req.method!=='GET'||!req.session?.teacherPortalId)return next();
  const allowed=value=>typeof value==='string'&&/^\/(?:courses|calendar|profile)?(?:\?[^#\r\n]*)?$/.test(value);
  if(req.path==='/'&&req.get('X-Teacher-Navigation')!=='1'&&allowed(req.session.teacherPortalView))req.url=req.session.teacherPortalView;
- if(allowed(req.url)){req.session.teacherPortalView=req.url;res.locals.path='/teach'+(req.path==='/'?'':req.path);res.locals.teacherRenderedView='/teach'+(req.url==='/'?'':req.url);}
+ if(allowed(req.url)){if(req.get('X-Teacher-Prefetch')!=='1')req.session.teacherPortalView=req.url;res.locals.path='/teach'+(req.path==='/'?'':req.path);res.locals.teacherRenderedView='/teach'+(req.url==='/'?'':req.url);}
  next();
+});
+
+router.post('/navigation-state', requirePortal, (req,res)=>{
+ const view=req.body && req.body.view;
+ if(typeof view!=='string'||!/^\/(?:courses|calendar|profile)?(?:\?[^#\r\n]*)?$/.test(view))return res.sendStatus(400);
+ req.session.teacherPortalView=view;
+ res.sendStatus(204);
 });
 
 function lessonActivity(teacherId){
  const rows=db.query(`SELECT s.course_id,s.lesson_id,
  MAX(CASE WHEN s.status='live' THEN 1 ELSE 0 END) AS is_live,
- MAX(CASE WHEN s.status='ended' AND s.ended_at IS NOT NULL THEN 1 ELSE 0 END) AS is_taught,
+ MAX(CASE WHEN s.status='ended' AND s.started_at IS NOT NULL AND s.ended_at IS NOT NULL THEN 1 ELSE 0 END) AS is_taught,
  MAX(CASE WHEN s.status='ended' AND s.started_at IS NOT NULL AND s.ended_at IS NOT NULL THEN 1 ELSE 0 END) AS has_taught_session
  FROM live_sessions s JOIN courses c ON c.id=s.course_id WHERE c.teacher_id=? AND s.lesson_id IS NOT NULL GROUP BY s.course_id,s.lesson_id`,[teacherId]);
- return new Map(rows.map(row=>[row.course_id+':'+row.lesson_id,row]));
+ const result=new Map(rows.map(row=>[row.course_id+':'+row.lesson_id,row]));
+ const videos=db.query("SELECT r.course_id,r.lesson_id FROM live_replays r JOIN courses c ON c.id=r.course_id WHERE c.teacher_id=? AND r.lesson_id IS NOT NULL AND (COALESCE(r.video_url,'')<>'' OR COALESCE(r.recorded_file,'')<>'')",[teacherId]);
+ for(const row of videos){const key=row.course_id+':'+row.lesson_id;result.set(key,{...(result.get(key)||{}),has_replay_video:true});}
+ return result;
 }
 // Teacher home: Beijing calendar days, only this teacher's assigned lessons.
 router.get('/', requirePortal, (req,res)=>{
@@ -92,22 +106,22 @@ router.get('/', requirePortal, (req,res)=>{
  const rangeEnd=Number.isFinite(last)?Math.max(defaultEnd,last):defaultEnd;
  const days=Array.from({length:Math.ceil((rangeEnd-start.getTime())/86400000)},(_,i)=>{const d=new Date(start.getTime()+i*86400000);return {date:d.toISOString().slice(0,10),weekday:['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][d.getUTCDay()],lessons:[]};});
  const end=new Date(rangeEnd).toISOString().slice(0,10);
- const lessons=db.query(`SELECT l.id,l.title,l.course_id,l.schedule_time,c.title AS course_title
- FROM lessons l JOIN courses c ON c.id=l.course_id WHERE c.teacher_id=? AND substr(l.schedule_time,1,10)>=? AND substr(l.schedule_time,1,10)<? ORDER BY l.schedule_time,l.id`,[teacher.id,days[0].date,end]);
+ const lessons=db.query(`SELECT l.id,l.title,l.description,l.course_id,l.schedule_time,c.title AS course_title
+ FROM lessons l JOIN courses c ON c.id=l.course_id WHERE c.teacher_id=? AND substr(l.schedule_time,1,10)>=? AND substr(l.schedule_time,1,10)<? ORDER BY l.schedule_time,l.id`,[teacher.id,days[0].date,end]).sort(courseOrder.lessons);
  const activity=lessonActivity(teacher.id),byDate=new Map(days.map(d=>[d.date,d]));
  for(const lesson of lessons){Object.assign(lesson,activity.get(lesson.course_id+':'+lesson.id)||{});const day=byDate.get(lesson.schedule_time.slice(0,10));if(day)day.lessons.push(lesson);}
- res.render('teacher-portal/home',{teacherName:teacher.real_name||teacher.display_name,days,today:days.find(d=>d.date===todayDate),weekCount:lessons.length});
+ res.render('teacher-portal/home',{teacherName:teacherDisplayName(teacher),days,today:days.find(d=>d.date===todayDate),weekCount:lessons.length});
 });
 
 // ── 教师课表 ──
 router.get('/courses', requirePortal, (req, res) => {
   const teacher = db.get('SELECT * FROM teachers WHERE id=?', [req.session.teacherPortalId]);
   if (!teacher) return res.redirect('/teach/login');
-  const courses = db.query('SELECT c.*, (SELECT COUNT(*) FROM lessons WHERE course_id=c.id) as lesson_count FROM courses c WHERE c.teacher_id=? ORDER BY c.created_at DESC', [teacher.id]);
+  const courses = db.query('SELECT c.*, (SELECT COUNT(*) FROM lessons WHERE course_id=c.id) as lesson_count FROM courses c WHERE c.teacher_id=? ORDER BY c.created_at DESC', [teacher.id]).sort(courseOrder.courses);
   const activity=lessonActivity(teacher.id);
   const allLessons=db.query('SELECT l.* FROM lessons l JOIN courses c ON c.id=l.course_id WHERE c.teacher_id=? ORDER BY l.order_index ASC',[teacher.id]);
   const lessonsByCourse=new Map();
-  for(const lesson of allLessons){const status=activity.get(lesson.course_id+':'+lesson.id)||{};Object.assign(lesson,{has_live_session:status.is_live||0,has_taught_session:status.has_taught_session||0});if(!lessonsByCourse.has(lesson.course_id))lessonsByCourse.set(lesson.course_id,[]);lessonsByCourse.get(lesson.course_id).push(lesson);}
+  for(const lesson of allLessons){const status=activity.get(lesson.course_id+':'+lesson.id)||{};Object.assign(lesson,{has_live_session:status.is_live||0,has_taught_session:status.has_taught_session||0,has_replay_video:status.has_replay_video||false});if(!lessonsByCourse.has(lesson.course_id))lessonsByCourse.set(lesson.course_id,[]);lessonsByCourse.get(lesson.course_id).push(lesson);}
   const rows=courses.map(course=>({course,lessons:lessonsByCourse.get(course.id)||[]}));
   const groupMap = {};
   rows.forEach(function(r) {
@@ -124,7 +138,7 @@ router.get('/courses', requirePortal, (req, res) => {
   try { studentCount = db.get('SELECT COUNT(DISTINCT e.student_id) as c FROM enrollments e JOIN courses c2 ON e.course_id=c2.id WHERE c2.teacher_id=?', [teacher.id]).c || 0; } catch(e) {}
   res.render('teacher-portal/dashboard', {
     title: '教师端 · 承泽在线',
-    teacherName: teacher.real_name || teacher.display_name,
+    teacherName: teacherDisplayName(teacher),
     teacher: teacher,
     rows,
     groups,
@@ -147,10 +161,13 @@ router.get('/calendar', requirePortal, (req, res) => {
   const monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
   const typeLabels = { lesson: '授课', review: '答疑', exam: '考试', other: '其他' };
 
-  const lessons = db.query("SELECT l.*, c.title as course_title FROM lessons l JOIN courses c ON l.course_id=c.id WHERE c.teacher_id=? AND l.schedule_time IS NOT NULL AND l.schedule_time != '' ORDER BY l.schedule_time", [teacherId]);
+  const lessons = db.query("SELECT l.*, c.title as course_title FROM lessons l JOIN courses c ON l.course_id=c.id WHERE c.teacher_id=? AND l.schedule_time IS NOT NULL AND l.schedule_time != '' ORDER BY l.schedule_time", [teacherId]).sort(courseOrder.lessons);
+  const calendarActivity=lessonActivity(teacherId);
+  lessons.forEach(l=>Object.assign(l,calendarActivity.get(l.course_id+':'+l.id)||{}));
   const calSchedules = lessons.map(function(l) {
     var st = l.schedule_time || '';
     return {
+      ...lessonEntry.state(l),
       date: st.slice(0, 10),
       start_time: st.length > 11 ? st.slice(11, 16) : '09:00',
       title: l.title,
@@ -215,6 +232,8 @@ router.get('/calendar', requirePortal, (req, res) => {
 });
 
 // ── 个人信息 ──
+router.post('/profile/nickname',requirePortal,require('../lib/teacher-nickname')(db));
+
 router.get('/profile', requirePortal, (req, res) => {
   const teacherId = req.session.teacherPortalId;
   const teacher = db.get('SELECT * FROM teachers WHERE id=?', [teacherId]);
@@ -226,7 +245,7 @@ router.get('/profile', requirePortal, (req, res) => {
   const historyCourses = db.query('SELECT id, title, category FROM courses WHERE teacher_id=? ORDER BY created_at DESC', [teacherId]);
   res.render('teacher-portal/profile', {
     title: '个人信息 · 教师端',
-    teacherName: teacher.real_name || teacher.display_name,
+    teacherName: teacherDisplayName(teacher),
     teacher: teacher,
     courseCount: courseCount,
     lessonCount: lessonCount,
@@ -236,11 +255,23 @@ router.get('/profile', requirePortal, (req, res) => {
 });
 
 // ── 授课直播间 ──
+router.get('/replay/:courseId',requirePortal,(req,res)=>{
+ const course=db.get('SELECT id,teacher_id FROM courses WHERE id=?',[req.params.courseId]);
+ if(!course||Number(course.teacher_id)!==Number(req.session.teacherPortalId))return res.sendStatus(403);
+ const lessonId=Number(req.query.lesson);
+ if(!Number.isSafeInteger(lessonId)||lessonId<=0)return res.sendStatus(400);
+ const rows=db.query("SELECT id,title FROM live_replays WHERE course_id=? AND lesson_id=? AND (COALESCE(video_url,'')<>'' OR COALESCE(recorded_file,'')<>'') ORDER BY id DESC",[course.id,lessonId]);
+ const replay=rows.find(r=>!String(r.title||'').includes('老师'))||rows[0];
+ if(!replay)return res.status(404).send('该课次暂无回放视频');
+ return res.redirect('/live/student/vod-replay/'+replay.id);
+});
+
 router.get('/live/:courseId', requirePortal, (req, res) => {
   const teacherId = req.session.teacherPortalId;
   const course = db.get('SELECT * FROM courses WHERE id=?', [req.params.courseId]);
   if (!course) return res.redirect('/teach');
   if (course.teacher_id !== teacherId) return res.redirect('/teach');
+  try{const selected=lessonEntry.select(db,course.id,req.query.lesson);req.query.lesson=String(selected.id);}catch(error){return res.status(403).send(error.message);}
   const teacher = db.get('SELECT * FROM teachers WHERE id=?', [teacherId]);
   let stream = db.get('SELECT * FROM live_streams WHERE course_id=? ORDER BY id DESC LIMIT 1', [course.id]);
   if (!stream) {
@@ -248,7 +279,7 @@ router.get('/live/:courseId', requirePortal, (req, res) => {
     db.run('INSERT INTO live_streams (course_id, stream_name, push_server, stream_key, play_url) VALUES (?,?,?,?,?)', [course.id, streamName, '', '', 'https://' + (LIVE_CONFIG.playDomain || 'play.chengze.online') + '/live/' + streamName + '.flv']);
     stream = db.get('SELECT * FROM live_streams WHERE course_id=? ORDER BY id DESC LIMIT 1', [course.id]);
   }
-  const lessons = db.query('SELECT id, title FROM lessons WHERE course_id = ? ORDER BY order_index ASC', [course.id]);
+  const lessons = db.query('SELECT id, title, schedule_time FROM lessons WHERE course_id = ? ORDER BY order_index ASC', [course.id]).map(l=>({...l,...lessonEntry.state(l)}));
   const roomId = course.id;
   const userId = 'teacher_' + teacherId;
   const relayStream = (LIVE_CONFIG.trtcAppId || '') + '_' + roomId + '_' + userId + '_main';
@@ -264,7 +295,7 @@ router.get('/live/:courseId', requirePortal, (req, res) => {
   const camPrivateMapKey = cameraCredentials.privateMapKey;
   res.render('teacher/live-studio', {
     title: course.title + ' · 授课直播间',
-    teacherName: teacher ? (teacher.real_name || teacher.display_name) : '老师',
+    teacherName: teacher ? (teacherDisplayName(teacher)) : '老师',
     course, stream, lessons,
     backUrl: '/teach',
     sdkAppId: appId, userId, userSig, privateMapKey, camUserId, camUserSig, camPrivateMapKey, roomId, expire

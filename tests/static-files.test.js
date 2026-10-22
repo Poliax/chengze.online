@@ -9,7 +9,7 @@ const staticFiles = require('../middleware/static-files');
 test('serves browser assets without exposing server files or datasets', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'chengze-static-'));
   const publicFiles = ['css/style.css', 'js/main.js', 'public/images/logo.svg',
-    'favicon-16-v18.png', 'data/exam.pdf'];
+    'favicon-16-v18.png', 'data/exam.pdf', require('../lib/brand-icons').png.slice(1)];
   const privateFiles = ['index.html', 'public/site/index.html', 'site/about.html', 'server.js', 'package.json', 'db/chengze.db', 'backups/export.zip',
     'routes/auth.js', 'views/student/index.ejs', 'data/questions.json', '.env'];
   for (const file of [...publicFiles, ...privateFiles]) {

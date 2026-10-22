@@ -1,0 +1,96 @@
+<% if (student) { %>
+<section class="view" id="viewProfile">
+  <div class="overview-panel student-profile">
+    <h3>个人信息</h3>
+    <form id="studentAccountProfile" class="student-study-form">
+      <div class="student-avatar-editor student-avatar-centered"><button type="button" id="studentAvatarPicker" class="student-avatar-picker" aria-label="修改头像"><span class="avatar" data-student-avatar><% if (student.avatar) { %><img src="<%= student.avatar %>" alt="学员头像"><% } else { %><%= (student.nickname || student.name || '学').charAt(0) %><% } %></span></button><input id="studentAvatarFile" type="file" accept="image/jpeg,image/png,image/webp" hidden><span id="studentAvatarStatus" role="status"></span></div>
+      <label for="studentNickname">昵称</label><input id="studentNickname" name="nickname" maxlength="30" value="<%= student.nickname || student.name || '' %>" required autocomplete="nickname">
+      <label for="studentRealName">姓名</label><input id="studentRealName" name="name" maxlength="50" autocomplete="name" value="<%= student.name || '' %>" placeholder="请填写姓名">
+      <label for="studentUID">UID</label><input id="studentUID" title="UID 注册后不可修改" value="<%= student.uid || '' %>" readonly>
+      <label for="studentPhone">电话</label><div class="student-phone-field"><input id="studentPhone" value="<%= student.phone || '' %>" readonly><button type="button" id="studentPhoneChangeOpen">修改</button></div>
+
+      <h4 class="student-form-heading">收货信息</h4>
+      <div class="student-shipping-fields">
+      <label for="studentRecipientName">收件人</label><input id="studentRecipientName" name="recipient_name" maxlength="50" value="<%= student.recipient_name || '' %>" autocomplete="shipping name">
+      <label for="studentRecipientPhone">联系电话</label><input id="studentRecipientPhone" name="recipient_phone" type="tel" maxlength="30" value="<%= student.recipient_phone || '' %>" autocomplete="shipping tel">
+      <label for="recipientProvince">所在地</label>
+      <div class="student-shipping-region" id="studentShippingRegion" data-province="<%= student.recipient_province || '' %>" data-city="<%= student.recipient_city || '' %>" data-district="<%= student.recipient_district || '' %>">
+        <select id="recipientProvince" name="recipient_province" aria-label="收货省份"><option value="">请选择省份</option></select>
+        <select id="recipientCity" name="recipient_city" aria-label="收货城市" disabled><option value="">请选择城市</option></select>
+        <select id="recipientDistrict" name="recipient_district" aria-label="收货区县" disabled><option value="">请选择区县</option></select>
+      </div>
+      <label for="studentRecipientAddress">详细地址</label><textarea id="studentRecipientAddress" name="recipient_address_detail" maxlength="300" rows="2" placeholder="街道、小区、楼栋及门牌号" autocomplete="shipping street-address"><%= student.recipient_address_detail || student.recipient_address || '' %></textarea>
+      <% if (student.recipient_address && !student.recipient_province) { %><p class="student-address-legacy">原收货地址已保留，请选择所在地区并核对详细地址。</p><% } %>
+      </div>
+    <h4 class="student-form-heading student-candidate-heading">考生信息</h4>
+    <div id="studentStudyProfile" class="student-study-form">
+      <label for="studentProvince">考试省份</label>
+      <select id="studentProvince" name="province_code">
+        <option value="">请选择省份</option>
+        <% (typeof provinces !== 'undefined' ? provinces : []).forEach(function(p) { %><option value="<%= p.code %>" <%= student.province_code === p.code ? 'selected' : '' %>><%= p.name %></option><% }); %>
+      </select>
+      <label for="studentExamYear">考试时间</label>
+      <% var studyYears = [String(new Date().getFullYear()), String(new Date().getFullYear()+1), String(new Date().getFullYear()+2), String(new Date().getFullYear()+3)]; if (student.exam_year && !studyYears.includes(String(student.exam_year))) studyYears.push(String(student.exam_year)); %>
+      <select id="studentExamYear" name="exam_year">
+        <option value="">请选择年份</option>
+        <% studyYears.sort().forEach(function(year) { %><option value="<%= year %>" <%= String(student.exam_year || '') === year ? 'selected' : '' %>><%= year %>年</option><% }); %>
+      </select>
+      <label for="studentJuniorCollege">专科院校</label><input id="studentJuniorCollege" name="junior_college" maxlength="100" value="<%= student.junior_college || '' %>" placeholder="请填写专科院校">
+      <label for="studentJuniorMajor">专科专业</label><input id="studentJuniorMajor" name="junior_major" maxlength="100" value="<%= student.junior_major || '' %>" placeholder="请填写专科专业">
+    </div>
+      <div class="student-profile-save"><p id="studentAccountStatus" role="status" aria-live="polite"></p><button type="submit">保存</button></div>
+    </form>
+    <div class="student-cancel-zone"><button type="button" id="studentCancelOpen">注销账号</button></div>
+    <dialog id="studentPhoneChangeDialog" class="student-cancel-dialog">
+      <form id="studentPhoneChangeForm">
+        <h3>修改登录手机号</h3>
+        <p>验证原手机号和新手机号后更换，UID与课程记录保持不变。</p>
+        <label for="changePhoneNew">新手机号</label><input id="changePhoneNew" name="new_phone" type="tel" maxlength="11" inputmode="numeric" autocomplete="tel" required>
+        <label for="changePhoneOldCode">原手机号验证码</label><div class="phone-code-row"><input id="changePhoneOldCode" name="old_code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" required><button type="button" data-phone-code="old">获取验证码</button></div>
+        <label for="changePhoneNewCode">新手机号验证码</label><div class="phone-code-row"><input id="changePhoneNewCode" name="new_code" inputmode="numeric" maxlength="6" autocomplete="off" required><button type="button" data-phone-code="new">获取验证码</button></div>
+        <p id="studentPhoneChangeStatus" role="status" aria-live="polite"></p>
+        <div class="student-cancel-actions"><button type="button" id="studentPhoneChangeClose">取消</button><button type="submit">确认修改</button></div>
+      </form>
+    </dialog>
+    <dialog id="studentCancelDialog" class="student-cancel-dialog">
+      <form id="studentCancelForm">
+        <h3>注销账号</h3>
+        <p>注销后将退出登录，无法继续使用本账号和已购课程。个人资料将清除，UID及订单、课程记录保留用于关联核对。</p>
+        <label for="cancelPhone">注册手机号</label><input id="cancelPhone" name="phone" type="tel" autocomplete="tel" required>
+        <label for="cancelPassword">登录密码</label><input id="cancelPassword" name="password" type="password" autocomplete="current-password" required>
+        <label for="cancelConfirmation">输入“注销账号”确认</label><input id="cancelConfirmation" name="confirmation" autocomplete="off" required>
+        <p id="studentCancelStatus" role="status" aria-live="polite"></p>
+        <div class="student-cancel-actions"><button type="button" id="studentCancelClose">取消</button><button type="submit" class="student-cancel-confirm">确认注销</button></div>
+      </form>
+    </dialog>
+  </div>
+</section>
+<section class="view" id="viewPurchased">
+  <div class="overview-panel">
+    <h3>已购课程</h3>
+    <% if (myList.length) { myList.forEach(function(c) { %>
+    <details class="overview-course purchased-course">
+      <summary>
+      <div class="ovc-info"><b><%= c.title %></b><span><%= c.province || '' %> · <%= c.year || '' %>年 · <%= c.teacher_name || '' %></span></div>
+      <div class="ovc-meta"><span>进度 <%= c.percent || 0 %>%</span><span><%= c.completed || 0 %> / <%= c.lesson_count || 0 %> 课时</span></div>
+      <div class="overview-progress"><i style="width:<%= c.percent || 0 %>%"></i></div>
+      <span class="purchased-course-action">查看课次 <span aria-hidden="true">⌄</span></span>
+      </summary>
+      <div class="purchased-lessons">
+        <% var detail = (courseDetails || {})[c.id]; var lessons = detail && detail.lessons || []; %>
+        <% if (lessons.length) { lessons.forEach(function(l) { %>
+        <div class="purchased-lesson">
+          <div><b><%= l.title %></b><span><%= String(l.schedule_time || '').replace('T', ' ').substring(0,16) || '时间待定' %></span></div>
+          <% if (l.is_live) { %>
+          <a href="/live/student/live-watch/<%= c.id %>" target="_blank" rel="noopener">进入直播</a>
+          <% } else if (l.has_replay || l.hasVideo) { %>
+          <a href="/live/student/replay-duo/<%= c.id %>?lesson=<%= l.id %>&amp;v=2" target="_blank" rel="noopener">观看回放</a>
+          <% } else { %><span class="purchased-pending">暂无回放</span><% } %>
+        </div>
+        <% }); } else { %><div class="empty">课次正在安排中</div><% } %>
+      </div>
+    </details>
+    <% }); } else { %><div class="empty">暂无已购课程</div><% } %>
+  </div>
+</section>
+<% } %>

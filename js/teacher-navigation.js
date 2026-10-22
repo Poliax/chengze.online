@@ -1,15 +1,41 @@
 (function(){
  function portalPath(path){return /^\/(?:teaching|teach)(?:\/(?:courses|calendar|profile))?\/?$/.test(path);}
  function calendarURL(base,year,month,view){const url=new URL(base+'/calendar',location.origin);url.searchParams.set('year',year);if(month)url.searchParams.set('month',month);url.searchParams.set('view',view==='year'?'year':'month');return url;}
- if(typeof module!=='undefined'&&module.exports)module.exports={portalPath};
+ function createViewLoader(fetcher,{now=Date.now,ttl=15000,max=8}={}){
+  const cache=new Map(),pending=new Map();let epoch=0;
+  function put(url,html){cache.delete(url);cache.set(url,{html,time:now()});while(cache.size>max)cache.delete(cache.keys().next().value);}
+  return {prime:put,clear(){epoch++;cache.clear();pending.clear();},async get(url,options={}){
+   const value=cache.get(url);if(value&&now()-value.time<ttl)return value.html;
+   if(pending.has(url))return pending.get(url);
+   const generation=epoch;
+   const promise=Promise.resolve().then(()=>fetcher(url,options)).then(html=>{if(generation===epoch)put(url,html);return html;}).finally(()=>{if(pending.get(url)===promise)pending.delete(url);});
+   pending.set(url,promise);return promise;
+  }};
+ }
+ if(typeof module!=='undefined'&&module.exports)module.exports={portalPath,createViewLoader};
  if(typeof document==='undefined')return;
  const content=document.querySelector('.main > .content');
  if(!content||!portalPath(location.pathname))return;
  const base=/^\/teaching(?:\/|$)/.test(location.pathname)?'/teaching':'/teach';
- let request=null,version=0,renderedURL=location.href,pendingURL='';
+ let request=null,version=0,intent=0,renderedURL=location.href,pendingURL='';
  const scrollPositions=new Map();
+ const views=createViewLoader(async(url,options)=>{
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
+  const abort=()=>controller.abort();options.signal?.addEventListener('abort',abort,{once:true});
+  try{
+   if(options.signal?.aborted)controller.abort();
+   const response=await fetch(url,{signal:controller.signal,credentials:'same-origin',cache:'no-store',headers:{Accept:'text/html','X-Teacher-Navigation':'1','X-Teacher-Prefetch':options.prefetch?'1':'0'}});
+   if(!response.ok||!portalPath(new URL(response.url||url).pathname))throw Error('session');
+   const html=await response.text();if(!html.includes('id="sidebar"')||!html.includes('id="teacherViewStyles"'))throw Error('session');return html;
+  }finally{clearTimeout(timeout);options.signal?.removeEventListener('abort',abort);}
+
+ });
+ function prefetch(url){if(url.origin===location.origin&&portalPath(url.pathname)&&url.href!==renderedURL)views.get(url.href,{prefetch:true}).catch(()=>{});}
+ document.addEventListener('pointerover',event=>{const link=event.target.closest('#sidebar a[href],.month-nav a[href],.view-toggle a[href]');if(link)prefetch(new URL(link.href,location.href));},{passive:true});
+ document.addEventListener('focusin',event=>{const link=event.target.closest('#sidebar a[href],.month-nav a[href],.view-toggle a[href]');if(link)prefetch(new URL(link.href,location.href));});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)views.clear();});
  const indicator=document.createElement('div');indicator.className='teacher-nav-status';indicator.setAttribute('role','status');indicator.setAttribute('aria-live','polite');document.body.append(indicator);
- const statusStyles=document.createElement('style');statusStyles.textContent='.teacher-nav-status{position:fixed;right:22px;top:72px;z-index:100;background:#fff;color:#68778A;border:1px solid #E0E6ED;border-radius:6px;padding:7px 11px;font-size:12px;box-shadow:0 2px 8px #172d4710;display:none}.teacher-nav-status:not(:empty){display:block}';document.head.append(statusStyles);
+ const statusStyles=document.createElement('style');statusStyles.textContent='.teacher-nav-status{position:fixed;right:22px;top:72px;z-index:100;background:#fff;color:#68778A;border:1px solid #E0E6ED;border-radius:6px;padding:7px 11px;font-size:12px;box-shadow:0 2px 8px #172d4710;display:none}.teacher-nav-status:not(:empty){display:block}.teacher-nav-status.is-loading{display:block;right:auto;transform:translate(-50%,-50%);width:32px;height:32px;padding:0;border:3px solid #dfe4eb;border-top-color:#697991;border-radius:50%;background:transparent;box-shadow:none;pointer-events:none;animation:teacher-nav-spin .75s linear infinite}@keyframes teacher-nav-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}@media(prefers-reduced-motion:reduce){.teacher-nav-status.is-loading{animation-duration:1.5s}}';document.head.append(statusStyles);
  // Mouse/pen drag supplements native touch and trackpad scrolling.
  let weekDrag=null,suppressWeekClick=false;
  document.addEventListener('pointerdown',event=>{const strip=event.target.closest('.week-scroll');if(!strip||event.pointerType==='touch'||event.button!==0)return;expandWeek();weekDrag={strip,id:event.pointerId,x:event.clientX,y:event.clientY,left:strip.scrollLeft,active:false};suppressWeekClick=false;});
@@ -41,37 +67,40 @@
  setInterval(syncHeader,60000);
 
  function watermark(){const wm=content.querySelector('#watermark');if(!wm)return;wm.replaceChildren();const name=wm.dataset.name||'';if(!name)return;const fragment=document.createDocumentFragment();const cols=Math.ceil(innerWidth/260)+1,rows=Math.ceil(innerHeight/260)+1;for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const el=document.createElement('div');el.textContent=name;el.style.cssText='position:absolute;left:'+(c*260)+'px;top:'+(r*260)+'px;font-size:15px;font-weight:400;color:rgba(45,55,65,.025);transform:rotate(-25deg);white-space:nowrap;pointer-events:none';fragment.append(el);}wm.append(fragment);}
- function initCalendar(){const day=content.querySelector('.cal-day.today')||Array.from(content.querySelectorAll('.cal-day:not(.other)')).find(el=>{try{return JSON.parse(el.dataset.ev||'[]').length>0}catch{return false}});if(day)showDay(day);}
+ function fitCalendar(){const dates=content.querySelector('.cal-dates-scroll');if(dates)dates.style.maxHeight=Math.max(160,innerHeight-dates.getBoundingClientRect().top-24)+'px';}
+ window.addEventListener('resize',()=>requestAnimationFrame(fitCalendar));
+ function initCalendar(){requestAnimationFrame(fitCalendar);const day=content.querySelector('.cal-day.today')||Array.from(content.querySelectorAll('.cal-day:not(.other)')).find(el=>{try{return JSON.parse(el.dataset.ev||'[]').length>0}catch{return false}});if(day)showDay(day);}
  function resetCalendarControls(){const toolbar=document.querySelector('[data-calendar-view]');if(!toolbar)return;const year=document.querySelector('#yearSelect'),month=document.querySelector('#monthSelect');if(year)year.value=toolbar.dataset.calendarYear;if(month)month.value=toolbar.dataset.calendarMonth;}
  function highlight(path){document.querySelectorAll('#sidebar .sidebar-nav a, #sidebar .teacher-sidebar-account').forEach(a=>{const target=new URL(a.href,location.href);a.classList.toggle('active',target.pathname.replace(/\/$/,'')===path.replace(/\/$/,''));});}
  async function navigate(url,{pop=false,calendar=false}={}){
   if(!portalPath(url.pathname)||url.origin!==location.origin)return;
-  if((url.href===renderedURL&&!pop)||url.href===pendingURL)return;
+  if(url.href===pendingURL)return;
+  if(url.href===renderedURL&&!pop){intent++;if(request){request.abort();request=null;version++;pendingURL='';indicator.textContent='';indicator.classList.remove('is-loading');indicator.removeAttribute('aria-label');content.removeAttribute('aria-busy');highlight(url.pathname);}return;}
+  const navigationIntent=++intent;
   const topicForms=Array.from(content.querySelectorAll('form[data-lesson-topic]'));
   if(topicForms.length){const saved=await Promise.all(topicForms.map(form=>saveTopic(form)));if(saved.some(ok=>!ok))return;}
+  if(navigationIntent!==intent)return;
   if(request)request.abort();const controller=new AbortController(),id=++version;request=controller;pendingURL=url.href;
   scrollPositions.set(renderedURL,{x:scrollX,y:scrollY});
-  const oldFocus=document.activeElement?.id;indicator.textContent='';content.setAttribute('aria-busy','true');const timer=setTimeout(()=>controller.abort(),12000);
+  const oldFocus=document.activeElement?.id;indicator.textContent='';indicator.classList.remove('is-loading');indicator.removeAttribute('aria-label');highlight(url.pathname);content.setAttribute('aria-busy','true');const loadingTimer=setTimeout(()=>{if(id===version){const rect=content.getBoundingClientRect();indicator.style.left=((Math.max(0,rect.left)+Math.min(innerWidth,rect.right))/2)+'px';indicator.style.top=((Math.max(64,rect.top)+Math.min(innerHeight,rect.bottom))/2)+'px';indicator.setAttribute('aria-label','正在加载');indicator.classList.add('is-loading');}},150);const timer=setTimeout(()=>controller.abort(),12000);
   try{
-   const response=await fetch(url.href,{signal:controller.signal,credentials:'same-origin',cache:'no-store',headers:{Accept:'text/html','X-Teacher-Navigation':'1'}});
-   if(!response.ok)throw Error('request');
-   if(!portalPath(new URL(response.url||url.href).pathname))throw Error('session');
-   const html=await response.text();if(id!==version)return;
+   const html=await views.get(url.href,{signal:controller.signal});if(id!==version)return;
    const doc=new DOMParser().parseFromString(html,'text/html');const next=doc.querySelector('.main > .content'),styles=doc.getElementById('teacherViewStyles');
    if(!next||!styles||!doc.getElementById('sidebar'))throw Error('session');
    next.querySelectorAll('script').forEach(script=>script.remove());
    const currentStyles=document.getElementById('teacherViewStyles');if(currentStyles&&currentStyles.textContent!==styles.textContent)currentStyles.textContent=styles.textContent;
    content.replaceChildren(...Array.from(next.childNodes));
+   for(const selector of ['.teacher-account-name','.teacher-sidebar-avatar']){const current=document.querySelector('#sidebar '+selector),updated=doc.querySelector('#sidebar '+selector);if(current&&updated)current.textContent=updated.textContent;}
    document.title=doc.title;
    if(!pop)history.pushState({teacherView:url.pathname+url.search},'',base);
-   renderedURL=url.href;highlight(url.pathname);syncHeader();watermark();initCalendar();initWeek();
+   renderedURL=url.href;fetch(base+'/navigation-state',{method:'POST',credentials:'same-origin',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({view:(url.pathname.slice(base.length)||'/')+url.search})}).catch(()=>{});highlight(url.pathname);syncHeader();watermark();initCalendar();initWeek();
    document.getElementById('sidebar')?.classList.remove('open');
    if(pop){const pos=scrollPositions.get(url.href)||{x:0,y:0};scrollTo(pos.x,pos.y);}else if(!calendar)scrollTo(0,0);
    // Preserve keyboard interaction for dropdowns without moving mouse focus.
    if(calendar&&['yearSelect','monthSelect'].includes(oldFocus))document.getElementById(oldFocus)?.focus({preventScroll:true});
-   indicator.textContent='';
-  }catch(error){if(id===version){indicator.replaceChildren(document.createTextNode('加载失败，请重试。'),Object.assign(document.createElement('a'),{href:base+'/login',textContent:'重新登录'}));resetCalendarControls();}}
-  finally{clearTimeout(timer);if(id===version){request=null;pendingURL='';content.removeAttribute('aria-busy');}}
+   indicator.textContent='';indicator.classList.remove('is-loading');indicator.removeAttribute('aria-label');
+  }catch(error){if(id===version){highlight(new URL(renderedURL).pathname);indicator.style.removeProperty('left');indicator.style.removeProperty('top');indicator.replaceChildren(document.createTextNode('加载失败，请重试。'),Object.assign(document.createElement('a'),{href:base+'/login',textContent:'重新登录'}));resetCalendarControls();}}
+  finally{clearTimeout(timer);clearTimeout(loadingTimer);if(id===version){request=null;pendingURL='';indicator.classList.remove('is-loading');indicator.removeAttribute('aria-label');content.removeAttribute('aria-busy');}}
  }
  function closeAccountMenu(){const menu=document.getElementById('teacherAccountMenu');if(menu)menu.hidden=true;document.querySelector('.teacher-account-trigger')?.setAttribute('aria-expanded','false');}
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){const open=document.querySelector('.teacher-account-trigger[aria-expanded="true"]');closeAccountMenu();open?.focus();}});
@@ -83,7 +112,7 @@
   if(event.target.closest('[data-confirm-logout]')){if(!window.confirm('确定退出登录吗？'))event.preventDefault();return;}
   if(event.target.closest('[data-close-sidebar]')){document.getElementById('sidebar')?.classList.remove('open');return;}
   const menu=event.target.closest('#menuToggle');if(menu){document.getElementById('sidebar')?.classList.toggle('open');return;}
-  const toggle=event.target.closest('[data-course-toggle]');if(toggle){document.getElementById('card-'+toggle.dataset.courseToggle)?.classList.toggle('open');return;}
+  const toggle=event.target.closest('[data-course-toggle]');if(toggle){const card=document.getElementById('card-'+toggle.dataset.courseToggle);card?.classList.toggle('open');if(card?.classList.contains('open')){const row=card.querySelector('[data-lesson-today]'),body=card.querySelector('.lesson-body');if(row&&body)requestAnimationFrame(()=>{const header=body.querySelector('thead');body.scrollTop+=row.getBoundingClientRect().top-body.getBoundingClientRect().top-(header?.getBoundingClientRect().height||0)-8;});}return;}
   const day=event.target.closest('.cal-day:not(.other)');if(day){showDay(day);return;}
   const link=event.target.closest('a[href]');if(!link||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||link.target||link.hasAttribute('download'))return;
   const url=new URL(link.href,location.href);if(url.origin!==location.origin||!portalPath(url.pathname))return;
@@ -98,7 +127,7 @@
   const value=field.value.trim();if(value===state.saved)return true;
   const id=form.dataset.lessonTopic;
   state.running=(async()=>{try{
-   const response=await fetch(base+'/lessons/'+id+'/content',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:value})});if(!response.ok)throw Error('save');const result=await response.json();if(!result.ok)throw Error('save');state.saved=result.content;field.defaultValue=result.content;
+   const response=await fetch(base+'/lessons/'+id+'/content',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:value})});if(!response.ok)throw Error('save');const result=await response.json();if(!result.ok)throw Error('save');state.saved=result.content;field.defaultValue=result.content;views.clear();
    if(field.value.trim()===result.content){topicNotice(form,'已保存');setTimeout(()=>{if(field.value.trim()===state.saved)topicNotice(form,'');},1800);}return true;
   }catch(error){topicNotice(form,'保存失败，内容已保留',true);return false;}})();
   const ok=await state.running;state.running=null;
@@ -112,7 +141,7 @@
  document.addEventListener('change',function(event){if(!['yearSelect','monthSelect'].includes(event.target.id))return;const toolbar=document.querySelector('[data-calendar-view]');if(!toolbar)return;const year=document.querySelector('#yearSelect').value,month=document.querySelector('#monthSelect')?.value;const url=calendarURL(base,year,month,toolbar.dataset.calendarView);navigate(url,{calendar:true});});
  document.addEventListener('keydown',event=>{if(!['Enter',' '].includes(event.key))return;const day=event.target.closest('.cal-day:not(.other)');if(day){event.preventDefault();showDay(day);}});
  window.addEventListener('popstate',event=>{const target=new URL(event.state?.teacherView||base,location.origin);navigate(target,{pop:true});});
- function showDay(day){const side=content.querySelector('#calSide');if(!side)return;content.querySelectorAll('.cal-day.selected').forEach(el=>el.classList.remove('selected'));day.classList.add('selected');let events=[];try{events=JSON.parse(day.dataset.ev||'[]')}catch{}if(!Array.isArray(events))events=[];const fragment=document.createDocumentFragment();const el=(tag,cls,text)=>{const node=document.createElement(tag);node.className=cls;node.textContent=text||'';return node};fragment.append(el('div','cal-side-hd',(day.dataset.date||'')+' 的课程'));if(!events.length)fragment.append(el('div','cal-side-empty','当天暂无课程'));for(const ev of events){const item=el('div','cal-side-item','');item.style.setProperty('--course-hue',String((Math.round(Number(ev.course_id)*137.508)||0)%360));item.append(el('span','cal-side-time',ev.start_time));const info=el('div','','');info.append(el('div','cal-side-title',ev.title),el('div','cal-side-course',ev.course_title));info.style.color='hsl(var(--course-hue) 38% 35%)';info.querySelectorAll('.cal-side-title,.cal-side-course').forEach(node=>node.style.color='inherit');item.append(info);if(/^[1-9]\d*$/.test(String(ev.course_id))){const a=el('a','cal-side-link','进入课程');a.href=base+'/live/'+ev.course_id+'?lesson='+(/^\d+$/.test(String(ev.lesson_id))?ev.lesson_id:'');a.target='_blank';a.rel='noopener';item.append(a);}fragment.append(item);}side.replaceChildren(fragment);}
+ function showDay(day){const side=content.querySelector('#calSide');if(!side)return;content.querySelectorAll('.cal-day.selected').forEach(el=>el.classList.remove('selected'));day.classList.add('selected');let events=[];try{events=JSON.parse(day.dataset.ev||'[]')}catch{}if(!Array.isArray(events))events=[];const fragment=document.createDocumentFragment();const el=(tag,cls,text)=>{const node=document.createElement(tag);node.className=cls;node.textContent=text||'';return node};fragment.append(el('div','cal-side-hd',(day.dataset.date||'')+' 的课程'));if(!events.length)fragment.append(el('div','cal-side-empty','当天暂无课程'));for(const ev of events){const item=el('div','cal-side-item','');item.style.setProperty('--course-hue',String((Math.round(Number(ev.course_id)*137.508)||0)%360));item.append(el('span','cal-side-time',ev.start_time));const info=el('div','','');info.append(el('div','cal-side-title',ev.course_title||ev.title),el('div','cal-side-course',ev.title));info.style.color='hsl(var(--course-hue) 38% 35%)';info.querySelector('.cal-side-title').style.color='inherit';item.append(info);if(/^[1-9]\d*$/.test(String(ev.course_id))){const actions=el('div','cal-side-actions','');const link=(label,url)=>{const a=el('a','cal-side-link',label);a.href=url;a.target='_blank';a.rel='noopener';actions.append(a);};if(ev.completed){if(ev.has_replay_video)link('回放',base+'/replay/'+ev.course_id+'?lesson='+ev.lesson_id);else actions.append(el('span','lesson-entry-unavailable','暂无回放'));}if(ev.live_allowed)link(ev.completed?'重录':'直播间',base+'/live/'+ev.course_id+'?lesson='+ev.lesson_id);else actions.append(el('span','lesson-entry-unavailable',ev.date?'当日开放':'待排课'));item.append(actions);}fragment.append(item);}side.replaceChildren(fragment);}
  // Store only the view location in browser history; all visible addresses use /teaching.
  const saved=history.state?.teacherView;
  const initialURL=new URL(location.href);
@@ -127,5 +156,8 @@
   history.replaceState({teacherView:serverURL.pathname+serverURL.search},'',base);
   highlight(serverURL.pathname);
  }
+ views.prime(renderedURL,document.documentElement.outerHTML);
+ const warm=()=>{if(document.hidden)return;document.querySelectorAll('#sidebar .sidebar-nav a[href]').forEach(link=>{const url=new URL(link.href,location.href);if([base,base+'/',base+'/courses',base+'/calendar'].includes(url.pathname))prefetch(url);});};
+ if(window.requestIdleCallback)window.requestIdleCallback(warm,{timeout:1000});else setTimeout(warm,200);
  syncHeader();watermark();initCalendar();initWeek();
 })();

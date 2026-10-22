@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const display=require('../lib/teacher-display-name'),nickname=require('../lib/teacher-nickname');
+test('teacher account labels prefer nickname and retain real-name/login fallbacks',()=>{assert.equal(display({display_name:'昵称',real_name:'姓名',username:'admin'}),'昵称');assert.equal(display({real_name:'姓名',username:'admin'}),'姓名');assert.equal(display({username:'admin'}),'admin');});
+test('teacher nickname endpoint is read-only even when called directly',()=>{let writes=0;const db={run(){writes++;}};const res={status(n){this.code=n;return this;},json(value){this.value=value;}};nickname(db)({session:{teacherPortalId:7},body:{nickname:'自行修改'}},res);assert.equal(res.code,403);assert.match(res.value.error,/管理员/);assert.equal(writes,0);});

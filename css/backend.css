@@ -63,6 +63,8 @@ body { overflow-x: clip; }
 
 .sidebar-logo {
   height: 64px;
+  min-height: 64px;
+  flex-shrink: 0;
   padding: 0 20px;
   font-size: 16px;
   font-weight: 700;
@@ -135,7 +137,8 @@ body { overflow-x: clip; }
 }
 
 .teacher-topbar {
-  height: 52px;
+  height: 64px;
+  min-height: 64px;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -1347,3 +1350,10 @@ tr:last-child td { border-bottom: none; }
 .table-wrap th,
 .user-table thead th,
 table th { text-align: left; }
+
+/* Management shell follows the teacher portal layout. */
+.teacher-body{background:#f7f8fa}.teacher-sidebar{flex:0 0 200px;overflow-x:clip}.teacher-sidebar .sidebar-logo{height:64px;min-height:64px;padding:0 20px;flex-shrink:0;border-bottom-color:rgba(255,255,255,.08)}.teacher-sidebar .sidebar-nav{overflow-x:hidden}.teacher-topbar.admin-neutral-topbar{height:64px;min-height:64px;padding:0 24px;background:#fefefd;border-bottom-color:#e6e8ec}.admin-neutral-topbar #adminHeaderDate{font-size:14px;font-weight:500;color:#526174}
+.admin-account-menu{position:relative}.admin-account-menu summary{display:flex;align-items:center;gap:10px;width:100%;padding:10px 8px;border-radius:8px;color:#e4e8ed;cursor:pointer;list-style:none}.admin-account-menu summary::-webkit-details-marker{display:none}.admin-account-menu summary:hover,.admin-account-menu[open] summary{background:rgba(255,255,255,.045)}.admin-account-avatar{display:grid;place-items:center;width:31px;height:31px;flex:none;border-radius:50%;font-size:12px;font-weight:500;color:#dce6e2;background:#445650}.admin-account-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.admin-account-dots{color:#8b999e;letter-spacing:1px}.admin-account-popover{position:absolute;bottom:calc(100% + 10px);left:0;right:0;padding:6px;border:1px solid #e1e4e7;border-radius:12px;background:#f7f8f9;box-shadow:0 8px 28px rgba(0,0,0,.18);z-index:110}.admin-account-popover a{display:flex;align-items:center;gap:10px;padding:10px;border-radius:6px;color:#30383d;text-decoration:none;font-size:12px}.admin-account-popover a:hover{background:#e9edeb}.admin-account-menu summary:focus-visible{outline:2px solid #b9ccc5;outline-offset:2px}
+
+/* Compact management sidebar and simple account entry. */
+.teacher-sidebar{width:180px;min-width:180px;flex-basis:180px}.teacher-sidebar .sidebar-logo{padding-left:16px;padding-right:12px}.teacher-sidebar .sidebar-footer{padding:10px 12px;border-top:0}.admin-account-menu summary{padding:7px 4px;gap:9px}.admin-account-avatar{width:27px;height:27px;font-size:11px}.admin-account-name{font-size:12px}.admin-account-menu summary:hover,.admin-account-menu[open] summary{background:rgba(255,255,255,.03)}

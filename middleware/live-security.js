@@ -37,7 +37,7 @@ function liveHttpGuard(db) {
     if (person.admin) return next();
     if (req.adminAccount && !/^\/(live\/studio|teaching)\//.test(req.path) && !/^\/live-manage\/\d+\/status/.test(req.path)) return next();
     let id = null;
-    const studio = req.path.match(/^\/(?:live\/studio|teaching)\/([1-9]\d*)(?:\/(?:upload|state|upload-status\/[^/]+))?\/?$/);
+    const studio = req.path.match(/^\/(?:live\/studio|teaching)\/([1-9]\d*)(?:\/(?:upload|state|eligibility|upload-status\/[^/]+))?\/?$/);
     if (studio && ['GET', 'POST'].includes(req.method)) id = studio[1];
     const stream = req.path.match(/^\/live-manage\/([1-9]\d*)\/status\/?$/);
     if (stream && req.method === 'POST') {

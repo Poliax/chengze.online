@@ -1,15 +1,7 @@
-<!-- Admin Top Header Bar -->
-<header class="teacher-topbar">
-  <div class="topbar-left">
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="菜单">
-      <span></span><span></span><span></span>
-    </button>
-    <button type="button" class="topbar-back" id="topbarBack" aria-label="返回" onclick="if(history.length>1){history.back()}else{location.href='<%= typeof adminAccount !== 'undefined' && adminAccount.role !== 'ceo' ? '/admin/workspace' : '/admin/dashboard' %>'}">← 返回</button>
-  </div>
-  <div class="topbar-right">
-    <div class="teacher-info">
-      <div class="teacher-avatar"><%= teacherName ? teacherName[0] : '师' %></div>
-      <span><%= teacherName %></span>
-    </div>
-  </div>
+<header class="teacher-topbar admin-neutral-topbar">
+ <div class="topbar-left"><button type="button" class="admin-mobile-menu" id="adminMobileMenu" aria-label="展开管理后台菜单" aria-controls="sidebar" aria-expanded="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+ <span id="adminHeaderDate"><%= new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'long',day:'numeric',weekday:'long'}).format(new Date()) %></span></div>
 </header>
+<button type="button" class="admin-nav-overlay" id="adminNavOverlay" aria-label="关闭管理后台菜单" hidden></button>
+<script src="/js/admin-shell.js?v=20261021-drawer1" defer></script>
+<script>(function(){function date(){var el=document.getElementById('adminHeaderDate');if(el)el.textContent=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'long',day:'numeric',weekday:'long'}).format(new Date());}setInterval(date,60000);document.addEventListener('click',function(e){var menu=document.getElementById('adminAccountMenu');if(menu&&!menu.contains(e.target))menu.open=false;var exit=e.target.closest('[data-admin-logout]');if(exit&&!window.confirm('确定退出登录吗？'))e.preventDefault();});document.addEventListener('keydown',function(e){if(e.key==='Escape'){var menu=document.getElementById('adminAccountMenu');if(menu&&menu.open){menu.open=false;menu.querySelector('summary').focus();}}});})();</script>

@@ -6,9 +6,13 @@ const fs = require('fs');
 const path = require('path');
 const db = require('../db');
 const router = express.Router();
+const profileTools = require('../lib/student-account-profile');
+const registrationIdentity = require('../lib/student-registration-identity');
+const avatarUpload = require('multer')({ storage:require('multer').memoryStorage(), limits:{fileSize:2*1024*1024, files:1, fields:0} }).single('avatar');
 
 // ── 限流状态（内存版，生产可换 Redis）──
 const loginAttempts = {};   // phone -> { count, lockedUntil }
+const phoneChange = require('../lib/student-phone-change')({db,sendSms:sendTencentSms,isReady:()=>{const cfg=loadLiveConfig(),sms=cfg.sms||{};return !sms.devMode&&!!(sms.sdkAppId&&sms.signName&&sms.templateId&&cfg.tencentSecretId&&cfg.tencentSecretKey);}});
 const smsCodes = {};        // phone -> { code, expiresAt }
 const smsRate = {};         // phone -> { lastSentAt, count }
 
@@ -91,6 +95,8 @@ function sendTencentSms(phone, code) {
         try {
           const j = JSON.parse(data);
           if (j.Response && j.Response.Error) return reject(new Error(j.Response.Error.Message || '短信发送失败'));
+          const sent=j.Response && j.Response.SendStatusSet;
+          if(!Array.isArray(sent)||!sent.length||sent.some(item=>item.Code!=='Ok'))return reject(new Error('短信发送失败，请稍后重试'));
           return resolve({ success: true });
         } catch (e) {
           return reject(new Error('短信发送失败'));
@@ -145,18 +151,17 @@ router.post('/auth/register', (req, res) => {
   const existing = db.get('SELECT id FROM students WHERE phone = ?', [phone]);
   if (existing) return res.json({ success: false, error: '该手机号已注册，请直接登录' });
 
-  const uid = 'CZ' + Date.now().toString().slice(-8);
-  const autoName = '学员' + phone.slice(-4);
+  const { uid, nickname } = registrationIdentity(db, phone);
   const uname = generateUsername();
   const passwordHash = bcrypt.hashSync(password, 10);
   db.run(
-    'INSERT INTO students (name, username, phone, email, password_hash, uid, wechat_nickname) VALUES (?,?,?,?,?,?,?)',
-    [autoName, uname, phone, '', passwordHash, uid, '']
+    'INSERT INTO students (name, nickname, username, phone, email, password_hash, uid, wechat_nickname) VALUES (?,?,?,?,?,?,?,?)',
+    ['', nickname, uname, phone, '', passwordHash, uid, '']
   );
   db.saveDb();
   delete smsCodes[phone];
 
-  const row = db.get('SELECT id, name, username, phone, uid, wechat_nickname FROM students WHERE phone = ?', [phone]);
+  const row = db.get('SELECT id, name, nickname, username, phone, uid, wechat_nickname FROM students WHERE phone = ?', [phone]);
   req.session.studentId = row.id;
   return res.json({ success: true, user: row });
 });
@@ -178,6 +183,7 @@ router.post('/auth/login', (req, res) => {
     loginAttempts[phone] = { count: (attempts ? attempts.count : 0) + 1, lockedUntil: null };
     return res.json({ success: false, error: '手机号未注册' });
   }
+  if (row.status === 'disabled') return res.json({success:false,error:'账号已停用或注销'});
   if (!row.password_hash) return res.json({ success: false, error: '该账号未设置密码' });
   if (!bcrypt.compareSync(password, row.password_hash)) {
     const count = (attempts ? attempts.count : 0) + 1;
@@ -190,7 +196,7 @@ router.post('/auth/login', (req, res) => {
   req.session.studentId = row.id;
   return res.json({
     success: true,
-    user: { id: row.id, name: row.name, username: row.username, phone: row.phone, uid: row.uid, wechat_nickname: row.wechat_nickname || '' }
+    user: { id: row.id, name: row.name, nickname: row.nickname || row.name, username: row.username, phone: row.phone, uid: row.uid, wechat_nickname: row.wechat_nickname || '' }
   });
 });
 
@@ -205,17 +211,17 @@ router.post('/auth/login-code', (req, res) => {
   }
   delete smsCodes[phone];
   let row = db.get('SELECT * FROM students WHERE phone = ?', [phone]);
+  if (row && row.status === 'disabled') return res.json({success:false,error:'账号已停用或注销'});
   if (!row) {
-    const uid = 'CZ' + Date.now().toString().slice(-8);
-    const autoName = '学员' + phone.slice(-4);
+    const { uid, nickname } = registrationIdentity(db, phone);
     const uname = generateUsername();
-    db.run('INSERT INTO students (name, username, phone, email, password_hash, uid, wechat_nickname) VALUES (?,?,?,?,?,?,?)',
-      [autoName, uname, phone, '', '', uid, '']);
+    db.run('INSERT INTO students (name, nickname, username, phone, email, password_hash, uid, wechat_nickname) VALUES (?,?,?,?,?,?,?,?)',
+      ['', nickname, uname, phone, '', '', uid, '']);
     db.saveDb();
     row = db.get('SELECT * FROM students WHERE phone = ?', [phone]);
   }
   req.session.studentId = row.id;
-  return res.json({ success: true, user: { id: row.id, name: row.name, username: row.username, phone: row.phone, uid: row.uid, wechat_nickname: row.wechat_nickname || '' } });
+  return res.json({ success: true, user: { id: row.id, name: row.name, nickname: row.nickname || row.name, username: row.username, phone: row.phone, uid: row.uid, wechat_nickname: row.wechat_nickname || '' } });
 });
 
 // ── 微信注册（输入微信昵称/账号，自动创建并绑定）──
@@ -241,6 +247,7 @@ router.post('/auth/login-wechat', (req, res) => {
   if (!wechat || !wechat.trim()) return res.json({ success: false, error: '请输入微信昵称/微信号' });
   const row = db.get('SELECT * FROM students WHERE wechat_nickname = ?', [wechat.trim()]);
   if (!row) return res.json({ success: false, error: '该微信未注册，请先注册' });
+  if (row.status === 'disabled') return res.json({success:false,error:'账号已停用或注销'});
   req.session.studentId = row.id;
   return res.json({ success: true, user: { id: row.id, name: row.name, phone: row.phone, uid: row.uid, wechat_nickname: row.wechat_nickname || '' } });
 });
@@ -281,6 +288,7 @@ router.get('/auth/me', (req, res) => {
 
 // ── 更新个人资料（姓名/微信）──
 router.post('/auth/profile', (req, res) => {
+  if (Object.prototype.hasOwnProperty.call(req.body || {}, 'uid')) return res.status(400).json({success:false,error:'UID 注册后不可修改'});
   if (!req.session.studentId) return res.json({ success: false, error: '请先登录' });
   const { name, wechat, exam_year, username } = req.body || {};
   const row = db.get('SELECT * FROM students WHERE id = ?', [req.session.studentId]);
@@ -296,6 +304,71 @@ router.post('/auth/profile', (req, res) => {
   db.saveDb();
   const updated = db.get('SELECT id, name, username, phone, uid, wechat_nickname, exam_year FROM students WHERE id = ?', [req.session.studentId]);
   return res.json({ success: true, user: updated });
+});
+
+function requireStudentProfile(req, res, next) {
+  if (!req.session.studentId) return res.status(401).json({success:false,error:'请先登录'});
+  if (!db.get('SELECT id FROM students WHERE id=?', [req.session.studentId])) return res.status(404).json({success:false,error:'账号不存在'});
+  next();
+}
+router.post('/auth/phone-change/code', requireStudentProfile, async (req,res) => {
+  try { await phoneChange.send(req.session.studentId,req.body && req.body.purpose,req.body && req.body.new_phone);res.json({success:true}); }
+  catch(error){res.status(error.status||400).json({success:false,error:error.message});}
+});
+router.post('/auth/phone-change', requireStudentProfile, (req,res) => {
+  try { const phone=phoneChange.change(req.session.studentId,req.body||{});res.json({success:true,phone}); }
+  catch(error){res.status(error.status||400).json({success:false,error:error.message});}
+});
+router.post('/auth/cancel-account', requireStudentProfile, (req,res) => {
+  const attempts=req.session.cancelAttempts;
+  if(attempts && attempts.count>=5 && Date.now()-attempts.startedAt<300000) return res.status(429).json({success:false,error:'验证次数过多，请5分钟后重试'});
+  try {
+    require('../lib/student-account-cancellation')(db,bcrypt,req.session.studentId,req.body || {});
+  } catch(error) {
+    req.session.cancelAttempts=attempts && Date.now()-attempts.startedAt<300000 ? {count:attempts.count+1,startedAt:attempts.startedAt} : {count:1,startedAt:Date.now()};
+    return res.status(400).json({success:false,error:error.message});
+  }
+  req.session.destroy(() => res.json({success:true}));
+});
+router.post('/auth/account-details', requireStudentProfile, (req,res) => {
+  let values;
+  try { values = {...profileTools.accountDetails(req.body || {}), ...profileTools.studyDetails(db,req.body || {})}; }
+  catch(error) { return res.status(400).json({success:false,error:error.message}); }
+  db.run('UPDATE students SET name=COALESCE(?,name), nickname=?, recipient_name=?, recipient_phone=?, recipient_address=?, recipient_province=?, recipient_city=?, recipient_district=?, recipient_address_detail=?, province_code=COALESCE(?,province_code), exam_year=COALESCE(?,exam_year), junior_college=COALESCE(?,junior_college), junior_major=COALESCE(?,junior_major) WHERE id=?', [values.name,values.nickname,values.recipient_name,values.recipient_phone,values.recipient_address,values.recipient_province,values.recipient_city,values.recipient_district,values.recipient_address_detail,values.province_code,values.exam_year,values.junior_college,values.junior_major,req.session.studentId]);
+  res.json({success:true, nickname:values.nickname,province_code:values.province_code,exam_year:values.exam_year});
+});
+router.post('/auth/avatar', requireStudentProfile, (req,res) => {
+  avatarUpload(req,res,error => {
+    if(error) return res.status(400).json({success:false,error:'请选择不超过 2MB 的图片'});
+    const ext=profileTools.avatarExtension(req.file && req.file.buffer);
+    if(!ext) return res.status(400).json({success:false,error:'请选择 JPG 或 PNG 图片'});
+    const directory=path.join(__dirname,'../public/images/student-avatars');
+    const filename=crypto.randomUUID()+ext;
+    const target=path.join(directory,filename);
+    const url='/public/images/student-avatars/'+filename;
+    try {
+      fs.mkdirSync(directory,{recursive:true});fs.writeFileSync(target,req.file.buffer,{flag:'wx'});
+      db.run('UPDATE students SET avatar=? WHERE id=?',[url,req.session.studentId]);
+    } catch(error) {
+      try { fs.unlinkSync(target); } catch(_) {}
+      return res.status(500).json({success:false,error:'头像保存失败，请重试'});
+    }
+    res.json({success:true,avatar:url});
+  });
+});
+
+// Bind study preferences to the authenticated account only.
+router.post('/auth/study-profile', (req, res) => {
+  if (!req.session.studentId) return res.status(401).json({ success:false, error:'请先登录' });
+  const body = req.body || {};
+  const province = typeof body.province_code === 'string' ? body.province_code.trim() : '';
+  const year = typeof body.exam_year === 'string' ? body.exam_year.trim() : '';
+  if (!province || !db.get('SELECT code FROM provinces WHERE code=?', [province])) return res.status(400).json({ success:false, error:'请选择有效省份' });
+  if (!/^20\d{2}$/.test(year)) return res.status(400).json({ success:false, error:'请选择有效考试年份' });
+  if (!db.get('SELECT id FROM students WHERE id=?', [req.session.studentId])) return res.status(404).json({ success:false, error:'账号不存在' });
+  db.run('UPDATE students SET province_code=?, exam_year=? WHERE id=?', [province, year, req.session.studentId]);
+  db.saveDb();
+  res.json({ success:true, province_code:province, exam_year:year });
 });
 
 // ── 设置/修改密码 ──

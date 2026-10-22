@@ -63,7 +63,7 @@ body.modal-mode .form-card{max-width:none;box-shadow:none;background:transparent
 body.modal-mode .form-card h3{display:none}
 body.modal-mode .form-actions{display:none}
 </style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head>
+<%- include('../partials/brand-icons') %></head>
 <body class="teacher-body<% if (modal) { %> modal-mode<% } %>"><% if (typeof modal === 'undefined' || !modal) { %><%- include('partials/sidebar') %><% } %><div class="teacher-main"><% if (typeof modal === 'undefined' || !modal) { %><%- include('partials/header') %><% } %>
 <div class="teacher-content">
 <div class="list-header">

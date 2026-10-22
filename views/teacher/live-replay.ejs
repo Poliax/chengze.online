@@ -18,7 +18,7 @@
     .copy-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
     .copy-btn.copied{color:#16a34a;border-color:#bbf7d0;background:#f0fdf4}
   </style>
-<link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"></head>
+<%- include('../partials/brand-icons') %></head>
 <body class="teacher-body">
   <%- include('partials/sidebar') %>
   <div class="teacher-main">
@@ -59,7 +59,7 @@
               <td><%= r.title %></td>
               <td><%= Math.floor(r.duration / 60) %>分钟</td>
               <td><span class="code-wrap"><% if (r.video_url) { %><a class="code-link" href="<%= r.video_url %>" target="_blank" rel="noopener"><%= r.video_url %></a><% } else { %><span class="code-box">-</span><% } %><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
-              <td><span class="code-wrap"><% var rpPath = r.lesson_id ? ('/live/student/replay-duo/' + r.course_id + '?lesson=' + r.lesson_id + '&v=2') : ('/live/student/replay/' + r.id); %><a class="code-link" href="<%= rpPath %>" target="_blank" rel="noopener">https://chengze.online<%= rpPath %></a><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
+              <td><span class="code-wrap"><% var rpPath = r.lesson_id && r.video_url ? ('/live/student/replay-duo/' + r.course_id + '?lesson=' + r.lesson_id + '&v=2') : ('/live/student/vod-replay/' + r.id); %><a class="code-link" href="<%= rpPath %>" target="_blank" rel="noopener">https://chengze.online<%= rpPath %></a><button type="button" class="copy-btn" title="一键复制" onclick="copyText(this, this.previousElementSibling.textContent.trim())"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></td>
               <td><%= fmtDT(r.created_at) %></td>
               <td>
                 <form method="POST" action="/admin/replays-manage/delete/<%= r.id %>" style="display:inline" onsubmit="return confirm('确认删除该回放？')">

@@ -1,0 +1,5 @@
+<% const date=String(lesson.schedule_time||'').slice(0,10),currentDate=new Date(Date.now()+8*3600000).toISOString().slice(0,10);const open=/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date)&&date<=currentDate;const done=!(lesson.is_live||lesson.has_live_session)&&!!(lesson.has_taught_session||lesson.is_taught);const cid=courseId; %>
+<div class="teacher-lesson-actions">
+<% if(done) { if(lesson.has_replay_video){ %><a class="home-enter lesson-live-entry" href="/teach/replay/<%= cid %>?lesson=<%= lesson.id %>" target="_blank" rel="noopener">回放</a><% }else{ %><span class="lesson-entry-unavailable">暂无回放</span><% } } %>
+<% if(open){ %><a class="home-enter lesson-live-entry" href="/teach/live/<%= cid %>?lesson=<%= lesson.id %>" target="_blank" rel="noopener"><%= done?'重录':'直播间' %></a><% }else{ %><span class="lesson-entry-unavailable"><%= date?'当日开放':'待排课' %></span><% } %>
+</div>

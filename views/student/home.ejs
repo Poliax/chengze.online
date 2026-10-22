@@ -464,7 +464,10 @@
     .header-sub { display:none; }
   }
 </style>
-<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><link rel="apple-touch-icon" href="/public/images/brand-green/app-rounded.png?v=20261017-brand1"><link rel="icon" type="image/svg+xml" href="/public/images/brand-green/app-rounded.svg?v=20261017-brand1"><link rel="stylesheet" href="/public/css/student-topnav.css?v=20261018-topnav1"></head>
+<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><%- include('../partials/brand-icons') %><link rel="stylesheet" href="/public/css/student-topnav.css?v=20261018-topnav1"><link rel="stylesheet" href="/public/css/student-account.css?v=20261021-education20">
+<script defer src="/js/shipping-regions.js?v=20261021-shipping1"></script>
+<script defer src="/js/student-account.js?v=20261021-education20"></script>
+</head>
 <body class="student-top-layout">
 <%
   var totalLessons = (courses || []).reduce(function(s, c){ return s + (c.lesson_count || 0); }, 0);
@@ -484,10 +487,6 @@
       <button type="button" class="menu-item" data-view="home" onclick="switchView('home')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         首页
-      </button>
-      <button type="button" class="menu-item" data-view="overview" onclick="switchView('overview')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
-        学习总览
       </button>
       <button type="button" class="menu-item" data-view="courses" onclick="switchView('courses')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -514,9 +513,14 @@
       <div class="foot-glow"></div>
       <% if (student) { %>
         <div class="sidebar-user">
-          <span class="avatar"><%= (student.name || '学').charAt(0) %></span>
-          <span class="u-name"><%= student.name %></span>
-          <a href="javascript:;" onclick="logoutStudent()">退出</a>
+          <div class="student-account-anchor">
+          <button type="button" class="student-account-trigger" id="studentAccountTrigger" aria-label="学员个人菜单" aria-expanded="false" aria-controls="studentAccountMenu"><span class="avatar" data-student-avatar><% if (student.avatar) { %><img src="<%= student.avatar %>" alt="学员头像"><% } else { %><%= (student.nickname || student.name || '学').charAt(0) %><% } %></span></button>
+          <div class="student-account-menu" id="studentAccountMenu" hidden>
+            <button type="button" data-account-view="profile">个人信息</button>
+            <button type="button" data-account-view="purchased">已购课程</button>
+            <button type="button" data-account-view="overview">学习总览</button>
+            <button type="button" onclick="logoutStudent()">退出登录</button>
+          </div></div>
         </div>
       <% } else if (guest) { %>
         <div class="sidebar-user">
@@ -554,12 +558,6 @@
           <button type="button" class="hero-cta" onclick="goCourseCenter()">进入课程中心 →</button>
         </div>
 
-        <div class="learn-overview">
-          <div class="overview-card"><span class="ov-num"><%= ov.enrolled || 0 %></span><span class="ov-label">已购课程</span></div>
-          <div class="overview-card"><span class="ov-num"><%= ov.completed || 0 %></span><span class="ov-label">完成课时</span></div>
-          <div class="overview-card"><span class="ov-num"><%= ov.upcoming || 0 %></span><span class="ov-label">待上课</span></div>
-          <div class="overview-card"><span class="ov-num"><%= Math.round((ov.minutes || 0) / 60) %></span><span class="ov-label">学习小时</span></div>
-        </div>
 
         <div class="tool-card">
           <h3>备考工具 <span class="en">Exam Tools</span></h3>
@@ -631,6 +629,7 @@
 
       </section>
 
+      <%- include('account-views', { myList: myList }) %>
       <!-- 学习总览视图 -->
       <section class="view" id="viewOverview">
         <div class="overview-hero">
@@ -940,6 +939,8 @@
 <script>
   var VIEW_TITLES = {
     home: ['首页', '专升本在线教育平台'],
+    profile: ['个人信息', '我的账号信息'],
+    purchased: ['已购课程', '已报名的课程'],
     overview: ['学习总览', '学习进度 · 我的课程 · 待上课'],
     courses: ['课程中心', '专升本备考 · 直播 + 回放'],
     practice: ['刷题模考', '题库刷题 · 模拟考试'],
@@ -1501,6 +1502,12 @@
   }
   var saved = null;
   try { saved = JSON.parse(localStorage.getItem('cz_province_pref') || 'null'); } catch(e) {}
+  var boundStudy = <%- JSON.stringify(student ? { province: student.province_code || '', year: student.exam_year || '' } : null).replace(/</g, '\\u003c') %>;
+  if (boundStudy && boundStudy.province && boundStudy.year) {
+    var boundYear = document.getElementById('globalYear');
+    if (boundYear) { if (!Array.from(boundYear.options).some(function(o){return o.value === boundStudy.year;})) boundYear.add(new Option(boundStudy.year, boundStudy.year)); boundYear.value = boundStudy.year; }
+    applyProvince(boundStudy.province, false); return;
+  }
   if (saved && saved.year) { var gy0 = document.getElementById('globalYear'); if (gy0) gy0.value = saved.year; }
   if (saved && saved.province) { applyProvince(saved.province, false); return; }
   try {

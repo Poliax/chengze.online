@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),ejs=require('ejs');
+const root=path.join(__dirname,'../views/teacher');
+test('省份和师资全部六个页面共用框架资源、侧栏和顶部栏',()=>{for(const name of ['provinces','province-form','province-detail','staff','staff-form','staff-detail']){const text=fs.readFileSync(path.join(root,name+'.ejs'),'utf8');assert(text.includes("include('partials/core-styles')"),name);assert(text.includes("include('partials/sidebar')"),name);assert(text.includes("include('partials/header')"),name);assert(!text.includes('/css/teacher.css'),name);ejs.compile(text,{filename:path.join(root,name+'.ejs')});}});
+test('后台页面不能重新引入遗留的重复框架样式',()=>{for(const name of fs.readdirSync(root).filter(n=>n.endsWith('.ejs'))){assert(!fs.readFileSync(path.join(root,name),'utf8').includes('/css/teacher.css'),name);}});
+test('共享框架样式资源能够渲染并携带缓存版本',async()=>{const html=await ejs.renderFile(path.join(root,'partials/core-styles.ejs'),{cssVer:'test123'});assert(html.includes('/css/backend.css?v=test123'));assert(html.includes('/css/style.css'));});

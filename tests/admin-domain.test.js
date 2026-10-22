@@ -72,3 +72,10 @@ test('后台统一字体覆盖完整页面，局部图表更新和学员端不�
  assert.equal(font('<section>局部图表</section>'),'<section>局部图表</section>');
  const fs=require('fs');for(const file of ['css/backend.css','css/teacher-backend.css','public/css/teacher-backend.css'])assert.ok(!fs.readFileSync(require('path').join(__dirname,'..',file),'utf8').includes('Noto Serif SC'));
 });
+
+test('系统入口渲染不误改管理域名或相似名称，教师端和排课入口保持正确',()=>{
+ const fs=require('fs'),path=require('path');const source=fs.readFileSync(path.join(__dirname,'../views/teacher/partials/business-overview.ejs'),'utf8');const row=source.split('\n').find(line=>line.includes('business-destinations'));const html=domain.htmlURLs(row);
+ assert(html.includes('href="https://www.chengze.online/"'));assert(html.includes('href="https://admin.chengze.online/teaching"'));assert(html.includes('href="/schedule"'));assert(!html.includes('https://.chengze.online'));
+ const urls='<a href="https://admin.chengze.online/admin/dashboard">内部</a><a href="/administrator">其他</a><a href="/admin-assets/logo.svg">资源</a>';
+ assert.equal(domain.htmlURLs(urls),'<a href="https://admin.chengze.online/dashboard">内部</a><a href="/administrator">其他</a><a href="/admin-assets/logo.svg">资源</a>');
+});
