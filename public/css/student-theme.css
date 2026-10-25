@@ -1,0 +1,215 @@
+/* Shared student palette, confirmed 2026-10-15. Keep player and backend themes separate. */
+.student-brand-theme {
+  --bg:#F8F8F5; --surface:#FFFFFF; --border:#DEE4DF;
+  --text-1:#252A28; --text-2:#252A28; --text-3:#626B66;
+  --accent:#28554A; --ink:#252A28; --muted:#626B66; --line:#DEE4DF;
+  --indigo:#28554A; --violet:#28554A; --purple:#28554A;
+  --color-bg:#F8F8F5; --color-surface:#FFFFFF; --color-text:#252A28;
+  --color-text-muted:#626B66; --color-text-light:#626B66;
+  --color-primary:#28554A; --color-border:#DEE4DF;
+  --brand-gradient:linear-gradient(135deg,#28554A,#356B5C);
+  --brand-gradient-deep:linear-gradient(135deg,#28554A,#21483E);
+  --button-gradient:linear-gradient(#28554A,#28554A);
+  --shadow-card:0 2px 5px rgba(37,42,40,.035),0 8px 22px rgba(37,42,40,.075);
+  --shadow-hover:0 3px 7px rgba(37,42,40,.04),0 12px 26px rgba(37,42,40,.1);
+  background:#F8F8F5; color:#252A28;
+}
+.student-brand-theme .main {background:#F8F8F5;min-height:calc(100vh - var(--student-nav-height,72px))}
+.student-brand-theme ::selection {background:#DEEAE2;color:#252A28}
+.student-brand-theme :is(.card,.pkg-card,.series-card,.course-card,.question-card,.overview-card,.overview-hero,.overview-panel,.stat-card,.detail-side,.detail-child-card,.item-card,.child-card,.file-item,.doc,.lesson-list,.form-card,.contact-card,.faq-item) {background:#FFFFFF;border-color:#DEE4DF;color:#252A28}
+.student-brand-theme :is(.course-tabs,.practice-tabs,.seg,.series-tags span,.overview-chips .chip,.explanation,.course-lesson,.overview-course,.lesson-item:hover,.section-tint,.exam-time,.sub) {background:#EDF2EC;border-color:#DEE4DF}
+.student-brand-theme :is(.course-tab,.practice-tab,.seg button,.subject-tab,.subject-pill) {color:#626B66}
+.student-brand-theme :is(.course-tab.active,.practice-tab.active,.seg button.active,.seg button.on,.subject-tab.active,.subject-pill.active,.btn-primary,.buy-btn,.detail-side .buy-btn,.course-lesson .watch,.dl,.practice-actions .primary) {background:#28554A;border-color:#28554A;color:#FFFFFF;box-shadow:none}
+.student-brand-theme :is(.btn-primary,.buy-btn,.dl):hover {background:#21483E;color:#FFFFFF}
+.student-brand-theme .option-btn.selected:not(.correct):not(.wrong) {background:#EDF2EC;border-color:#28554A;color:#28554A}
+.student-brand-theme :is(.pkg-teacher-avatar,.child-avatar,.stat-icon,.stat-icon.green,.stat-icon.amber) {background:#28554A;color:#FFFFFF}
+.student-brand-theme :is(.lesson-num,.item-icon,.contact-side .icon-box,.card .ic) {background:#EDF2EC;color:#28554A}
+.student-brand-theme :is(.back,.dl-link,.child-card .go,.item-card .go,.course-portal-nav a:hover,.result-score) {color:#28554A}
+.student-brand-theme :is(.row,.notice,.muted,.empty,.course-detail-info p,.course-detail-meta,.pkg-hd .meta,.child-card .meta,.child-teacher,.card p,.card li) {color:#626B66}
+.student-brand-theme :is(.topbar,header.site-header) {background:#FFFFFF;border-bottom:1px solid #DEE4DF;color:#252A28}
+.student-brand-theme :is(.topbar a,.topbar b,header.site-header .brand-name,header.site-header nav a) {color:#252A28}
+.student-brand-theme .page-hero {background:#EDF2EC;color:#252A28}
+.student-brand-theme .cta-banner {background:#28554A;box-shadow:none}
+.student-brand-theme :is(.course-detail-cover) {background:linear-gradient(135deg,#28554A,#668274);box-shadow:none}
+.student-brand-theme :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=submit]):not([type=button]),textarea,select) {font-family:inherit;color:#252A28;background-color:#FFFFFF;border-color:#DEE4DF;box-shadow:none}
+.student-brand-theme select {appearance:none;-webkit-appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%23626B66' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");background-position:right 9px center;background-repeat:no-repeat}
+.student-brand-theme :is(input,textarea,select):focus {outline:none;box-shadow:none;border-color:#638472}
+.student-brand-theme :is(button,a):focus-visible {outline:2px solid #638472;outline-offset:2px}
+.student-brand-theme .student-topnav .menu-item:is(.on,:hover) {color:#28554A}
+.student-brand-theme :is(.hero-cta,.modal-actions .primary,.res-tab.active) {background:#28554A;border-color:#28554A;color:#FFFFFF}
+.student-brand-theme .home-news-panel .overview-panel {background:transparent;border:0}
+.student-brand-theme :is(.post-card .tags span,.series-tags span) {background:#EDF2EC;color:#626B66}
+.student-brand-theme :is(.card,.pkg-card,.series-card,.course-card):hover {border-color:#B9CBBF}
+
+/* Compact actions: softer corners without enlarging the controls. */
+.student-brand-theme {--action-radius:10px;--action-height:32px}
+.student-brand-theme :is(.btn,.btn-primary,.hero-cta,.buy-btn,.dl,.practice-actions button,.modal-actions button,.student-profile button,.phone-code-row button) {
+  box-sizing:border-box;min-height:var(--action-height);padding:6px 14px;
+  border-radius:var(--action-radius);font-size:13px;line-height:18px;letter-spacing:0;
+}
+.student-brand-theme .sidebar-foot .auth-btn {padding:6px 14px;min-height:32px;border-radius:10px;font-size:13px;line-height:18px}
+.student-brand-theme .home-major-panel #majorQueryForm>button {height:34px;min-height:34px;padding:0 18px;border-radius:10px;font-size:13px;line-height:normal}
+.student-brand-theme :is(.course-tab,.practice-tab,.seg button,.subject-tab,.subject-pill,.res-tab) {box-sizing:border-box;padding:5px 12px;min-height:30px;border-radius:9px;font-size:12px;line-height:20px}
+.student-brand-theme .home-resources .res-tabs .res-tab {padding:5px 12px;min-height:30px;border-radius:9px;font-size:12px;line-height:20px}
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle {padding:4px 12px;min-height:28px;border-radius:8px;font-size:12px;line-height:18px}
+.student-brand-theme .student-topnav .menu-item {font-size:14px}
+
+/* Shared card elevation, including standalone course and account pages. */
+.student-brand-theme :is(.card,.pkg-card,.series-card,.course-card,.question-card,.post-card,.overview-card,.stat-card,.item-card,.child-card,.file-item,.form-card,.contact-card) {box-shadow:var(--shadow-card)}
+.student-brand-theme :is(.card,.pkg-card,.series-card,.course-card,.question-card,.post-card,.overview-card,.overview-hero,.stat-card,.detail-side,.detail-child-card,.item-card,.child-card,.file-item,.doc,.lesson-list,.form-card,.contact-card,.faq-item),
+.student-brand-theme .home-dashboard>.home-exam-panel,
+.student-brand-theme .home-dashboard>.home-news-panel,
+.student-brand-theme .home-major-panel,
+.student-brand-theme .home-resources {border-color:transparent}
+
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle {display:inline-flex;align-items:center;justify-content:center;width:30px;height:28px;min-height:28px;padding:0;vertical-align:middle}
+.student-brand-theme .prep-school-toggle::before {content:'';display:block;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+.student-brand-theme .prep-school-toggle[aria-expanded=true]::before {transform:translateY(2px) rotate(225deg)}
+
+/* One segmented-control component for resources, course types and practice modes. */
+.student-brand-theme.student-top-layout .student-segmented{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;padding:4px;width:fit-content;max-width:100%;box-sizing:border-box;background:#e9eee9;border:0;border-radius:12px;box-shadow:none}
+.student-brand-theme.student-top-layout .student-segmented>button{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:32px;height:32px;margin:0;padding:0 16px;border:0;border-radius:9px;background:transparent;color:#626b66;font-family:inherit;font-size:13px;font-weight:500;line-height:1.4;white-space:nowrap;box-shadow:none;transform:none;transition:background-color .15s,color .15s}
+.student-brand-theme.student-top-layout .student-segmented>button:hover{background:#e0e8e1;color:#28554a}
+.student-brand-theme.student-top-layout .student-segmented>button:is(.active,.on){background:#fff;color:#28554a;font-weight:600;box-shadow:0 1px 4px rgba(37,65,48,.10)}
+.student-brand-theme.student-top-layout .student-segmented>button:is(.active,.on):hover{background:#fff;color:#21483e}
+.student-brand-theme.student-top-layout .student-segmented>button:focus-visible{outline:2px solid #638472;outline-offset:2px}
+@media(max-width:600px){.student-brand-theme.student-top-layout .student-segmented>button{padding:0 12px}}
+
+/* Account entry stays filled; the search action is visually secondary. */
+.student-brand-theme .home-major-panel #majorQueryForm>button{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;padding:0 13px;background:#fff;color:#28554a;border:1px solid #9db6a7;box-shadow:none;font-weight:500}
+.student-brand-theme .home-major-panel #majorQueryForm>button::before{content:'';display:block;width:13px;height:13px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='6.8' cy='6.8' r='4.5' fill='none' stroke='%2328554a' stroke-width='1.5'/%3E%3Cpath d='m10.2 10.2 3.6 3.6' stroke='%2328554a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat}
+.student-brand-theme .home-major-panel #majorQueryForm>button:hover{background:#eef4ef;border-color:#638472;color:#21483e}
+.student-brand-theme .home-major-panel #majorQueryForm>button:active{background:#e1ece4}
+
+.student-brand-theme .home-major-panel #majorQueryForm>button{width:34px;min-width:34px;padding:0;gap:0}
+.student-brand-theme .home-major-panel #majorQueryForm>button::before{width:16px;height:16px}
+
+.student-brand-theme .home-major-panel #majorQueryForm>button{background:transparent;border:0;box-shadow:none;border-radius:8px}
+.student-brand-theme .home-major-panel #majorQueryForm>button::before{width:18px;height:18px}
+.student-brand-theme .home-major-panel #majorQueryForm>button:hover{background:rgba(255,255,255,.7);border:0}
+.student-brand-theme .home-major-panel #majorQueryForm>button:active{background:#dce8df}
+
+.student-brand-theme .home-major-panel #majorQueryForm>button{width:38px;min-width:38px;height:38px;min-height:38px;background:#fff;border:0;border-radius:10px}
+.student-brand-theme .home-major-panel #majorQueryForm>button:hover{background:#f7faf7;border:0}
+.student-brand-theme .home-major-panel #majorQueryForm>button:active{background:#edf3ee}
+@media(pointer:coarse){.student-brand-theme .home-major-panel #majorQueryForm>button{width:44px;min-width:44px;height:44px;min-height:44px}}
+
+/* Centre the main navigation independently of the logo and account entry. */
+@media(min-width:1151px){
+ .student-brand-theme .student-topnav{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:24px}
+ .student-brand-theme .student-topnav>.logo{justify-self:start}
+ .student-brand-theme .student-topnav>.menu-scroll{justify-self:center;justify-content:center;width:auto;flex:none;overflow:visible}
+ .student-brand-theme .student-topnav>.sidebar-foot{justify-self:end}
+}
+@media(max-width:1150px){.student-brand-theme .student-topnav>.menu-scroll{justify-content:center}}
+.student-brand-theme .home-major-panel #majorQueryForm input,
+.student-brand-theme .home-major-panel #majorQueryForm>button{height:38px;min-height:38px;border:1px solid #dee4df;border-radius:8px;box-sizing:border-box;background:#fff}
+.student-brand-theme .home-major-panel #majorQueryForm>button{width:38px;min-width:38px}
+.student-brand-theme .home-major-panel #majorQueryForm>button:hover{border:1px solid #9db6a7;background:#f7faf7}
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle,
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle[aria-expanded=true]{background:#e6efe8;color:#28554a;border-color:#cbdcd0;box-shadow:none}
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle:hover{background:#f7faf7;color:#21483e;border-color:#9db6a7}
+@media(pointer:coarse){.student-brand-theme .home-major-panel #majorQueryForm input,.student-brand-theme .home-major-panel #majorQueryForm>button{height:44px;min-height:44px}.student-brand-theme .home-major-panel #majorQueryForm>button{width:44px;min-width:44px}}
+
+/* The main-navigation selection has its own colour and location marker. */
+.student-brand-theme .student-topnav .menu-scroll .menu-item.on{background:#cce3dc;color:#204e42;font-weight:600}
+.student-brand-theme .student-topnav .menu-scroll .menu-item.on::after{content:none;display:none}
+.student-brand-theme .student-topnav .menu-scroll .menu-item.on:hover{background:#c3ddd4;color:#204e42}
+
+/* 2026-10-26: align global navigation to the content canvas. */
+.student-brand-theme .student-topnav{padding-left:max(26px,calc((100% - 1180px)/2 + 26px));padding-right:max(26px,calc((100% - 1180px)/2 + 26px))}
+@media(max-width:960px){.student-brand-theme .student-topnav{padding-left:16px;padding-right:16px}}
+@media(max-width:640px){.student-brand-theme .student-topnav{padding-left:12px;padding-right:12px}}
+.student-brand-theme .student-topnav .menu-scroll .menu-item.on{background:#28554a;color:#fff;box-shadow:none}
+.student-brand-theme .student-topnav .menu-scroll .menu-item.on:hover{background:#21483e;color:#fff;box-shadow:none}
+.student-brand-theme .student-topnav .sidebar-foot .auth-btn{transition:background-color .16s,box-shadow .16s,transform .16s}
+.student-brand-theme .student-topnav .sidebar-foot .auth-btn:hover{background:#16423c;border-color:#16423c;box-shadow:0 4px 10px rgba(22,66,60,.2);transform:translateY(-1px)}
+.student-brand-theme.student-top-layout .student-segmented>button:not(.active):not(.on):hover{background:#f3f6f2;color:#28554a;box-shadow:none}
+.student-brand-theme.student-top-layout .student-segmented>button:is(.active,.on):hover{background:#fff;color:#28554a;box-shadow:0 1px 4px rgba(37,65,48,.10)}
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle[aria-expanded=false]{background:#e6efe8;color:#28554a;border-color:#cbdcd0;box-shadow:none}
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle[aria-expanded=false]:hover{background:#d8e7dd;border-color:#b1cbb9;color:#21483e;box-shadow:none}
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle[aria-expanded=true]{background:#e6efe8;color:#28554a;border-color:#cbdcd0;box-shadow:none}
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle[aria-expanded=true]:hover{background:#d8e7dd;border-color:#b1cbb9;color:#21483e;box-shadow:none}
+@media(prefers-reduced-motion:reduce){.student-brand-theme .student-topnav .sidebar-foot .auth-btn:hover{transform:none}}
+
+/* Navigation highlights match the visible logo tile (approximately 34px). */
+.student-brand-theme .student-topnav .menu-scroll .menu-item{height:34px;min-height:34px;padding:0 12px;border-radius:7px;box-sizing:border-box}
+@media(max-width:640px){.student-brand-theme .student-topnav .menu-scroll .menu-item{height:32px;min-height:32px}}
+
+/* Compact authentication dialog; keep payment dialogs independent. */
+.student-brand-theme #authModal{padding:20px;box-sizing:border-box;background:rgba(27,37,31,.38)}
+.student-brand-theme #authModal .modal-box{position:relative;width:360px;max-width:100%;max-height:calc(100dvh - 40px);overflow-y:auto;padding:28px;border-radius:16px;background:#fff;box-shadow:0 20px 60px rgba(25,45,33,.18)}
+.student-brand-theme #authModal h3{margin:0 30px 20px 0;font-size:20px;font-weight:600;letter-spacing:0;color:#252a28}
+.student-brand-theme #authModal .auth-close{position:absolute;top:17px;right:17px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:7px;background:transparent;color:#7a847d;font-size:24px;line-height:1;cursor:pointer}
+.student-brand-theme #authModal .auth-close:hover{background:#f0f3ef;color:#28554a}
+.student-brand-theme #authModal .tabs{gap:24px;margin:0 0 22px;border-bottom:1px solid #e8ece8}
+.student-brand-theme #authModal .tabs button{position:relative;flex:none;min-width:44px;padding:0 0 10px;border:0;border-radius:0;background:transparent;box-shadow:none;font-size:14px;line-height:22px;font-weight:400;color:#7a847d}
+.student-brand-theme #authModal .tabs button:hover{color:#28554a;background:transparent;box-shadow:none}
+.student-brand-theme #authModal .tabs button.active{color:#28554a;font-weight:600;box-shadow:none}
+.student-brand-theme #authModal .tabs button.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:#28554a;border-radius:2px}
+.student-brand-theme #authModal .field{margin-bottom:16px}
+.student-brand-theme #authModal .field label{margin-bottom:7px;font-size:12px;font-weight:400;color:#626b66}
+.student-brand-theme #authModal .field input{height:40px;min-width:0;padding:0 11px;border:1px solid #dee4df;border-radius:8px;font-size:13px;background:#fafbf9;box-shadow:none}
+.student-brand-theme #authModal .field input:focus{background:#fff;border-color:#789b84;box-shadow:0 0 0 2px rgba(120,155,132,.12)}
+.student-brand-theme #authModal .auth-remember{display:flex;align-items:center;gap:7px;margin:0 0 18px;font-size:12px;color:#626b66}
+.student-brand-theme #authModal input[type=checkbox]{margin:0;width:14px;height:14px;accent-color:#28554a}
+.student-brand-theme #authModal .modal-actions{margin-top:4px}
+.student-brand-theme #authModal .modal-actions .primary{width:100%;height:40px;border:0;border-radius:8px;background:#28554a;color:#fff;font-size:14px;font-weight:500;box-shadow:none}
+.student-brand-theme #authModal .modal-actions .primary:hover{background:#21483e}
+.student-brand-theme #authModal .auth-tip:empty{display:none}
+.student-brand-theme #authModal .auth-tip:not(:empty){margin-top:10px;font-size:12px;color:#a04438}
+.student-brand-theme #authModal .auth-guest{margin-top:20px;padding-top:14px;border-top:1px solid #edf0ec;text-align:center}
+.student-brand-theme #authModal .guest-entry{width:auto;padding:4px 12px;border:0;background:transparent;font-size:12px;color:#7a847d;box-shadow:none}
+.student-brand-theme #authModal .guest-entry:hover{background:#f4f6f2;color:#28554a}
+.student-brand-theme #authModal .code-row button{height:40px;border:1px solid #dee4df;border-radius:8px;background:#fff;color:#28554a;font-size:12px}
+.student-brand-theme #authModal button:focus-visible{outline:2px solid #789b84;outline-offset:3px}
+@media(max-width:420px){.student-brand-theme #authModal .modal-box{padding:24px}}
+
+/* Course catalog: compact information, restrained brand accents. */
+.student-brand-theme .pkg-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
+.student-brand-theme .pkg-grid .pkg-card{min-height:0;border:0;border-radius:12px;text-decoration:none;box-shadow:0 2px 5px rgba(37,65,48,.035),0 8px 20px rgba(37,65,48,.065);transition:transform .16s,box-shadow .16s}
+.student-brand-theme .pkg-grid .pkg-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(37,65,48,.04),0 12px 24px rgba(37,65,48,.09)}
+.student-brand-theme .pkg-card .pkg-top{padding:18px 18px 14px;background:#edf3ee;border:0}
+.student-brand-theme .pkg-card .pkg-top .pkg-tags{gap:6px;margin:0 0 10px}
+.student-brand-theme .pkg-card .pkg-tags span{padding:2px 7px;border-radius:5px;background:#e1ebe3;color:#526e5b;font-size:10px;line-height:18px;letter-spacing:0}
+.student-brand-theme .pkg-card .pkg-top h3{margin:0;font-size:16px;font-weight:600;line-height:1.5;color:#253c31;overflow-wrap:anywhere}
+.student-brand-theme .pkg-card .pkg-body{padding:14px 18px 16px;gap:3px;flex:1}
+.student-brand-theme .pkg-card .pkg-start{font-size:12px;line-height:20px;color:#626b66}
+.student-brand-theme .pkg-card .pkg-start b{font-size:11px;font-weight:400;color:#859188}
+.student-brand-theme .pkg-card .pkg-desc{min-height:0;margin:8px 0 0;font-size:12px;line-height:20px;color:#7a847d}
+.student-brand-theme .pkg-card .pkg-foot{padding:12px 18px;background:#fff;border-top:1px solid #edf0ec;gap:12px;font-size:11px;color:#8a958d}
+.student-brand-theme .pkg-card .pkg-price{gap:8px;flex-wrap:wrap}
+.student-brand-theme .pkg-card .pkg-price .now{font-size:20px;font-weight:600;color:#c44936;text-decoration:none!important;line-height:26px}
+.student-brand-theme .pkg-card .pkg-price:has(.old) .now{order:2;font-size:11px;font-weight:400;color:#909b93;text-decoration:line-through!important}
+.student-brand-theme .pkg-card .pkg-price .old{order:1;font-size:20px;font-weight:600;color:#c44936;line-height:26px;text-decoration:none}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top{background:#fff;padding-bottom:10px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-tags span{background:#f4eddd;color:#78613a;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top h3{font-size:15px;color:#252a28}
+.student-brand-theme .pkg-card .pkg-teacher{align-items:center;gap:10px 14px;margin-top:14px;font-size:11px;color:#626b66}
+.student-brand-theme .pkg-card .pkg-teacher-item{flex-direction:row;gap:6px;width:auto;max-width:100%;text-align:left}
+.student-brand-theme .pkg-card .pkg-teacher-avatar{width:26px;height:26px;flex:none;background:#e6eee8;color:#28554a;font-size:12px;font-weight:500}
+.student-brand-theme .series-card{border:0;border-radius:12px;box-shadow:0 2px 5px rgba(37,65,48,.035),0 8px 20px rgba(37,65,48,.065)}
+.student-brand-theme .series-card .series-body{padding:18px}
+.student-brand-theme .series-card .series-hd{gap:10px;margin-bottom:12px}
+.student-brand-theme .series-card .series-hd h4{margin:0;font-size:15px;font-weight:600;line-height:1.5}
+.student-brand-theme .series-card .series-avatar{width:32px;height:32px;border-radius:8px;background:#e6eee8;color:#28554a;font-size:14px;font-weight:500}
+.student-brand-theme .series-card .series-foot{padding:11px 18px;border-color:#edf0ec;font-size:11px;color:#8a958d}
+@media(prefers-reduced-motion:reduce){.student-brand-theme .pkg-grid .pkg-card{transition:none}.student-brand-theme .pkg-grid .pkg-card:hover{transform:none}}
+
+@media(max-width:960px){.student-brand-theme .pkg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.student-brand-theme .pkg-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Square child-course cards with portrait-style teacher identities. */
+.student-brand-theme #childrenGrid .pkg-card{aspect-ratio:auto;min-height:0}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher{align-items:flex-start;gap:12px;margin-top:16px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher-item{flex-direction:column;align-items:center;gap:6px;width:58px;text-align:center;font-size:11px;line-height:16px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher-avatar{width:42px;height:42px;font-size:17px}
+
+
+/* Package tiers have distinct green and warm-gold identities. */
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-top{background:#28554a}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-top h3{color:#fffaf0}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-tags span{background:rgba(255,255,255,.13);color:#e7f0e9}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-top{background:#b89a58}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-top h3{color:#3f321d}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-tags span{background:rgba(255,255,255,.38);color:#5b4729}

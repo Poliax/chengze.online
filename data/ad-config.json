@@ -1,0 +1,28 @@
+{
+  "enabled": true,
+  "intervalMs": 6000,
+  "slides": [
+    {
+      "image": "/public/images/campaigns/chengze-class-photo-20261024.png",
+      "title": "跟上课堂节奏，学好每一课",
+      "link": "",
+      "enabled": true
+    },
+    {
+      "image": "/public/images/campaigns/chengze-study-photo-20261024.png",
+      "title": "承泽在线 · 2027考季",
+      "link": "",
+      "enabled": true
+    },
+    {
+      "image": "/public/images/campaigns/chengze-review-photo-20261024.png",
+      "title": "重点反复回顾，知识逐步吃透",
+      "link": "",
+      "enabled": true
+    }
+  ],
+  "title": "跟上课堂节奏，学好每一课",
+  "image": "/public/images/campaigns/chengze-class-photo-20261024.png",
+  "link": "",
+  "subtitle": ""
+}

@@ -1,0 +1,28 @@
+{
+  "enabled": true,
+  "intervalMs": 6000,
+  "slides": [
+    {
+      "image": "/public/images/campaigns/home-brand-20261026.png",
+      "title": "承泽在线｜不只是为了考试，更是培养未来面对世界的能力",
+      "link": "",
+      "enabled": true
+    },
+    {
+      "image": "/public/images/campaigns/home-2027-start-20261024.png",
+      "title": "备考从现在开始，向理想的本科出发",
+      "link": "",
+      "enabled": true
+    },
+    {
+      "image": "/public/images/campaigns/home-plan-20261024.png",
+      "title": "先看清方向，再走好每一步",
+      "link": "",
+      "enabled": true
+    }
+  ],
+  "title": "承泽在线｜不只是为了考试，更是培养未来面对世界的能力",
+  "image": "/public/images/campaigns/home-brand-20261026.png",
+  "link": "",
+  "subtitle": ""
+}

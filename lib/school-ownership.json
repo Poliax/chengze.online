@@ -1,0 +1,212 @@
+{
+  "source": "https://www.moe.gov.cn/jyb_xxgk/s5743/s5744/202606/t20260618_1441074.html",
+  "as_of": "2026-06-17",
+  "note": "教学点标签表示授予本科学历的招生院校办学性质。未匹配的院校不推断性质。",
+  "schools": {
+    "西安航空学院": {
+      "ownership": "公办",
+      "institution": "西安航空学院",
+      "moe_code": "4161011736"
+    },
+    "陕西科技大学镐京学院": {
+      "ownership": "民办",
+      "institution": "陕西科技大学镐京学院",
+      "moe_code": "4161013681"
+    },
+    "西安翻译学院": {
+      "ownership": "民办",
+      "institution": "西安翻译学院",
+      "moe_code": "4161012714"
+    },
+    "西安培华学院": {
+      "ownership": "民办",
+      "institution": "西安培华学院",
+      "moe_code": "4161011400"
+    },
+    "西京学院": {
+      "ownership": "民办",
+      "institution": "西京学院",
+      "moe_code": "4161012715"
+    },
+    "西安思源学院": {
+      "ownership": "民办",
+      "institution": "西安思源学院",
+      "moe_code": "4161013121"
+    },
+    "陕西国际商贸学院": {
+      "ownership": "民办",
+      "institution": "陕西国际商贸学院",
+      "moe_code": "4161013123"
+    },
+    "西安交通工程学院": {
+      "ownership": "民办",
+      "institution": "西安交通工程学院",
+      "moe_code": "4161013569"
+    },
+    "西安信息职业大学": {
+      "ownership": "民办",
+      "institution": "西安信息职业大学",
+      "moe_code": "4161014030"
+    },
+    "西安建筑科技大学华清学院": {
+      "ownership": "民办",
+      "institution": "西安建筑科技大学华清学院",
+      "moe_code": "4161013679"
+    },
+    "西安科技大学高新学院": {
+      "ownership": "民办",
+      "institution": "西安科技大学高新学院",
+      "moe_code": "4161014042"
+    },
+    "西安欧亚学院": {
+      "ownership": "民办",
+      "institution": "西安欧亚学院",
+      "moe_code": "4161012712"
+    },
+    "西安理工大学高科学院": {
+      "ownership": "民办",
+      "institution": "西安理工大学高科学院",
+      "moe_code": "4161014041"
+    },
+    "西安工商学院": {
+      "ownership": "民办",
+      "institution": "西安工商学院",
+      "moe_code": "4161013682"
+    },
+    "西安财经大学行知学院": {
+      "ownership": "民办",
+      "institution": "西安财经大学行知学院",
+      "moe_code": "4161013680"
+    },
+    "咸阳师范学院": {
+      "ownership": "公办",
+      "institution": "咸阳师范学院",
+      "moe_code": "4161010722"
+    },
+    "榆林大学": {
+      "ownership": "公办",
+      "institution": "榆林大学",
+      "moe_code": "4161011395"
+    },
+    "西安外事学院": {
+      "ownership": "民办",
+      "institution": "西安外事学院",
+      "moe_code": "4161012713"
+    },
+    "西安文理学院": {
+      "ownership": "公办",
+      "institution": "西安文理学院",
+      "moe_code": "4161011080"
+    },
+    "陕西理工大学": {
+      "ownership": "公办",
+      "institution": "陕西理工大学",
+      "moe_code": "4161010720"
+    },
+    "宝鸡文理学院": {
+      "ownership": "公办",
+      "institution": "宝鸡文理学院",
+      "moe_code": "4161010721"
+    },
+    "渭南师范学院": {
+      "ownership": "公办",
+      "institution": "渭南师范学院",
+      "moe_code": "4161010723"
+    },
+    "商洛学院": {
+      "ownership": "公办",
+      "institution": "商洛学院",
+      "moe_code": "4161011396"
+    },
+    "安康学院": {
+      "ownership": "公办",
+      "institution": "安康学院",
+      "moe_code": "4161011397"
+    },
+    "陕西学前师范学院": {
+      "ownership": "公办",
+      "institution": "陕西学前师范学院",
+      "moe_code": "4161014390"
+    },
+    "西北大学现代学院": {
+      "ownership": "民办",
+      "institution": "西北大学现代学院",
+      "moe_code": "4161013678"
+    },
+    "陕西警察学院": {
+      "ownership": "公办",
+      "institution": "陕西警察学院",
+      "moe_code": "4161013819"
+    },
+    "西安交通大学城市学院": {
+      "ownership": "民办",
+      "institution": "西安交通大学城市学院",
+      "moe_code": "4161013677"
+    },
+    "西安文理学院教学点：陕西职业技术学院": {
+      "ownership": "公办",
+      "institution": "西安文理学院",
+      "moe_code": "4161011080"
+    },
+    "延安大学西安创新学院": {
+      "ownership": "民办",
+      "institution": "延安大学西安创新学院",
+      "moe_code": "4161013683"
+    },
+    "陕西服装工程学院": {
+      "ownership": "民办",
+      "institution": "陕西服装工程学院",
+      "moe_code": "4161013125"
+    },
+    "咸阳师范学院教学点：咸阳职业技术学院": {
+      "ownership": "公办",
+      "institution": "咸阳师范学院",
+      "moe_code": "4161010722"
+    },
+    "西安明德理工学院": {
+      "ownership": "民办",
+      "institution": "西安明德理工学院",
+      "moe_code": "4161013894"
+    },
+    "西安汽车职业大学": {
+      "ownership": "民办",
+      "institution": "西安汽车职业大学",
+      "moe_code": "4161013738"
+    },
+    "西安戏剧学院": {
+      "ownership": "公办",
+      "institution": "西安戏剧学院",
+      "moe_code": "4161014945"
+    },
+    "安康学院教学点：陕西铁路工程职业技术学院": {
+      "ownership": "公办",
+      "institution": "安康学院",
+      "moe_code": "4161011397"
+    },
+    "陕西理工大学教学点：陕西交通职业技术学院": {
+      "ownership": "公办",
+      "institution": "陕西理工大学",
+      "moe_code": "4161010720"
+    },
+    "西安文理学院教学点：西安铁路职业技术学院": {
+      "ownership": "公办",
+      "institution": "西安文理学院",
+      "moe_code": "4161011080"
+    },
+    "咸阳师范学院教学点：陕西能源职业技术学院": {
+      "ownership": "公办",
+      "institution": "咸阳师范学院",
+      "moe_code": "4161010722"
+    },
+    "西安文理学院教学点：陕西国防工业职业技术学院": {
+      "ownership": "公办",
+      "institution": "西安文理学院",
+      "moe_code": "4161011080"
+    },
+    "西安医学院": {
+      "ownership": "公办",
+      "institution": "西安医学院",
+      "moe_code": "4161011840"
+    }
+  }
+}
