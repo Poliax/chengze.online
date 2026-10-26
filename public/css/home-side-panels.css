@@ -308,14 +308,13 @@
 .prep-result-table .prep-school-table th{background:#f8f8f5}
 @media(max-width:600px){.student-top-layout #homeQueryContent #majorResults,.student-top-layout #homeQueryContent:has(.prep-query-empty) #majorResults{padding:16px}.prep-result-table .prep-school-box{padding:12px 4px}}
 
-/* Connect the selected tool to its shared content panel. */
+/* A small active-card pointer replaces the flowchart connector. */
 @media(min-width:761px){
  .student-top-layout .home-tools-row{position:relative;isolation:isolate}
  .student-top-layout .home-tools-row>.home-resources,.student-top-layout .home-tools-row>.home-major-panel{position:relative;overflow:visible}
  .student-top-layout .home-tools-row:has(~ #homeResourceContent:not([hidden]))>.home-resources::after,
- .student-top-layout .home-tools-row:has(~ #homeQueryContent:not([hidden]))>.home-major-panel::after{content:'';position:absolute;left:50%;bottom:-24px;width:1px;height:24px;background:#91ac9a;pointer-events:none}
- .student-top-layout .home-tools-row:has(~ #homeResourceContent:not([hidden]))>.home-resources::before,
- .student-top-layout .home-tools-row:has(~ #homeQueryContent:not([hidden]))>.home-major-panel::before{content:'';position:absolute;left:calc(50% - 3px);bottom:-28px;width:7px;height:7px;box-sizing:border-box;border:1px solid #91ac9a;border-radius:50%;background:#fff;z-index:1;pointer-events:none}
+ .student-top-layout .home-tools-row:has(~ #homeQueryContent:not([hidden]))>.home-major-panel::after{content:'';position:absolute;left:calc(50% - 8px);bottom:-7px;width:16px;height:8px;background:#fff;clip-path:polygon(0 0,100% 0,50% 100%);pointer-events:none}
+ .student-top-layout .home-tools-row:has(~ #homeQueryContent:not([hidden]))>.home-major-panel::after{background:#eaf1eb}
 }
 
 /* Query content follows its source card colour without nested white panels. */

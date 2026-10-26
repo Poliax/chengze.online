@@ -1,0 +1,105 @@
+<aside class="teacher-sidebar" id="sidebar">
+  <div class="sidebar-logo" style="justify-content:flex-start">
+    <a href="<%= typeof adminAccount !== 'undefined' && adminAccount.role !== 'ceo' ? '/admin/workspace' : '/admin/dashboard' %>" class="logo-link"><img class="backend-app-icon" src="/public/images/brand-green/app-rounded.svg?v=20261019-backend-icon1" alt="承泽在线" width="42" height="42" style="width:42px;height:42px;display:block;flex:none;border-radius:9px"><span style="font-size:16px;font-weight:600;letter-spacing:1px;color:#B9CCC5;white-space:nowrap">管理后台</span></a>
+  </div>
+  <nav class="sidebar-nav">
+    <% if (typeof adminAccount !== 'undefined' && adminAccount.role !== 'ceo') { %><a href="/admin/workspace" class="sidebar-link <%= path === '/admin/workspace' ? 'active' : '' %>">工作台</a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/dashboard')) { %><a href="/admin/dashboard" class="sidebar-link <%= path.startsWith('/admin/dashboard') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      控制台
+    </a><% } %>
+        <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/provinces-manage')) { %><a href="/admin/provinces-manage" class="sidebar-link <%= path.startsWith('/admin/provinces-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      省份管理
+    </a><% } %>
+
+
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/teachers-manage')) { %><a href="/admin/teachers-manage" class="sidebar-link <%= path.startsWith('/admin/teachers-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      师资管理
+    </a><% } %>
+
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/courses-manage')) { %><a href="/admin/courses-manage" class="sidebar-link <%= path.startsWith('/admin/courses-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      课程管理
+    </a><% } %>
+
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/live-manage')) { %><a href="/admin/live-manage" class="sidebar-link <%= path.startsWith('/admin/live-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      直播管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/replays-manage')) { %><a href="/admin/replays-manage" class="sidebar-link <%= path.startsWith('/admin/replays-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+      回放管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/ads-manage')) { %><a href="/admin/ads-manage" class="sidebar-link <%= path.startsWith('/admin/ads-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+      广告管理
+    </a><% } %>
+    <% if (typeof canAdminPath !== 'undefined' && canAdminPath('/admin/prep-query-manage')) { %><a href="/admin/prep-query-manage" class="sidebar-link <%= path.startsWith('/admin/prep-query-manage') ? 'active' : '' %>">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5M7 7h6M7 11h3"/><circle cx="17" cy="17" r="4"/><path d="m20 20 2 2"/></svg>
+      专业查询
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/research-manage')) { %><a href="/admin/research-manage" class="sidebar-link <%= path.startsWith('/admin/research-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      教研管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/questions-manage')) { %><a href="/admin/questions-manage" class="sidebar-link <%= path.startsWith('/admin/questions-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      题库管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/course-materials')) { %><a href="/admin/course-materials" class="sidebar-link <%= path.startsWith('/admin/course-materials') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      讲义管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/assistants-manage')) { %><a href="/admin/assistants-manage" class="sidebar-link <%= path.startsWith('/admin/assistants-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      助教管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/qa-manage')) { %><a href="/admin/qa-manage" class="sidebar-link <%= path.startsWith('/admin/qa-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      答疑管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/users-manage')) { %><a href="/admin/users-manage" class="sidebar-link <%= path.startsWith('/admin/users-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      用户管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/students-manage')) { %><a href="/admin/students-manage" class="sidebar-link <%= path.startsWith('/admin/students-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      学员管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/orders-manage')) { %><a href="/admin/orders-manage" class="sidebar-link <%= path.startsWith('/admin/orders-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      订单管理
+    </a><% } %>
+    <% if (typeof canAdminPath === "undefined" || canAdminPath('/admin/logistics-manage')) { %><a href="/admin/logistics-manage" class="sidebar-link <%= path.startsWith('/admin/logistics-manage') ? 'active' : '' %>">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      物流管理
+    </a><% } %>
+
+  </nav>
+  <div class="sidebar-footer">
+    <details class="admin-account-menu" id="adminAccountMenu">
+      <summary><span class="admin-account-avatar"><%= teacherName ? teacherName[0] : '管' %></span><span class="admin-account-name"><%= teacherName || '管理员' %></span></summary>
+      <div class="admin-account-popover"><a href="/admin/logout" data-admin-logout><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>退出登录</a></div>
+    </details>
+  </div>
+</aside>
+<script>
+(function(){
+  function debounce(fn, wait){
+    var t;
+    return function(){ clearTimeout(t); t=setTimeout(fn, wait); };
+  }
+  document.querySelectorAll('form.toolbar-form').forEach(function(form){
+    if(form.getAttribute('data-client-filter')) return;
+    var els=form.querySelectorAll('input[type="text"], input:not([type]), select');
+    if(!els.length) return;
+    var submit=debounce(function(){ form.submit(); }, 400);
+    els.forEach(function(el){
+      el.addEventListener('input', submit);
+      el.addEventListener('change', submit);
+    });
+  });
+})();
+</script>

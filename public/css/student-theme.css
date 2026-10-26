@@ -207,9 +207,220 @@
 
 
 /* Package tiers have distinct green and warm-gold identities. */
-.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-top{background:#28554a}
-.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-top h3{color:#fffaf0}
-.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-tags span{background:rgba(255,255,255,.13);color:#e7f0e9}
-.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-top{background:#b89a58}
-.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-top h3{color:#3f321d}
-.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-tags span{background:rgba(255,255,255,.38);color:#5b4729}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-top{background:var(--package-leap-bg)}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-top h3{color:var(--package-leap-text)}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-tags span{background:rgba(255,255,255,.13);color:#dde8df}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-top{background:var(--package-gold-bg)}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-top h3{color:var(--package-gold-text)}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-tags span{background:rgba(255,255,255,.28);color:#4e432e}
+
+/* Parent package headers and child-course labels share the same palette. */
+.student-brand-theme{--package-leap-bg:#1e4438;--package-leap-text:#f7f4e8;--package-gold-bg:#a58d62;--package-gold-text:#28261f}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .pkg-tags span{background:var(--package-leap-bg);color:var(--package-leap-text)}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .pkg-tags span{background:var(--package-gold-bg);color:var(--package-gold-text)}
+
+/* Child courses use one consistent content column and a quiet footer. */
+.student-brand-theme #childrenGrid .pkg-card .pkg-top{padding:18px 20px 12px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top .pkg-tags{margin-bottom:10px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top h3{font-size:15px;line-height:1.55;font-weight:600}
+.student-brand-theme #childrenGrid .pkg-card .pkg-body{padding:0 20px 18px;gap:4px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-start{display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:0;align-items:baseline;font-size:12px;line-height:20px;color:#626b66}
+.student-brand-theme #childrenGrid .pkg-card .pkg-start b{font-size:11px;font-weight:400;color:#859188}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher{gap:18px;margin-top:16px;align-items:flex-start}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher-item{width:48px;gap:7px;font-size:11px;line-height:16px;color:#626b66}
+.student-brand-theme #childrenGrid .pkg-card .pkg-foot{margin:0 20px;padding:13px 0 15px;border-top:1px solid #e8ede8;min-height:54px;box-sizing:border-box}
+.student-brand-theme #childrenGrid .pkg-card .pkg-foot>span:last-child{white-space:nowrap;font-size:11px;color:#8a958d}
+
+.student-brand-theme #childrenGrid .pkg-card .pkg-top .pkg-tags span{font-size:13px;line-height:20px;padding:4px 10px;font-weight:500;border-radius:6px}
+
+.student-brand-theme #childrenGrid .pkg-card .pkg-top .pkg-tags{justify-content:flex-start}
+
+/* Lighter child-course composition: short tier, title, teachers, price. */
+.student-brand-theme #childrenGrid .pkg-card .pkg-top{padding:22px 22px 0}
+.student-brand-theme #childrenGrid .pkg-card .course-card-eyebrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top .pkg-tags{margin:0;justify-content:flex-start;min-width:0}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top .pkg-tags span{padding:3px 9px;font-size:12px;line-height:20px;max-width:100%}
+.student-brand-theme #childrenGrid .pkg-card .course-card-hours{flex:none;font-size:11px;line-height:20px;color:#859188;white-space:nowrap}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top .course-card-title{margin:0;font-size:17px;line-height:1.65;font-weight:600;color:#252f29;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.student-brand-theme #childrenGrid .pkg-card .pkg-body{padding:0 22px 20px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher{margin:22px 0 0;gap:18px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher-item{width:48px;font-size:11px;color:#7a847d}
+.student-brand-theme #childrenGrid .pkg-card .pkg-foot{margin:0 22px;padding:14px 0 18px;min-height:58px;border-color:#edf0ec}
+.student-brand-theme #childrenGrid .pkg-card .pkg-foot .course-card-open{display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;border-radius:50%;background:#f0f4f0;color:#526e5b}
+.student-brand-theme #childrenGrid .pkg-card .course-card-open svg{width:16px;height:16px}
+.student-brand-theme #childrenGrid .pkg-card:hover .course-card-open{background:#e3ede5;color:#1e4438}
+
+/* Three calm surfaces clarify course information without extra containers. */
+.student-brand-theme #childrenGrid .pkg-card{background:#fff;box-shadow:0 3px 8px rgba(30,55,42,.035),0 12px 28px rgba(30,55,42,.075)}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top{background:#e3ece5;padding:22px 22px 18px}
+.student-brand-theme #childrenGrid .pkg-card .course-card-hours{color:#687c70}
+.student-brand-theme #childrenGrid .pkg-card .pkg-top .course-card-title{color:#263c31}
+.student-brand-theme #childrenGrid .pkg-card .pkg-body{background:#fff;padding:20px 22px 22px}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher{margin-top:0}
+.student-brand-theme #childrenGrid .pkg-card .pkg-teacher-avatar{background:#e8eee8;color:#345c4c}
+.student-brand-theme #childrenGrid .pkg-card .pkg-foot{margin:0;padding:15px 22px 17px;background:#f5f2e9;border-top:0}
+.student-brand-theme #childrenGrid .pkg-card .pkg-foot .course-card-open{background:#fff;color:#466657}
+.student-brand-theme #childrenGrid .pkg-card:hover .course-card-open{background:#e0e9df;color:#1e4438}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .pkg-top{background:#ece5d6}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .course-card-hours{color:#827454}
+
+/* Child-course headers match their parent package tier exactly. */
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .pkg-top{background:var(--package-leap-bg)}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .pkg-top .course-card-title{color:var(--package-leap-text)}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .course-card-hours{color:#d4e1d8}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .pkg-tags span{background:rgba(255,255,255,.13);color:#dde8df}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .pkg-top{background:var(--package-gold-bg)}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .pkg-top .course-card-title{color:var(--package-gold-text)}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .course-card-hours{color:#403927}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .pkg-tags span{background:rgba(255,255,255,.28);color:#4e432e}
+
+/* Softer tier tints; the lower card stays neutral rather than mixing tiers. */
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .pkg-top{background:#dfebe2}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .pkg-top .course-card-title{color:#254739}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .course-card-hours{color:#61786b}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="飞跃班"] .pkg-tags span{background:#c9ddd0;color:#28513e}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .pkg-top{background:#eee5d4}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .pkg-top .course-card-title{color:#5b4b32}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .course-card-hours{color:#807054}
+.student-brand-theme #childrenGrid .pkg-card[data-parent-title*="卓越班"] .pkg-tags span{background:#e0d0af;color:#655033}
+.student-brand-theme #childrenGrid .pkg-card .pkg-foot{background:#fff;border-top:1px solid #edf0ec}
+
+/* Package headers retain green/gold identities in softer, readable tints. */
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-top{background:#dfebe2}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-top h3{color:#254739}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="飞跃班"] .pkg-tags span{background:#c9ddd0;color:#28513e}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-top{background:#eee5d4}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-top h3{color:#5b4b32}
+.student-brand-theme .pkg-grid:not(#childrenGrid) .pkg-card[data-title*="卓越班"] .pkg-tags span{background:#e0d0af;color:#655033}
+
+/* Course detail: a quiet illustrated summary and a clean learning workspace. */
+.student-brand-theme #embeddedCourseDetail .detail-main{padding:0;border:0;overflow:hidden;box-shadow:0 8px 28px rgba(30,55,42,.07);border-radius:16px;background:#fff}
+.student-brand-theme #embeddedCourseDetail .detail-hd{padding:28px;gap:30px;align-items:center;background:linear-gradient(90deg,#e4eee6 0%,#e4eee6 60%,rgba(228,238,230,.68) 100%),url('/public/images/campaigns/chengze-class-study-20261024.png') right center/cover}
+.student-brand-theme #embeddedCourseDetail .detail-tags{margin-bottom:16px}
+.student-brand-theme #embeddedCourseDetail .detail-tags span{background:rgba(255,255,255,.65);color:#526b59;border:0;font-size:11px}
+.student-brand-theme #embeddedCourseDetail .detail-parent{font-size:13px;font-weight:500;color:#64796a;margin:0 0 10px}
+.student-brand-theme #embeddedCourseDetail .detail-hd h1{font-size:23px;font-weight:600;line-height:1.55;color:#263e30;margin:0 0 22px;max-width:720px}
+.student-brand-theme #embeddedCourseDetail .course-meta{flex-direction:row;flex-wrap:wrap;gap:10px 24px;font-size:12px;color:#526759;margin-top:0}
+.student-brand-theme #embeddedCourseDetail .course-meta span{display:flex;flex-direction:column;gap:6px}
+.student-brand-theme #embeddedCourseDetail .course-meta b{font-size:11px;font-weight:400;color:#7a8c7d}
+.student-brand-theme #embeddedCourseDetail .detail-side{width:270px;box-sizing:border-box;border:0;background:rgba(255,255,255,.95);padding:22px;border-radius:12px;box-shadow:0 6px 18px rgba(30,55,42,.045)}
+.student-brand-theme #embeddedCourseDetail .detail-side .price{font-size:28px;font-weight:600;gap:10px;color:#c44936;margin-bottom:10px}
+.student-brand-theme #embeddedCourseDetail .detail-side .price .original-price{font-size:13px;font-weight:400;color:#909b93;text-decoration:line-through}
+.student-brand-theme #embeddedCourseDetail .detail-side .students{font-size:11px;color:#819084;margin-bottom:18px}
+.student-brand-theme #embeddedCourseDetail .detail-side .buy-btn{background:#28554a;color:#fff;border:0;border-radius:8px;padding:11px;font-size:14px}
+.student-brand-theme #embeddedCourseDetail .detail-side .buy-btn:hover{background:#1e4438;transform:none}
+.student-brand-theme #embeddedCourseDetail .detail-side .agree{display:block;white-space:normal;line-height:1.8;color:#8b968e;font-size:10px;margin-top:12px}
+.student-brand-theme #embeddedCourseDetail .course-tabs-divider{display:none}
+.student-brand-theme #embeddedCourseDetail .course-tabs{display:flex;width:max-content;max-width:calc(100% - 48px);margin:24px 24px 0;padding:4px;gap:4px;background:#edf1eb;border:0;border-radius:10px}
+.student-brand-theme #embeddedCourseDetail .course-tab{background:transparent;color:#748077;border:0;box-shadow:none;padding:9px 16px;border-radius:7px;font-size:13px}
+.student-brand-theme #embeddedCourseDetail .course-tab.active{background:#fff;color:#28554a;box-shadow:0 2px 5px rgba(30,55,42,.07);font-weight:600}
+.student-brand-theme #embeddedCourseDetail .course-panels{padding:20px 24px 24px}
+.student-brand-theme #embeddedCourseDetail .subject-tabs{gap:8px;margin-bottom:16px}
+.student-brand-theme #embeddedCourseDetail .subject-tab{background:#f6f8f4;border:0;border-radius:6px;color:#768378;padding:7px 13px;font-size:12px}
+.student-brand-theme #embeddedCourseDetail .subject-tab.active{background:#dfebe2;color:#28554a;font-weight:600}
+.student-brand-theme #embeddedCourseDetail .detail-table-wrap{border:0;box-shadow:none;border-radius:10px;overflow-x:auto}
+.student-brand-theme #embeddedCourseDetail .detail-table th{background:#e9efe8;color:#52675a;border:0;padding:13px 15px;font-size:12px;font-weight:500;white-space:nowrap}
+.student-brand-theme #embeddedCourseDetail .detail-table td{background:#fff;color:#5e6b62;border-bottom:1px solid #edf1eb;padding:13px 15px;font-size:12px}
+.student-brand-theme #embeddedCourseDetail .detail-table tbody tr:hover td{background:#f7f9f5}
+@media(max-width:760px){.student-brand-theme #embeddedCourseDetail .detail-hd{flex-wrap:wrap;padding:20px}.student-brand-theme #embeddedCourseDetail .detail-side{width:100%}.student-brand-theme #embeddedCourseDetail .detail-hd h1{font-size:20px}.student-brand-theme #embeddedCourseDetail .course-tab{padding:8px 10px}.student-brand-theme #embeddedCourseDetail .course-panels{padding:16px}}
+
+/* Brand mark leads; navigation and account actions stay secondary. */
+.student-brand-theme .student-topnav .menu-scroll .menu-item{height:30px;min-height:30px;align-self:center;padding:0 12px;font-size:13px;font-weight:400;border-radius:7px}
+.student-brand-theme .student-topnav .menu-scroll .menu-item.on{background:#e5ede7;color:#28554a;font-weight:500;box-shadow:none}
+.student-brand-theme .student-topnav .menu-scroll .menu-item.on:hover{background:#dbe7df;color:#28554a;box-shadow:none}
+.student-brand-theme .student-topnav .sidebar-foot .auth-btn{min-height:29px;height:29px;padding:4px 13px;font-size:12px;font-weight:500;line-height:19px;border-radius:8px;box-shadow:none}
+.student-brand-theme .student-topnav .sidebar-foot .auth-btn:hover{background:#16423c;border-color:#16423c;box-shadow:0 2px 6px rgba(22,66,60,.14);transform:none}
+
+/* Shared segmented controls and a compact subject selector. */
+.student-brand-theme.student-top-layout #embeddedCourseDetail .course-tabs.student-segmented{gap:4px;padding:4px;background:#e9eee9;border-radius:12px;width:fit-content}
+.student-brand-theme.student-top-layout #embeddedCourseDetail .course-tabs.student-segmented>button{height:32px;min-height:32px;padding:0 16px;font-size:13px;font-weight:500;border-radius:9px;color:#626b66}
+.student-brand-theme.student-top-layout #embeddedCourseDetail .course-tabs.student-segmented>button.active{background:#fff;color:#28554a;font-weight:600;box-shadow:0 1px 4px rgba(37,65,48,.10)}
+.student-brand-theme #embeddedCourseDetail .subject-filter{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:12px;color:#738176}
+.student-brand-theme #embeddedCourseDetail .subject-filter select{min-width:150px;max-width:260px;height:34px;padding:0 32px 0 12px;border:1px solid #dce5dd;border-radius:8px;font-size:12px;cursor:pointer}
+.student-brand-theme #embeddedCourseDetail .cal-head{color:#7a887e;background:#edf2eb;border-radius:5px;font-weight:500;padding:8px 0}
+.student-brand-theme #embeddedCourseDetail .cal-title{color:#355546;font-weight:600}
+.student-brand-theme #embeddedCourseDetail .cal-nav{background:#fff;border-color:#dce5dd;color:#5b7464;border-radius:7px}
+.student-brand-theme #embeddedCourseDetail .cal-nav:hover{background:#edf3eb;border-color:#aabfae}
+.student-brand-theme #embeddedCourseDetail .cal-cell{background:#fafbf8;border:1px solid #e7ece4;color:#8a958b;padding:8px;min-height:100px}
+.student-brand-theme #embeddedCourseDetail .cal-cell.empty{background:transparent;border-color:transparent}
+.student-brand-theme #embeddedCourseDetail .cal-cell.has{background:#f0f5ee;border-color:#d5e2d3}
+.student-brand-theme #embeddedCourseDetail .cal-cell>b{font-size:12px;font-weight:500;color:#597461;margin-bottom:6px}
+.student-brand-theme #embeddedCourseDetail .cal-lesson{background:#fff;border-left:2px solid #b3c9b6;border-radius:4px;padding:6px 7px;margin-top:5px;box-sizing:border-box}
+.student-brand-theme #embeddedCourseDetail .cal-lesson i{color:#7f8c80;font-size:10px}
+.student-brand-theme #embeddedCourseDetail .cal-lesson b{color:#3b5142;font-size:11px;font-weight:500;margin:3px 0}
+.student-brand-theme #embeddedCourseDetail .cal-lesson em{color:#9a855d;font-size:10px}
+.student-brand-theme .student-topnav .sidebar-foot .auth-btn{background:#f3f6f1;color:#38594a;border:1px solid #d9e3d9}
+.student-brand-theme .student-topnav .sidebar-foot .auth-btn:hover{background:#e5eee4;color:#28513c;border-color:#b8ccba;box-shadow:none;transform:none}
+
+.student-brand-theme #embeddedCourseDetail .detail-controls-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 24px 0;flex-wrap:wrap}
+.student-brand-theme #embeddedCourseDetail .detail-controls-row .course-tabs{margin:0;max-width:100%}
+.student-brand-theme #embeddedCourseDetail .detail-controls-row .subject-filter{margin:0 0 0 auto}
+.student-brand-theme #embeddedCourseDetail .detail-controls-row .subject-filter select{height:36px}
+.student-brand-theme #embeddedCourseDetail .detail-main:not(:has(#coursePanelCatalog.active)) .subject-filter{display:none}
+
+/* Course and teacher introductions share a restrained editorial layout. */
+.student-brand-theme #coursePanelDetail{color:#59685e}
+.student-brand-theme #coursePanelDetail .detail-section{margin:0 0 24px;padding:22px 24px;background:#f5f8f2;border:0;border-radius:10px}
+.student-brand-theme #coursePanelDetail .detail-section h3{font-size:15px;font-weight:600;color:#2f5140;margin:0 0 12px}
+.student-brand-theme #coursePanelDetail .detail-section .desc{font-size:13px;line-height:1.95;color:#66746a;white-space:pre-line;margin:0}
+.student-brand-theme #coursePanelDetail .detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:0 0 24px;background:#fff;border-top:1px solid #e8eee5;border-bottom:1px solid #e8eee5;padding:8px 0}
+.student-brand-theme #coursePanelDetail .detail-item{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px 24px;margin:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.student-brand-theme #coursePanelDetail .detail-item .dl{font-size:11px;color:#8a968c;font-weight:400}
+.student-brand-theme #coursePanelDetail .detail-item .dv{font-size:13px;color:#455d4d;font-weight:500;line-height:1.7}
+.student-brand-theme #coursePanelDetail .res-file{display:flex;align-items:center;gap:14px;padding:14px 16px;margin:8px 0 0;background:#fff;border:1px solid #e4ebe0;border-radius:8px;box-shadow:none}
+.student-brand-theme #coursePanelDetail .res-file .icon{background:#e6eee1;color:#547447;border-radius:7px;font-size:11px}
+.student-brand-theme #coursePanelDetail .res-file strong{font-size:13px;font-weight:500;color:#455d4d}
+.student-brand-theme #coursePanelDetail .res-file .info>span{font-size:11px;color:#8b978d}
+.student-brand-theme #coursePanelDetail .detail-section:last-child{background:#f8f7f2;margin-bottom:0}
+.student-brand-theme #coursePanelDetail .policy-list{padding-left:18px;margin:0 0 12px;font-size:12px;line-height:1.95;color:#7b837a}
+.student-brand-theme #coursePanelDetail .policy-list li{margin-bottom:8px}
+.student-brand-theme #coursePanelDetail .detail-section>a{color:#5d755e!important;font-size:12px!important;font-weight:500!important}
+.student-brand-theme #coursePanelTeacher .teacher-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.student-brand-theme #coursePanelTeacher .teacher-card{align-items:flex-start;gap:18px;padding:24px;border:0;background:#f1f6ee;border-radius:12px;box-shadow:none}
+.student-brand-theme #coursePanelTeacher .teacher-avatar{width:64px;height:64px;border-radius:50%;background:#dfebdf;color:#365c44;font-size:24px;font-weight:500}
+.student-brand-theme #coursePanelTeacher .teacher-info{padding-top:4px}
+.student-brand-theme #coursePanelTeacher .teacher-name{font-size:16px;font-weight:600;color:#355240;margin:0 0 10px}
+.student-brand-theme #coursePanelTeacher .teacher-bio{font-size:12px;line-height:1.95;color:#7c897d;white-space:pre-line}
+@media(max-width:760px){.student-brand-theme #coursePanelTeacher .teacher-list{grid-template-columns:1fr}.student-brand-theme #coursePanelDetail .detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.student-brand-theme #coursePanelDetail .detail-item{padding:12px}.student-brand-theme #coursePanelTeacher .teacher-card{padding:18px}}
+
+.student-brand-theme #embeddedCourseDetail .detail-side .buy-btn{background:#c8ae78;color:#332c20;border:1px solid #c0a46b;box-shadow:0 2px 5px rgba(139,111,58,.08)}
+.student-brand-theme #embeddedCourseDetail .detail-side .buy-btn:hover{background:#bfa16a;color:#2d271d;border-color:#b6955a;box-shadow:0 3px 8px rgba(139,111,58,.13);transform:none}
+
+.student-brand-theme #coursePanelDetail .detail-item .dl{background:none;border:0;border-radius:0;box-shadow:none;padding:0;width:auto;min-width:0;min-height:0;height:auto;display:block;color:#8a968c}
+
+/* One auxiliary-action family: back, pagination, calendar, expand/collapse. */
+.student-brand-theme #childBackBtn.back-btn,
+.student-brand-theme #embeddedCourseDetail .pager button,
+.student-brand-theme #embeddedCourseDetail .cal-nav,
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle[aria-expanded]{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:32px;height:32px;min-height:32px;padding:0;border:1px solid #d8e2da;border-radius:8px;background:#fff;color:#436854;box-shadow:none;flex-shrink:0;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s;transform:none}
+.student-brand-theme #childBackBtn.back-btn:hover,
+.student-brand-theme #embeddedCourseDetail .pager button:hover:not(:disabled),
+.student-brand-theme #embeddedCourseDetail .cal-nav:hover,
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle[aria-expanded]:hover{background:#eaf1e8;border-color:#adc5b2;color:#28553d;box-shadow:none;transform:none}
+.student-brand-theme #embeddedCourseDetail .pager button:disabled{background:#fafbf9;color:#c3ccc4;border-color:#e8ede7;opacity:1;cursor:default}
+.student-brand-theme #childBackBtn.back-btn:focus-visible,
+.student-brand-theme #embeddedCourseDetail .pager button:focus-visible,
+.student-brand-theme #embeddedCourseDetail .cal-nav:focus-visible,
+.student-brand-theme .home-major-panel .prep-action-cell button.prep-school-toggle:focus-visible{outline:2px solid #789b81;outline-offset:3px}
+.student-brand-theme #embeddedCourseDetail .pager{gap:12px;padding-top:18px}
+
+/* Canonical student filter controls. Local layouts retain their widths/positions. */
+.student-brand-theme{--filter-surface:#e9eee9;--filter-line:#d8e2da;--filter-text:#626b66;--filter-active:#28554a;--filter-height:40px}
+.student-brand-theme.student-top-layout .student-segmented{display:inline-flex!important;align-items:center!important;gap:4px!important;padding:4px!important;border:0!important;border-radius:12px!important;background:var(--filter-surface)!important;box-shadow:none!important;width:fit-content;box-sizing:border-box!important}
+.student-brand-theme.student-top-layout .student-segmented>button{height:32px!important;min-height:32px!important;padding:0 16px!important;margin:0!important;border:0!important;border-radius:9px!important;background:transparent!important;color:var(--filter-text)!important;box-shadow:none!important;font-family:inherit!important;font-size:13px!important;font-weight:500!important;line-height:1.4!important;transform:none!important}
+.student-brand-theme.student-top-layout .student-segmented>button:not(.active):not(.on):hover{background:#f3f6f2!important;color:var(--filter-active)!important}
+.student-brand-theme.student-top-layout .student-segmented>button:is(.active,.on){background:#fff!important;color:var(--filter-active)!important;font-weight:600!important;box-shadow:0 1px 4px rgba(37,65,48,.10)!important}
+.student-brand-theme.student-top-layout .student-segmented>button:is(.active,.on):hover{background:#fff!important;color:#21483e!important}
+.student-brand-theme.student-top-layout select:not([multiple]):not([size]){appearance:none!important;-webkit-appearance:none!important;box-sizing:border-box!important;height:var(--filter-height)!important;min-height:var(--filter-height)!important;padding:0 34px 0 12px!important;border:1px solid var(--filter-line)!important;border-radius:10px!important;background-color:#fff!important;color:#455d4e!important;font-family:inherit!important;font-size:13px!important;font-weight:400!important;line-height:normal!important;box-shadow:none!important;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%236e8475' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important;background-position:right 12px center!important;background-repeat:no-repeat!important;transition:background-color .15s,border-color .15s}
+.student-brand-theme.student-top-layout select:not([multiple]):not([size]):hover{border-color:#adc5b2!important;background-color:#fafcf8!important}
+.student-brand-theme.student-top-layout select:not([multiple]):not([size]):focus-visible{border-color:#789b81!important;outline:2px solid #dce8dc!important;outline-offset:2px!important;box-shadow:none!important}
+.student-brand-theme.student-top-layout select:disabled{background-color:#f6f8f4!important;color:#a8b2aa!important;border-color:#e5eae3!important;cursor:not-allowed!important}
+@media(max-width:600px){.student-brand-theme.student-top-layout .student-segmented>button{padding:0 12px!important}}
+
+.student-brand-theme #coursePanelTeacher .teacher-list{grid-template-columns:minmax(0,1fr)}
+
+.student-brand-theme #embeddedCourseDetail .detail-side .buy-btn{background:#eee1bd;color:#665332;border-color:#e3d0a1;box-shadow:0 2px 5px rgba(139,111,58,.05)}
+.student-brand-theme #embeddedCourseDetail .detail-side .buy-btn:hover{background:#e5d3a4;color:#574526;border-color:#d8be83;box-shadow:0 3px 8px rgba(139,111,58,.09)}
+
+.student-brand-theme .prep-school-ownership.is-public{background:#f1e7cd;color:#826b3e;border-color:#e7d7ae}
+.student-brand-theme .prep-school-ownership.is-private{background:#e2ede3;color:#4f7359;border-color:#cadfcd}

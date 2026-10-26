@@ -535,11 +535,15 @@
 @media(min-width:601px) and (max-width:1150px){.home-dashboard{grid-template-columns:180px minmax(0,1fr)}.home-news-panel{grid-column:1/-1}}
 .student-top-layout .home-dashboard>.home-exam-panel,.student-top-layout .home-dashboard>.home-news-panel{background:#f8f9fb;border:1px solid #cbd2da;box-shadow:0 3px 12px rgba(33,45,62,.075),0 1px 2px rgba(33,45,62,.04)}
 .student-top-layout .home-exam-panel .header-exam-filter select:focus{box-shadow:none;outline:none;border-color:#9eafa4}.student-top-layout .home-exam-panel .header-exam-filter select:focus-visible{box-shadow:none;outline:1px solid #9eafa4;outline-offset:1px}
+
+  #childBackBtn.back-btn { margin-left:auto; width:36px; height:36px; padding:0; justify-content:center; flex-shrink:0; border:1px solid #dce4de; border-radius:10px; background:#fff; color:#28554a; box-shadow:0 2px 5px rgba(30,68,56,.04); transition:background .15s,border-color .15s,box-shadow .15s; }
+  #childBackBtn.back-btn:hover { background:#edf3ee; border-color:#a8bfb0; box-shadow:0 3px 8px rgba(30,68,56,.08); }
+  #childBackBtn.back-btn:focus-visible { outline:2px solid #709580; outline-offset:3px; }
 </style>
-<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><%- include('../partials/brand-icons') %><link rel="stylesheet" href="/public/css/student-topnav.css?v=20261018-topnav1"><link rel="stylesheet" href="/public/css/student-account.css?v=20261021-education20"><link rel="stylesheet" href="/public/css/home-side-panels.css?v=20261026-summarydots61">
+<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><%- include('../partials/brand-icons') %><link rel="stylesheet" href="/public/css/student-topnav.css?v=20261018-topnav1"><link rel="stylesheet" href="/public/css/student-account.css?v=20261021-education20"><link rel="stylesheet" href="/public/css/home-side-panels.css?v=20261026-activepointer62">
 <script defer src="/js/shipping-regions.js?v=20261021-shipping1"></script>
 <script defer src="/js/student-account.js?v=20261021-education20"></script>
-<link rel="stylesheet" href="/public/css/student-theme.css?v=20261026-unifiedprice27">
+<link rel="stylesheet" href="/public/css/student-theme.css?v=20261026-fixed51">
 </head>
 <body class="student-top-layout student-brand-theme">
 <%
@@ -791,11 +795,8 @@
             <button data-t="专项提升">专项提升</button>
             <button data-t="公开课">公开课</button>
           </div>
-          <button type="button" class="back-btn" id="childBackBtn" style="display:none" onclick="backToPackages()">← 返回</button>
-          <div class="search">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input id="courseSearch" type="text" name="q" autocomplete="off" spellcheck="false" placeholder="搜索课程名称">
-          </div>
+          <button type="button" class="back-btn" id="childBackBtn" style="display:none" onclick="backToPackages()" aria-label="返回上一级" title="返回上一级"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button>
+
         </div>
 
         <% if (packages && packages.length > 0) { %>
@@ -1110,7 +1111,9 @@
       card.setAttribute('data-type', typeLabel(c.class_type));
       var _tagLabel = typeLabel(c.class_type);
       var parentTitle = (_packageDetails[c.id] && _packageDetails[c.id].parent_title) || '';
-      var tags = parentTitle ? '<span>' + escHtml(parentTitle) + '</span>' : [c.province || '全国', (c.year || '') + '年', c.exam_type || '专升本'].map(function(t) { return '<span>' + t + '</span>'; }).join('');
+      card.setAttribute('data-parent-title', parentTitle);
+      var tier = parentTitle.match(/飞跃班|卓越班/);
+      var tags = parentTitle ? '<span title="' + escHtml(parentTitle) + '">' + escHtml(tier ? tier[0] : parentTitle) + '</span>' : [c.province || '全国', (c.year || '') + '年', c.exam_type || '专升本'].map(function(t) { return '<span>' + escHtml(t) + '</span>'; }).join('');
       var orig = c.price;
       var sale = c.sale_price;
       var priceHtml = orig ? '<span class="now" style="text-decoration:line-through">¥' + Number(orig).toFixed(2) + '</span>' + (sale && Number(sale) < Number(orig) ? ' <span class="old">¥' + Number(sale).toFixed(2) + '</span>' : '') : (sale ? '¥' + Number(sale).toFixed(2) : '<span class="none">价格面议</span>');
@@ -1118,8 +1121,8 @@
       var teacherHtml = teacherNames.length ? '<div class="pkg-teacher">' + teacherNames.map(function(n, i){ var av = (c.teacher_avatars && c.teacher_avatars[i]) ? '<img src="' + c.teacher_avatars[i] + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="">' : n.charAt(0); return '<span class="pkg-teacher-item"><span class="pkg-teacher-avatar">' + av + '</span><span>' + n + '</span></span>'; }).join('') + '</div>' : '';
       var dp = _packageDetails[c.id] || {};
       var dh = calcHours(dp.scheduleRows || []);
-      var startInfo = '<div class="pkg-start"><b>课时：</b>' + dh + '+' + '</div><div class="pkg-start"><b>开课：</b>' + escHtml(dp.start_date || '待定') + (dp.end_date ? ' ~ ' + escHtml(dp.end_date) : '') + '</div>';
-      card.innerHTML = '<div class="pkg-top"><div class="pkg-tags">' + tags + '</div><h3>' + escHtml(c.title || '') + '</h3></div><div class="pkg-body">' + startInfo + teacherHtml + '</div><div class="pkg-foot"><span class="go pkg-price">' + priceHtml + '</span><span>' + (c.display_student_count || 0) + ' 人报名</span></div>';
+      var hoursInfo = dh > 0 ? dh + '+ 课时' : '课时待定';
+      card.innerHTML = '<div class="pkg-top"><div class="course-card-eyebrow"><div class="pkg-tags">' + tags + '</div><span class="course-card-hours">' + hoursInfo + '</span></div><h3 class="course-card-title" title="' + escHtml(c.title || '') + '">' + escHtml(c.title || '') + '</h3></div><div class="pkg-body">' + teacherHtml + '</div><div class="pkg-foot"><span class="go pkg-price">' + priceHtml + '</span><span class="course-enrollment">' + (c.display_student_count || 0) + ' 人报名</span></div>';
       grid.appendChild(card);
     });
     showDrillUI(p ? p.getAttribute('data-title') : '系统课列表');
@@ -1177,7 +1180,9 @@
   function packageSideHtml(d){
     var orig = d.price;
     var sale = d.sale_price;
-    var priceHtml = orig ? '<span style="text-decoration:line-through">¥' + Number(orig).toFixed(2) + '</span>' + (sale && Number(sale) < Number(orig) ? '<span class="old" style="font-size:14px;color:#dc2626">¥' + Number(sale).toFixed(2) + '</span>' : '') : (sale ? '¥' + Number(sale).toFixed(2) : '价格面议');
+    var hasDiscount = Number(orig) > 0 && Number(sale) > 0 && Number(sale) < Number(orig);
+    var currentPrice = hasDiscount ? Number(sale) : (Number(orig) || Number(sale));
+    var priceHtml = currentPrice ? '<span class="current-price">¥' + currentPrice.toFixed(2) + '</span>' + (hasDiscount ? '<span class="original-price">¥' + Number(orig).toFixed(2) + '</span>' : '') : '价格面议';
     return '<aside class="detail-side"><div class="price">' + priceHtml + '</div><div class="students">' + (d.display_student_count || 0) + ' 人报名</div><div class="detail-btns"><button type="button" class="buy-btn" onclick="startBuy()">立即购买</button></div><label class="agree"><input type="checkbox" id="agreeTerms" style="margin-right:4px">我已阅读并同意<a href="/live/student/policy" target="_blank" rel="noopener" style="color:#1c1917">《用户协议》《隐私政策》《退款说明》</a></label></aside>';
   }
   function calendarHtml(){
@@ -1208,7 +1213,7 @@
       }).join('');
       cells.push('<span class="cal-cell' + (lessons.length ? ' has' : '') + '"><b>' + day + '</b>' + items + '</span>');
     }
-    var nav = '<button type="button" class="cal-nav" onclick="calPrev()">‹ 上月</button><span class="cal-title" style="margin:0">' + year + ' 年 ' + (month + 1) + ' 月</span><button type="button" class="cal-nav" onclick="calNext()">下月 ›</button>';
+    var nav = '<button type="button" class="cal-nav" onclick="calPrev()" aria-label="上个月" title="上个月"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button><span class="cal-title" style="margin:0">' + year + ' 年 ' + (month + 1) + ' 月</span><button type="button" class="cal-nav" onclick="calNext()" aria-label="下个月" title="下个月"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>';
     return '<div class="course-calendar"><div class="cal-head-row">' + nav + '</div><div class="cal-grid-head">' + heads + '</div><div class="cal-grid">' + cells.join('') + '</div></div>';
   }
   function calPrev(){ _calMonth--; if (_calMonth < 0) { _calMonth = 11; _calYear--; } renderCalendarPanel(); }
@@ -1220,18 +1225,21 @@
     _calYear = now.getFullYear();
     _calMonth = now.getMonth();
   }
+  function catalogSubjectHtml(p){
+    return '<div class="subject-filter"><select id="catalogSubject" aria-label="筛选科目" onchange="filterSchedule(this.value)"><option value="0"' + (!_catalogFilterCid ? ' selected' : '') + '>全部科目</option>' + (p.courses || []).map(function(c){
+      return '<option value="' + Number(c.id) + '"' + (Number(_catalogFilterCid) === Number(c.id) ? ' selected' : '') + '>' + escHtml(c.category || c.title) + '</option>';
+    }).join('') + '</select></div>';
+  }
   function buildCatalogTableHtml(p){
-    var subjectTabs = '<div class="subject-tabs"><button type="button" class="subject-tab' + (!_catalogFilterCid ? ' active' : '') + '" data-cid="0" onclick="filterSchedule(0)">全部</button>' + (p.courses || []).map(function(c){
-      return '<button type="button" class="subject-tab' + (Number(_catalogFilterCid) === Number(c.id) ? ' active' : '') + '" data-cid="' + c.id + '" onclick="filterSchedule(' + c.id + ')">' + escHtml(c.category || c.title) + '</button>';
-    }).join('') + '</div>';
+
     var filtered = _catalogRows.filter(function(r){ return !_catalogFilterCid || Number(r.cid) === Number(_catalogFilterCid); });
     var total = filtered.length;
     var pages = Math.max(1, Math.ceil(total / _catalogPageSize));
     if (_catalogPage > pages) _catalogPage = pages;
     if (_catalogPage < 1) _catalogPage = 1;
     var rows = filtered.slice((_catalogPage - 1) * _catalogPageSize, _catalogPage * _catalogPageSize).map(function(r){ return r.html; }).join('');
-    var pager = total > _catalogPageSize ? '<div class="pager"><button onclick="catalogPage(' + (_catalogPage - 1) + ')"' + (_catalogPage <= 1 ? ' disabled' : '') + '>上一页</button><span>' + _catalogPage + ' / ' + pages + '</span><button onclick="catalogPage(' + (_catalogPage + 1) + ')"' + (_catalogPage >= pages ? ' disabled' : '') + '>下一页</button></div>' : '';
-    return subjectTabs + '<div class="detail-table-wrap catalog-table-wrap"><table class="detail-table"><thead><tr><th>科目</th><th>课次</th><th>上课时间</th><th>时长</th><th>课件/讲义</th><th>课后练习</th><th>入口</th></tr></thead><tbody>' + rows + '</tbody></table></div>' + pager;
+    var pager = total > _catalogPageSize ? '<div class="pager"><button onclick="catalogPage(' + (_catalogPage - 1) + ')"' + (_catalogPage <= 1 ? ' disabled' : '') + ' aria-label="上一页" title="上一页"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button><span>' + _catalogPage + ' / ' + pages + '</span><button onclick="catalogPage(' + (_catalogPage + 1) + ')"' + (_catalogPage >= pages ? ' disabled' : '') + ' aria-label="下一页" title="下一页"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button></div>' : '';
+    return '<div class="detail-table-wrap catalog-table-wrap"><table class="detail-table"><thead><tr><th>科目</th><th>课次</th><th>上课时间</th><th>时长</th><th>课件/讲义</th><th>课后练习</th><th>入口</th></tr></thead><tbody>' + rows + '</tbody></table></div>' + pager;
   }
   function catalogPage(n){
     if (!_catalogPkg) return;
@@ -1293,12 +1301,12 @@
     var sideHtml = (!p.children || p.children.length === 0) ? packageSideHtml(p) : '';
     var detailPanel = '<div class="course-panel" id="coursePanelDetail">' + (firstCourseId ? courseInfoHtml(firstCourseId) : '<div class="empty">暂无课程信息</div>') + '</div>';
     var teacherPanel = '<div class="course-panel" id="coursePanelTeacher">' + teachersHtml + '</div>';
-    var tabsHtml = '<div class="course-tabs"><button type="button" class="course-tab active" data-panel="catalog" onclick="switchCourseTab(\'catalog\',\'embeddedCourseDetail\')">课程目录</button><button type="button" class="course-tab" data-panel="calendar" onclick="switchCourseTab(\'calendar\',\'embeddedCourseDetail\')">课程日历</button><button type="button" class="course-tab" data-panel="detail" onclick="switchCourseTab(\'detail\',\'embeddedCourseDetail\')">课程简介</button><button type="button" class="course-tab" data-panel="teacher" onclick="switchCourseTab(\'teacher\',\'embeddedCourseDetail\')">教师简介</button></div>';
+    var tabsHtml = '<div class="course-tabs student-segmented"><button type="button" class="course-tab active" data-panel="catalog" onclick="switchCourseTab(\'catalog\',\'embeddedCourseDetail\')">课程目录</button><button type="button" class="course-tab" data-panel="calendar" onclick="switchCourseTab(\'calendar\',\'embeddedCourseDetail\')">课程日历</button><button type="button" class="course-tab" data-panel="detail" onclick="switchCourseTab(\'detail\',\'embeddedCourseDetail\')">课程简介</button><button type="button" class="course-tab" data-panel="teacher" onclick="switchCourseTab(\'teacher\',\'embeddedCourseDetail\')">教师简介</button></div>';
     var totalLessons = calcHours(p.scheduleRows || []);
     if (!totalLessons) (p.courses || []).forEach(function(c){ totalLessons += Number(c.lesson_count) || 0; });
     var metaRow = '<div class="course-meta"><span><b>开课：</b>' + escHtml(p.start_date || '待定') + '</span><span><b>下架时间：</b>' + escHtml(p.valid_until || p.end_date || '待定') + '</span><span><b>总课时：</b>' + totalLessons + '</span></div>';
     var parentHtml = p.parent_title ? '<div class="detail-parent">' + escHtml(p.parent_title) + '</div>' : '';
-    document.getElementById('embeddedCourseDetail').innerHTML = '<div class="detail-layout"><div class="detail-main"><div class="detail-hd"><div class="detail-hd-left">' + tagsHtml(p) + parentHtml + '<h1>' + escHtml(p.title) + '</h1>' + metaRow + '</div>' + sideHtml + '</div><div class="course-tabs-divider"></div>' + tabsHtml + '<div class="course-panels">' + teacherPanel + catalogPanel + calendarPanel + detailPanel + '</div></div></div>';
+    document.getElementById('embeddedCourseDetail').innerHTML = '<div class="detail-layout"><div class="detail-main"><div class="detail-hd"><div class="detail-hd-left">' + tagsHtml(p) + parentHtml + '<h1>' + escHtml(p.title) + '</h1>' + metaRow + '</div>' + sideHtml + '</div><div class="course-tabs-divider"></div>' + '<div class="detail-controls-row">' + tabsHtml + catalogSubjectHtml(p) + '</div><div class="course-panels">' + teacherPanel + catalogPanel + calendarPanel + detailPanel + '</div></div></div>';
     ensureCoursesView();
   }
   function updateEmbeddedDetail(cid){
