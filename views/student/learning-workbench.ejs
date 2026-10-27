@@ -1,0 +1,27 @@
+<section class="view" id="viewOverview">
+  <div class="learning-workspace">
+    <header class="workspace-heading"><div><h2>学习总览</h2><p><%= new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'long',day:'numeric',weekday:'long'}).format(new Date()) %></p></div></header>
+    <% var studyMinutes=Math.max(0,Number(ov.minutes)||0); var studyValue=studyMinutes<60?Math.round(studyMinutes):Math.round(studyMinutes/6)/10; %>
+    <div class="workspace-stats" aria-label="学习概况">
+      <div><span>我的课程</span><strong><%= myList.length %><small>门</small></strong></div>
+      <div><span>已完成课次</span><strong><%= Math.max(0,Number(ov.completed)||0) %><small>课次</small></strong></div>
+      <div><span>学习时长</span><strong><%= studyValue %><small><%= studyMinutes<60?'分钟':'小时' %></small></strong></div>
+      <div><span>待上课</span><strong><%= Math.max(0,Number(ov.upcoming)||0) %><small>课次</small></strong></div>
+    </div>
+    <div class="workspace-columns">
+      <section class="workspace-courses" aria-labelledby="workspaceCoursesTitle">
+        <div class="workspace-panel-heading"><h3 id="workspaceCoursesTitle">我的课程</h3></div>
+        <%- include('learning-courses', {myList:myList}) %>
+      </section>
+      <aside class="workspace-agenda" aria-labelledby="workspaceAgendaTitle">
+        <div class="workspace-panel-heading"><h3 id="workspaceAgendaTitle">近期课次</h3></div>
+        <% if(upList.length){ %><div class="workspace-agenda-list"><% upList.forEach(function(l){
+          var stamp=String(l.schedule_time||'').replace('T',' '), date=stamp.substring(5,10), clock=stamp.substring(11,16);
+          var match=myList.find(function(c){var d=(typeof courseDetails!=='undefined'&&courseDetails||{})[c.id];return d&&(d.lessons||[]).some(function(x){return Number(x.id)===Number(l.id);});});
+        %>
+          <div class="workspace-agenda-item"><div class="workspace-agenda-date"><span><%= date||'待定' %></span><strong><%= clock||'—' %></strong></div><div class="workspace-agenda-info"><b><%= l.title %></b><span><%= l.course_title %></span><% if(match){ %><button type="button" data-workbench-course="<%= match.id %>" aria-label="查看<%= l.course_title %>课程目录">查看课程 <span aria-hidden="true">›</span></button><% } %></div></div>
+        <% }); %></div><% }else{ %><div class="workspace-agenda-empty"><strong>暂无待上课</strong><p>已安排的课次会显示在这里。</p></div><% } %>
+      </aside>
+    </div>
+  </div>
+</section>

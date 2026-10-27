@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(148,163,184,.35) transparent; }
+    *::-webkit-scrollbar { width:8px; height:8px; }
+    *::-webkit-scrollbar-track { background:transparent; }
+    *::-webkit-scrollbar-thumb { background:rgba(148,163,184,.35); border-radius:8px; border:2px solid transparent; background-clip:padding-box; }
+    *::-webkit-scrollbar-thumb:hover { background:rgba(148,163,184,.6); border:2px solid transparent; background-clip:padding-box; }
+    *::-webkit-scrollbar-corner { background:transparent; }
+    html, body { height:100%; }
+    body { background:#2B2F36; color:#e5e7eb; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Arial,sans-serif; height:100%; overflow:hidden; }
+    .watch-header { display:flex; align-items:center; gap:14px; padding:0 20px; height:64px; background:#2B2F36; border-bottom:1px solid rgba(255,255,255,.28); position:sticky; top:0; z-index:40; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+    .watch-brand { display:inline-flex; align-items:center; gap:10px; font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; color:#fff; text-decoration:none; font-size:22px; font-weight:400; line-height:1; letter-spacing:.5px; white-space:nowrap; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    .watch-brand img, .watch-brand svg { width:28px; height:28px; flex:none; }
+    .watch-brand .brand-tag { font-size:11px; font-weight:400; color:rgba(255,255,255,.55); letter-spacing:1px; margin-left:2px; }
+    .watch-course { margin-left:0; padding-left:14px; border-left:1px solid rgba(255,255,255,.16); color:rgba(255,255,255,.6); font-size:14px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:55%; }
+    .page { max-width:1360px; margin:0 auto; padding:22px 26px; height:calc(100vh - 56px); box-sizing:border-box; display:flex; gap:18px; align-items:stretch; }
+    .player-col { flex:1; min-width:0; min-height:0; height:100%; display:flex; flex-direction:column; justify-content:center; }
+    .player-main { position:relative; width:min(100%, calc((100vh - 56px - 44px - 42px) * 16 / 9)); aspect-ratio:16/9; margin:0 auto; background:#000; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.1); box-shadow:0 24px 60px rgba(0,0,0,.55); }
+    .player-main video { width:100%; height:100%; object-fit:contain; background:#000; }
+    .cap-main { position:absolute; top:10px; left:12px; font-size:11px; color:rgba(255,255,255,.7); background:rgba(0,0,0,.5); padding:2px 8px; border-radius:4px; }
+    .controls { display:flex; align-items:center; gap:10px; padding:7px 12px; background:#2B2F36; border:1px solid rgba(255,255,255,.12); border-top:none; border-radius:0 0 14px 14px; box-shadow:0 -8px 24px rgba(0,0,0,.25); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); flex-shrink:0; }
+    .ctrl-btn { width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; font-size:13px; cursor:pointer; border-radius:8px; line-height:1; transition:all .18s ease; }
+    .ctrl-btn:hover { background:rgba(37,99,235,.28); border-color:rgba(96,165,250,.45); color:#fff; transform:translateY(-1px) scale(1.06); box-shadow:0 8px 20px rgba(37,99,235,.25); }
+    .ctrl-btn svg { display:block; }
+    .ctrl-btn.active { background:rgba(37,99,235,.35); border-color:rgba(96,165,250,.55); }
+    .ctrl-btn.wide { width:auto; min-width:44px; padding:0 9px; font-size:12px; font-weight:600; font-family:inherit; }
+    .volume-box { display:flex; align-items:center; gap:8px; }
+    .vol-slider { width:70px; -webkit-appearance:none; appearance:none; height:3px; border-radius:2px; background:rgba(255,255,255,.2); outline:none; }
+    .vol-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:12px; height:12px; border-radius:50%; background:#e2e8f0; cursor:pointer; border:none; }
+    .vol-slider::-moz-range-thumb { width:12px; height:12px; border-radius:50%; background:#e2e8f0; cursor:pointer; border:none; }
+    .rate-wrap { position:relative; }
+    .rate-menu { position:absolute; bottom:calc(100% + 8px); right:0; min-width:72px; background:rgba(13,21,38,.96); border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:5px; display:none; z-index:80; box-shadow:0 16px 40px rgba(0,0,0,.45); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+    .rate-menu.open { display:block; }
+    .rate-menu button { display:block; width:100%; padding:6px 10px; border:none; background:transparent; color:rgba(255,255,255,.72); font-size:12px; text-align:left; border-radius:6px; cursor:pointer; font-family:inherit; }
+    .rate-menu button:hover { background:rgba(37,99,235,.3); color:#fff; }
+    .rate-menu button.on { color:#fff; font-weight:700; background:rgba(37,99,235,.24); }
+    .progress { flex:1; height:4px; background:rgba(255,255,255,.2); border-radius:2px; cursor:pointer; position:relative; }
+    .progress-fill { height:100%; width:0; background:#2563eb; border-radius:2px; }
+    .time { font-size:12px; color:rgba(255,255,255,.55); font-variant-numeric:tabular-nums; min-width:96px; text-align:center; }
+    .right-col { width:270px; display:flex; flex-direction:column; gap:14px; height:100%; max-height:100%; min-height:0; }
+    .right-col.hidden { display:none; }
+    .cam-box { background:#2B2F36; border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.35); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+    .cam-box video { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:#000; }
+    .cam-box, .chat-col { transition:opacity .15s ease, visibility .15s ease; }
+    .chat-col { flex:1; min-height:0; display:flex; flex-direction:column; background:#2B2F36; border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.32); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+    .chat-hd { padding:13px 16px; font-size:14px; font-weight:600; color:rgba(255,255,255,.85); border-bottom:1px solid rgba(255,255,255,.08); }
+    .chat-msgs { flex:1; overflow-y:auto; padding:14px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.2) transparent; }
+    .chat-msgs::-webkit-scrollbar { width:6px; }
+    .chat-msgs::-webkit-scrollbar-thumb { background:rgba(255,255,255,.18); border-radius:3px; }
+    .chat-msg { margin-bottom:12px; font-size:13px; line-height:1.55; color:rgba(255,255,255,.88); }
+    .chat-msg .head { display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
+    .chat-msg .who { color:#60a5fa; font-weight:600; font-size:12px; }
+    .chat-msg .time { color:rgba(255,255,255,.32); font-size:11px; }
+    .chat-msg .txt { display:block; color:rgba(255,255,255,.9); line-height:1.5; word-break:break-word; }
+    .empty { color:rgba(255,255,255,.35); font-size:12px; text-align:center; padding:26px 0; }
+
+
+    @media (max-width:900px) { body { overflow:auto; } .page { flex-direction:column; padding:14px; height:auto; min-height:calc(100vh - 56px); } .right-col { width:100%; height:auto; max-height:none; } .chat-col { min-height:240px; } .player-main { width:100%; } }
+  .watch-header .rerecord-action{flex:none;margin-left:auto;display:inline-flex;align-items:center;justify-content:center;padding:8px 16px;border:1px solid #648574;border-radius:6px;background:#426453;color:#fff;font-family:inherit;font-size:12px;font-weight:500;line-height:1.5;text-decoration:none;white-space:nowrap}.watch-header .rerecord-action:hover{background:#507560}.watch-header .rerecord-action:focus-visible{outline:2px solid #b9c9c0;outline-offset:3px}
+</style>
+<link rel="stylesheet" href="/public/css/replay-studio.css?v=20261023-soft1">
+<script defer src="/js/replay-controls.js?v=20261022-hover1"></script>
+<script defer src="/js/replay-layout.js?v=20261022-hover1"></script>
+<%- include('../partials/playback-assets') %><%- include('../partials/brand-icons') %><link rel="stylesheet" href="/public/css/classroom-ui.css?v=20261022-sans1">
+<link rel="stylesheet" href="/public/css/student-viewer-avatar.css?v=20261021-avatar1">
+<link rel="stylesheet" href="/public/css/player-themes.css?v=20261027-theme1">
+<script src="/js/player-theme.js?v=20261027-theme1"></script>
+</head>
+<body class="replay-studio classroom-ui">
+  <div class="watch-header">
+    <span class="watch-brand"><%- include('../partials/playback-brand') %></span>
+    <div class="playback-course-group"><span class="playback-course-title"><%= course.title %><% if (lessonTitle) { %> · <%= lessonTitle %><% } %></span><span class="playback-kind">课程回放</span></div>
+    <% if(typeof rerecordUrl!=='undefined' && rerecordUrl){ %><a class="rerecord-action" href="<%= rerecordUrl %>">重新录制</a><% } %>
+    <button type="button" class="player-theme-toggle" data-player-theme-toggle aria-pressed="false" aria-label="切换为日间模式"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span>夜间</span></button>
+    <%- include('../partials/student-viewer-avatar') %>
+  </div>
+  <div class="page">
+    <div class="player-col">
+      <div class="player-main" id="mainBox">
+        <% if (main.video_url) { %><video id="mainVideo" playsinline></video><% } else { %><div class="classroom-placeholder" style="height:100%">授课画面未配置</div><% } %>
+      <div class="controls" role="group" aria-label="回放控制">
+        <button class="ctrl-btn" id="playBtn" title="播放或暂停" aria-label="播放或暂停"><svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg></button>
+        <div class="volume-box">
+          <button class="ctrl-btn" id="muteBtn" title="静音或恢复声音" aria-label="静音或恢复声音"><svg id="volOn" style="display:none" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/><path d="M14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg><svg id="volOff" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg></button>
+          <input type="range" id="volRange" aria-label="音量" class="vol-slider" min="0" max="100" value="100">
+        </div>
+        <div class="rate-wrap">
+          <button class="ctrl-btn wide" id="rateBtn" title="倍速">1.0x</button>
+          <div class="rate-menu" id="rateMenu">
+            <button data-rate="1" class="on">1.0x</button>
+            <button data-rate="1.5">1.5x</button>
+            <button data-rate="2">2.0x</button>
+            <button data-rate="2.5">2.5x</button>
+            <button data-rate="3">3.0x</button>
+          </div>
+        </div>
+        <div class="progress" id="progress" role="slider" tabindex="0" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
+        <span class="time" id="timeText">00:00 / 00:00</span>
+        <button type="button" class="ctrl-btn" id="sideBtn" title="隐藏教师画面和课堂互动" aria-label="隐藏教师画面和课堂互动" aria-controls="replaySidebar" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/><path id="sidebarArrow" d="m8 9 3 3-3 3"/></svg></button>
+        <button class="ctrl-btn" id="fullBtn" title="全屏" aria-label="全屏"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+      </div>
+      </div>
+    </div>
+    <div class="right-col" id="replaySidebar">
+      <div class="cam-box">
+        <% if (cam && cam.video_url) { %><video id="camVideo" playsinline></video><% } else { %><div class="classroom-placeholder" style="aspect-ratio:16/9">老师画面未配置</div><% } %>
+      </div>
+      <div class="chat-col">
+        <div class="chat-hd">课堂互动</div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/player/hls.min.js"></script>
+  <script>
+    var mainUrl = <%- jsonForScript(main.video_url || '') %>;
+    var camUrl = <%- jsonForScript(cam && cam.video_url || '') %>;
+    var v1 = document.getElementById('mainVideo');
+    var v2 = document.getElementById('camVideo');
+    function setupVideo(video, url) {
+      if (!video || !url) return;
+      if (url.indexOf('.m3u8') > -1) {
+        if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; }
+        else if (window.Hls && Hls.isSupported()) { var hls = new Hls(); hls.loadSource(url); hls.attachMedia(video); }
+        else { video.src = url; }
+      } else { video.src = url; }
+    }
+    setupVideo(v1, mainUrl);
+    setupVideo(v2, camUrl);
+    var playBtn = document.getElementById('playBtn');
+    var playIcon = document.getElementById('playIcon');
+    var progress = document.getElementById('progress');
+    var progressFill = document.getElementById('progressFill');
+    var timeText = document.getElementById('timeText');
+    function fmt(sec) { sec = sec || 0; var m = Math.floor(sec / 60), s = Math.floor(sec % 60); return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); }
+    function sync() {
+      var dur = v1.duration || 0;
+      var displayedTime=seeking?previewTime:v1.currentTime;
+      var pct = dur ? (displayedTime / dur) * 100 : 0;
+      progressFill.style.width = pct + '%';
+      progress.setAttribute('aria-valuenow',String(Math.round(pct)));
+      progress.setAttribute('aria-valuetext',fmt(displayedTime)+' / '+fmt(dur));
+      timeText.textContent = fmt(displayedTime) + ' / ' + fmt(dur);
+    }
+    function togglePlay() {
+      if (!v1) return;
+      if (v1.paused) {
+        var ps = [];
+        if (v1.src) ps.push(v1.play());
+        if (v2 && v2.src) ps.push(v2.play());
+        Promise.all(ps).catch(function(){});
+        playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      } else {
+        v1.pause(); if (v2) v2.pause();
+        playIcon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+      }
+    }
+    playBtn.addEventListener('click', togglePlay);
+    v1.addEventListener('play', function(){ playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'; });
+    v1.addEventListener('pause', function(){ playIcon.innerHTML = '<polygon points="5,3 19,12 5,21"/>'; });
+    v1.addEventListener('timeupdate', sync);
+    v1.addEventListener('loadedmetadata', sync);
+    var progressFrame=0;
+    function animateProgress(){progressFrame=0;if(!document.hidden){sync();if(!v1.paused&&!v1.ended)progressFrame=requestAnimationFrame(animateProgress);}}
+    function startProgress(){if(!progressFrame&&!document.hidden)progressFrame=requestAnimationFrame(animateProgress);}
+    v1.addEventListener('play',startProgress);
+    v1.addEventListener('pause',function(){cancelAnimationFrame(progressFrame);progressFrame=0;sync();});
+    document.addEventListener('visibilitychange',function(){if(document.hidden){cancelAnimationFrame(progressFrame);progressFrame=0;}else if(!v1.paused)startProgress();});
+
+    function seekTo(t){if(!Number.isFinite(v1.duration)||!v1.duration)return; t=Math.max(0,Math.min(v1.duration,t));v1.currentTime=t;if(v2)v2.currentTime=t;sync();}
+    function seekPointer(e){var r=progress.getBoundingClientRect();if(!Number.isFinite(v1.duration))return;previewTime=Math.max(0,Math.min(v1.duration,(e.clientX-r.left)/r.width*v1.duration));sync();}
+    var seeking=false,previewTime=0;
+    progress.addEventListener('pointerdown',function(e){if(e.button!==0)return;e.preventDefault();seeking=true;progress.setPointerCapture(e.pointerId);seekPointer(e);});
+    progress.addEventListener('pointermove',function(e){if(seeking)seekPointer(e);});
+    progress.addEventListener('pointerup',function(e){if(seeking){seekPointer(e);seeking=false;seekTo(previewTime);if(progress.hasPointerCapture(e.pointerId))progress.releasePointerCapture(e.pointerId);}});
+    progress.addEventListener('pointercancel',function(){seeking=false;sync();});
+    progress.addEventListener('keydown',function(e){var t=v1.currentTime;if(e.key==='ArrowRight')t+=5;else if(e.key==='ArrowLeft')t-=5;else if(e.key==='Home')t=0;else if(e.key==='End')t=v1.duration;else return;e.preventDefault();seekTo(t);});
+    document.getElementById('fullBtn').addEventListener('click', function() {
+      var el = document.getElementById('mainBox');
+      if (!document.fullscreenElement) { el.requestFullscreen().catch(function(){}); } else { document.exitFullscreen().catch(function(){}); }
+    });
+    var muteBtn = document.getElementById('muteBtn');
+    var volRange = document.getElementById('volRange');
+    var audioMuted = false;
+    var lastVolume = 100;
+    function setVolume(muted, vol) {
+      [v1, v2].forEach(function(v) {
+        if (!v) return;
+        v.muted = muted;
+        v.volume = Math.max(0, Math.min(1, (vol || 0) / 100));
+      });
+      document.getElementById('volOn').style.display = muted ? 'none' : 'block';
+      document.getElementById('volOff').style.display = muted ? 'block' : 'none';
+    }
+    muteBtn.addEventListener('click', function() {
+      audioMuted = !audioMuted;
+      if (audioMuted) {
+        lastVolume = parseInt(volRange.value) || 100;
+        volRange.value = 0;
+        setVolume(true, 0);
+      } else {
+        volRange.value = lastVolume || 100;
+        setVolume(false, volRange.value);
+      }
+    });
+    volRange.addEventListener('input', function() {
+      audioMuted = false;
+      setVolume(false, volRange.value);
+    });
+    var rateBtn = document.getElementById('rateBtn');
+    var rateMenu = document.getElementById('rateMenu');
+    var rate = 1;
+    function setRate(r) {
+      rate = r;
+      [v1, v2].forEach(function(v) { if (v) v.playbackRate = r; });
+      rateBtn.textContent = (r % 1 === 0 ? r.toFixed(1) : String(r)) + 'x';
+      rateMenu.querySelectorAll('button').forEach(function(b) {
+        b.classList.toggle('on', parseFloat(b.getAttribute('data-rate')) === r);
+      });
+      rateMenu.classList.remove('open');
+    }
+    rateBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      rateMenu.classList.toggle('open');
+    });
+    rateMenu.querySelectorAll('button').forEach(function(b) {
+      b.addEventListener('click', function() { setRate(parseFloat(b.getAttribute('data-rate'))); });
+    });
+    document.addEventListener('click', function(e) {
+      if (!rateMenu.contains(e.target) && e.target !== rateBtn) rateMenu.classList.remove('open');
+    });
+    var sideBtn = document.getElementById('sideBtn');
+    var rightCol = document.querySelector('.right-col');
+    var sideHidden = false;
+    sideBtn.addEventListener('click', function() {
+      sideHidden = !sideHidden;
+      rightCol.classList.toggle('hidden', sideHidden);
+      window.dispatchEvent(new Event('resize'));
+      var label = sideHidden ? '显示教师画面和课堂互动' : '隐藏教师画面和课堂互动';
+      sideBtn.title = label;
+      sideBtn.setAttribute('aria-label', label);
+      sideBtn.setAttribute('aria-expanded', String(!sideHidden));
+      document.getElementById('sidebarArrow').setAttribute('d', sideHidden ? 'm11 9-3 3 3 3' : 'm8 9 3 3-3 3');
+      sideBtn.classList.toggle('active', sideHidden);
+    });
+    var chatLog = <%- JSON.stringify((function(){ try { return JSON.parse(chatLog || '[]'); } catch(e){ return []; } })()).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029') %>;
+    if (!Array.isArray(chatLog)) { try { chatLog = JSON.parse(chatLog); } catch(e) { chatLog = []; } }
+    (function(){
+      var box = document.getElementById('chatMsgs');
+      if (!box) return;
+      function tfmt(t) {
+        try { var d = new Date(String(t).replace(' ', 'T') + 'Z'); var p = function(n){ return (n<10?'0'+n:''+n); }; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); } catch(e){ return ''; }
+      }
+      chatLog = chatLog.filter(function(m) {
+        var c = String(m.content || '');
+        return !(String(m.sender || '') === '系统' && (c.indexOf('老师已开始直播') > -1 || c.indexOf('老师已结束直播') > -1));
+      });
+      if (!chatLog || chatLog.length === 0) { box.innerHTML = '<div class="empty">本次课堂暂无聊天记录</div>'; return; }
+      var chats = chatLog.map(function(m) {
+        var t = 0;
+        try { t = new Date(String(m.created_at).replace(' ', 'T') + 'Z').getTime(); } catch(e) {}
+        return { m: m, t: t };
+      });
+      var t0 = chats[0] ? chats[0].t : 0;
+      chats.forEach(function(c) { c.offset = (c.t - t0) / 1000; });
+      var shownCount = 0;
+      function addMsg(m) {
+        var div = document.createElement('div'); div.className = 'chat-msg';
+        var head = document.createElement('div'); head.className = 'head';
+        var who = document.createElement('span'); who.className = 'who'; who.textContent = m.sender || '学生';
+        var tm = document.createElement('span'); tm.className = 'time'; tm.textContent = tfmt(m.created_at);
+        var txt = document.createElement('span'); txt.className = 'txt'; txt.textContent = m.content || '';
+        head.appendChild(who); head.appendChild(tm);
+        div.appendChild(head); div.appendChild(txt);
+        box.appendChild(div); box.scrollTop = box.scrollHeight;
+      }
+      function appendVisible() {
+        if (!v1) return;
+        while (shownCount < chats.length && chats[shownCount].offset <= (v1.currentTime || 0)) {
+          addMsg(chats[shownCount].m); shownCount++;
+        }
+      }
+      if (v1) v1.addEventListener('timeupdate', appendVisible);
+      appendVisible();
+    })();
+  </script>
+</body>
+</html>

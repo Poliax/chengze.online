@@ -1,0 +1,29 @@
+/* Quiet green-and-gold palette; video pixels and playback geometry stay intact. */
+body.replay-studio.classroom-ui{background:#252A28;color:#E6EBE7}
+.replay-studio .watch-header{background:#193D33;border-bottom:1px solid #ffffff0d;box-shadow:0 3px 14px #00000012;backdrop-filter:none}
+.replay-studio .playback-course-title{color:#E6EBE7}
+.replay-studio .playback-kind{color:#A8BBB0}
+.replay-studio .playback-course-group{border-color:#ffffff24}
+.replay-studio .player-main{box-shadow:0 8px 28px #00000020}
+.replay-studio .cam-box{background:#1E2521;border:0;box-shadow:0 4px 16px #00000016}
+.replay-studio .chat-col{background:#303A35;border:0;box-shadow:0 4px 16px #00000012}
+.replay-studio .chat-hd{background:#3A4840;color:#E6EBE7;border-bottom:0;font-weight:600}
+.replay-studio .chat-msg{border-bottom-color:#ffffff08}
+.replay-studio .chat-msg .who{color:#C3D1C7}
+.replay-studio .chat-msg .txt{color:#E6EBE7}
+.replay-studio .chat-msg .time{color:#9BAAA1}
+.replay-studio .classroom-placeholder{color:#9BAAA1}
+.replay-studio .controls{background:linear-gradient(transparent,rgba(19,28,23,.25) 30%,rgba(19,28,23,.8))}
+.replay-studio .controls .progress-fill,.replay-studio .controls .progress-fill::after{background:#C8B27D}
+.replay-studio .controls .progress{background:#ffffff38}
+.replay-studio .controls .vol-slider{accent-color:#C8B27D}
+.replay-studio .controls .ctrl-btn::before{background:#ffffff12}
+.replay-studio .controls .ctrl-btn:active::before{background:#C8B27D30}
+.replay-studio .controls .ctrl-btn:focus-visible,.replay-studio .progress:focus-visible{outline-color:#C8B27D}
+.replay-studio .rate-menu{background:#303A35;border-color:#ffffff14;box-shadow:0 6px 24px #0003}
+.replay-studio .rate-menu button{color:#E6EBE7}
+.replay-studio .rate-menu button:hover{background:#3A4840}
+.replay-studio .rate-menu button.on{background:#485344;color:#E3D1A3}
+.replay-studio .rerecord-action{color:#D8C59B;border-color:#C8B27D55;background:#C8B27D0d}
+.replay-studio *{scrollbar-color:#73877A60 transparent}
+.replay-studio *::-webkit-scrollbar-thumb{background-color:#73877A60}

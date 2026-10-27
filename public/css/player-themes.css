@@ -1,0 +1,46 @@
+:root[data-player-theme]{--pt-bg:#272A2D;--pt-header:#272A2D;--pt-panel:#303438;--pt-head:#393E42;--pt-text:#E5E8E7;--pt-muted:#9DA6A2;--pt-line:#ffffff13;--pt-hover:#ffffff10;--pt-accent:#B5CBBE;--pt-shadow:0 6px 22px #00000012;color-scheme:dark}
+:root[data-player-theme="day"]{--pt-bg:#F5F5F2;--pt-header:#FFFFFF;--pt-panel:#FFFFFF;--pt-head:#ECEFEA;--pt-text:#303B35;--pt-muted:#748078;--pt-line:#dfe4df;--pt-hover:#edf1ed;--pt-accent:#28554A;--pt-shadow:0 6px 22px #25382a09;color-scheme:light}
+html[data-player-theme] body{background:var(--pt-bg);color:var(--pt-text)}
+html[data-player-theme] :is(.watch-header,.topbar){background:var(--pt-header);border-bottom:1px solid var(--pt-line);backdrop-filter:none}
+html[data-player-theme] :is(.playback-course-title,.watch-course,.watch-brand,.topbar .brand){color:var(--pt-text);border-color:var(--pt-line)}
+html[data-player-theme] :is(.playback-kind,.brand-tag){color:var(--pt-muted)}
+html[data-player-theme] :is(.chat-col,.player-controls){background:var(--pt-panel);border-color:var(--pt-line);box-shadow:var(--pt-shadow)}
+html[data-player-theme] .chat-hd{background:var(--pt-head);color:var(--pt-text);border-bottom:0}
+html[data-player-theme] :is(.chat-msg,.chat-msg .txt){color:var(--pt-text)}
+html[data-player-theme] .chat-msg .who{color:var(--pt-accent)}
+html[data-player-theme] :is(.chat-msg .time,.empty){color:var(--pt-muted)}
+html[data-player-theme] :is(.chat-msg,.chat-input-row){border-color:var(--pt-line)}
+html[data-player-theme] .chat-input-row input{background:var(--pt-bg);color:var(--pt-text);border-color:var(--pt-line)}
+html[data-player-theme] .chat-input-row button{background:#28554A;box-shadow:none}
+html[data-player-theme] .player-controls .ctrl-btn{background:var(--pt-hover);color:var(--pt-text);border-color:var(--pt-line)}
+html[data-player-theme] .player-controls #timeText{color:var(--pt-muted)!important}
+html[data-player-theme] .cam-box{border:0;box-shadow:var(--pt-shadow)}
+html[data-player-theme] .player-main{box-shadow:var(--pt-shadow)}
+html[data-player-theme] .player-theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;margin-left:auto;padding:0 11px;height:32px;border:1px solid var(--pt-line);border-radius:9px;background:var(--pt-hover);color:var(--pt-text);font:500 12px/1 system-ui,-apple-system,'PingFang SC',sans-serif;cursor:pointer;white-space:nowrap}
+html[data-player-theme] .player-theme-toggle:hover{border-color:var(--pt-muted)}
+html[data-player-theme] .player-theme-toggle:focus-visible{outline:2px solid var(--pt-accent);outline-offset:3px}
+html[data-player-theme] .player-theme-toggle svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7}
+html[data-player-theme] .player-theme-toggle+.student-viewer-avatar{margin-left:0}
+@media(max-width:600px){html[data-player-theme] .player-theme-toggle{padding:0 8px;gap:4px}html[data-player-theme] :is(.watch-header,.topbar){gap:8px}}
+
+/* Icon-only day/night action; retain a comfortable hit area. */
+html[data-player-theme] .player-theme-toggle{width:34px;height:34px;padding:0;gap:0}
+html[data-player-theme] .player-theme-toggle span{display:none}
+html[data-player-theme] .player-theme-toggle svg{width:18px;height:18px}
+
+/* Outrank the shared classroom active-tab selector in both modes. */
+html[data-player-theme] body .chat-col .chat-hd{background:var(--pt-head);color:var(--pt-text);border:0;box-shadow:none}
+html[data-player-theme] body .chat-col{background:var(--pt-panel);border-color:var(--pt-line)}
+html[data-player-theme] body .chat-col .chat-msg .who{color:var(--pt-accent)}
+html[data-player-theme] body .chat-col .chat-msg .txt{color:var(--pt-text)}
+html[data-player-theme] body .chat-col .chat-msg .time{color:var(--pt-muted)}
+
+html[data-player-theme] :is(.watch-header,.topbar){box-sizing:border-box}
+html[data-player-theme] :is(.watch-header,.topbar) .playback-course-group{min-width:0;flex:1;overflow:hidden}
+html[data-player-theme] :is(.watch-header,.topbar) .playback-course-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html[data-player-theme] :is(.watch-header,.topbar) .watch-brand{flex:none}
+
+/* Muted brand green accents for the two night-mode surfaces. */
+html[data-player-theme="night"] body .chat-col .chat-hd{background:#333B36;color:#E5EDE7}
+html[data-player-theme="night"] body .player-theme-toggle{background:#333B36;border-color:#434B45;color:#E5EDE7}
+html[data-player-theme="night"] body .player-theme-toggle:hover{background:#3D463F;border-color:#566259}

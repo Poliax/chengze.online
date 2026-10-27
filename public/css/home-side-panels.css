@@ -308,14 +308,7 @@
 .prep-result-table .prep-school-table th{background:#f8f8f5}
 @media(max-width:600px){.student-top-layout #homeQueryContent #majorResults,.student-top-layout #homeQueryContent:has(.prep-query-empty) #majorResults{padding:16px}.prep-result-table .prep-school-box{padding:12px 4px}}
 
-/* A small active-card pointer replaces the flowchart connector. */
-@media(min-width:761px){
- .student-top-layout .home-tools-row{position:relative;isolation:isolate}
- .student-top-layout .home-tools-row>.home-resources,.student-top-layout .home-tools-row>.home-major-panel{position:relative;overflow:visible}
- .student-top-layout .home-tools-row:has(~ #homeResourceContent:not([hidden]))>.home-resources::after,
- .student-top-layout .home-tools-row:has(~ #homeQueryContent:not([hidden]))>.home-major-panel::after{content:'';position:absolute;left:calc(50% - 8px);bottom:-7px;width:16px;height:8px;background:#fff;clip-path:polygon(0 0,100% 0,50% 100%);pointer-events:none}
- .student-top-layout .home-tools-row:has(~ #homeQueryContent:not([hidden]))>.home-major-panel::after{background:#eaf1eb}
-}
+
 
 /* Query content follows its source card colour without nested white panels. */
 .student-top-layout #homeQueryContent .prep-result-table>tbody>tr>td,
@@ -364,3 +357,16 @@
 /* Subtle middle dots separate the right-aligned summary groups. */
 .prep-result-heading .prep-result-meta{column-gap:10px}
 .prep-result-heading .prep-result-meta>.prep-reference+.prep-reference::before{content:'·';display:inline-block;margin-right:10px;color:#9aa69d}
+
+/* Keep desktop query subjects on one line; allow scrolling before squeezing content. */
+@media(min-width:601px){
+ .student-top-layout #homeQueryContent .prep-table-scroll{overflow-x:auto}
+ .student-top-layout #homeQueryContent .prep-result-table{table-layout:auto}
+ .student-top-layout #homeQueryContent .prep-result-table>thead>tr>th{width:auto;white-space:nowrap}
+ .student-top-layout #homeQueryContent .prep-result-table>tbody>tr:not(.prep-school-row)>td:nth-child(3),
+ .student-top-layout #homeQueryContent .prep-result-table>tbody>tr:not(.prep-school-row)>td:nth-child(4){white-space:nowrap;overflow-wrap:normal}
+}
+
+/* Bring the two lower rows closer to the hero and each other. */
+.student-top-layout .home-dashboard{margin-bottom:14px}
+.student-top-layout .home-tools-row{margin-bottom:14px}

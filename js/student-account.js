@@ -19,11 +19,8 @@
       var data={};['name','nickname','recipient_name','recipient_phone','recipient_province','recipient_city','recipient_district','recipient_address_detail','province_code','exam_year','junior_college','junior_major'].forEach(function(key){data[key]=accountForm.elements[key].value;});
       var response=await fetch('/api/auth/account-details',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}),result=await response.json();
       if(!response.ok||!result.success)throw Error(result.error||'保存失败');
-      document.querySelectorAll('[data-student-avatar]').forEach(function(el){if(!el.querySelector('img'))el.textContent=result.nickname.charAt(0);});
-      var gp=document.getElementById('globalProvince'),gy=document.getElementById('globalYear');
-      if(gp&&result.province_code){gp.value=result.province_code;gp.dispatchEvent(new Event('change'));}
-      if(gy&&result.exam_year){if(!Array.from(gy.options).some(function(o){return o.value===result.exam_year;}))gy.add(new Option(result.exam_year,result.exam_year));gy.value=result.exam_year;gy.dispatchEvent(new Event('change'));}
-      status.textContent='已保存';
+      status.textContent='已保存，正在返回首页…';
+      location.assign('/?view=home');
     }catch(error){status.textContent=error.message||'保存失败，请重试';}finally{button.disabled=false;}
   });
   var phoneDialog=document.getElementById('studentPhoneChangeDialog'),phoneForm=document.getElementById('studentPhoneChangeForm');

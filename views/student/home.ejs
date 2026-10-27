@@ -540,10 +540,12 @@
   #childBackBtn.back-btn:hover { background:#edf3ee; border-color:#a8bfb0; box-shadow:0 3px 8px rgba(30,68,56,.08); }
   #childBackBtn.back-btn:focus-visible { outline:2px solid #709580; outline-offset:3px; }
 </style>
-<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><%- include('../partials/brand-icons') %><link rel="stylesheet" href="/public/css/student-topnav.css?v=20261018-topnav1"><link rel="stylesheet" href="/public/css/student-account.css?v=20261021-education20"><link rel="stylesheet" href="/public/css/home-side-panels.css?v=20261026-activepointer62">
+<style>.chengze-mobile-mark{display:none}@media(max-width:768px){.logo .chengze-wordmark{display:none!important}.chengze-mobile-mark{display:block;background:#f5f3ed;border-radius:6px;padding:3px;box-sizing:border-box}}</style><%- include('../partials/brand-icons') %><link rel="stylesheet" href="/public/css/student-topnav.css?v=20261018-topnav1"><link rel="stylesheet" href="/public/css/student-account.css?v=20261027-purchased1"><link rel="stylesheet" href="/public/css/home-side-panels.css?v=20261027-resourcewhite2">
 <script defer src="/js/shipping-regions.js?v=20261021-shipping1"></script>
-<script defer src="/js/student-account.js?v=20261021-education20"></script>
-<link rel="stylesheet" href="/public/css/student-theme.css?v=20261026-fixed51">
+<script defer src="/js/student-account.js?v=20261027-candidate-default2"></script>
+<link rel="stylesheet" href="/public/css/student-theme.css?v=20261026-fit53">
+<link rel="stylesheet" href="/public/css/student-workbench.css?v=20261027-workbench1">
+<script defer src="/js/student-workbench.js?v=20261027-workbench1"></script>
 </head>
 <body class="student-top-layout student-brand-theme">
 <%
@@ -587,7 +589,6 @@
           <button type="button" class="student-account-trigger" id="studentAccountTrigger" aria-label="学员个人菜单" aria-expanded="false" aria-controls="studentAccountMenu"><span class="avatar" data-student-avatar><% if (student.avatar) { %><img src="<%= student.avatar %>" alt="学员头像"><% } else { %><%= (student.nickname || student.name || '学').charAt(0) %><% } %></span></button>
           <div class="student-account-menu" id="studentAccountMenu" hidden>
             <button type="button" data-account-view="profile">个人信息</button>
-            <button type="button" data-account-view="purchased">已购课程</button>
             <button type="button" data-account-view="overview">学习总览</button>
             <button type="button" onclick="logoutStudent()">退出登录</button>
           </div></div>
@@ -717,48 +718,7 @@
       </section>
 
       <%- include('account-views', { myList: myList }) %>
-      <!-- 学习总览视图 -->
-      <section class="view" id="viewOverview">
-        <div class="overview-hero">
-          <div class="ov-greet">
-            <% var hour = new Date().getHours(); var greet = hour < 12 ? '早上好' : (hour < 18 ? '下午好' : '晚上好'); %>
-            <h2><%= greet %>，开始今天的学习吧</h2>
-            <p>已学课程、完成课时、待上课和学习时长一目了然。</p>
-          </div>
-          <div class="overview-chips">
-            <div class="chip"><span class="chip-value"><%= myList.length %></span><span class="chip-label">已学课程</span></div>
-            <div class="chip"><span class="chip-value"><%= Math.round((ov.minutes||0)/60) %></span><span class="chip-label">学习时长(小时)</span></div>
-            <div class="chip"><span class="chip-value"><%= ov.completed||0 %></span><span class="chip-label">完成课时</span></div>
-            <div class="chip"><span class="chip-value"><%= ov.upcoming||0 %></span><span class="chip-label">待上课</span></div>
-          </div>
-        </div>
-
-        <div class="overview-grid">
-          <div class="overview-panel">
-            <h3>我的课程</h3>
-            <% if (myList.length) { %>
-              <% myList.forEach(function(c){ %>
-              <div class="overview-course">
-                <div class="ovc-info"><b><%= c.title %></b><span><%= c.province||'' %> · <%= c.year||'' %>年 · <%= c.teacher_name||'' %></span></div>
-                <div class="ovc-meta"><span>进度 <%= c.percent||0 %>%</span><span><%= c.completed %> / <%= c.lesson_count %> 课时</span></div>
-                <div class="overview-progress"><i style="width:<%= c.percent||0 %>%"></i></div>
-              </div>
-              <% }) %>
-            <% } else { %><div class="empty">暂无已购课程</div><% } %>
-          </div>
-          <div class="overview-panel">
-            <h3>待上课</h3>
-            <% if (upList.length) { %>
-              <% upList.forEach(function(l){ %>
-              <div class="upcoming-item">
-                <span class="u-time"><%= String(l.schedule_time||'').replace('T',' ').substring(5,16) %></span>
-                <div><b><%= l.title %></b><span><%= l.course_title %></span></div>
-              </div>
-              <% }) %>
-            <% } else { %><div class="empty">暂无待上课</div><% } %>
-          </div>
-        </div>
-      </section>
+      <%- include('learning-workbench', {myList:myList, ov:ov, upList:upList}) %>
 
       <!-- 课程中心视图 -->
       <section class="view" id="viewCourses">
@@ -1028,8 +988,7 @@
   var VIEW_TITLES = {
     home: ['首页', '专升本在线教育平台'],
     profile: ['个人信息', '我的账号信息'],
-    purchased: ['已购课程', '已报名的课程'],
-    overview: ['学习总览', '学习进度 · 我的课程 · 待上课'],
+    overview: ['学习总览', '我的课程 · 学习进度 · 近期课次'],
     courses: ['课程中心', '专升本备考 · 直播 + 回放'],
     practice: ['刷题模考', '题库刷题 · 模拟考试'],
     ai: ['在线答疑', '助教 + AI 智能答疑'],
@@ -1057,6 +1016,7 @@
   var _catalogFilterCid = 0;
   var _catalogPkg = null;
   function switchView(view) {
+    if(view==='purchased')view='overview';
     if(view==='news')view='home';
     if (_currentView) _prevView = _currentView;
     _currentView = view;
@@ -1533,17 +1493,6 @@
     if (!gp || !gy) return;
     try { localStorage.setItem('cz_province_pref', JSON.stringify({ province: gp.value, year: gy.value })); } catch(e) {}
   }
-  function autoYear(){
-    if (!gy) return;
-    var years = {};
-    document.querySelectorAll('.pkg-card, .series-card').forEach(function(c){
-      if (c.style.display !== 'none') { var y = c.getAttribute('data-year'); if (y) years[y] = 1; }
-    });
-    var keys = Object.keys(years).sort();
-    if (!keys.length) return;
-    var preferred = keys.indexOf('2027') >= 0 ? '2027' : keys[0];
-    if (!gy.value || !years[gy.value]) gy.value = preferred;
-  }
   function sync(){
     var homeP = document.getElementById('homeProvince');
     var homeY = document.getElementById('homeYear');
@@ -1551,7 +1500,6 @@
     if (homeY && gy) homeY.value = gy.value;
     if (window.loadScheduleGlobal) window.loadScheduleGlobal();
     if (window.applyGlobalFilter) window.applyGlobalFilter();
-    autoYear();
     if (window.applyGlobalFilter) window.applyGlobalFilter();
     savePref();
   }
@@ -1565,6 +1513,8 @@
 </script>
 <script>
 (function(){
+  var studyChoiceTouched=false;
+  ['globalProvince','globalYear','studentProvince','studentExamYear'].forEach(function(id){var field=document.getElementById(id);if(field)field.addEventListener('change',function(){studyChoiceTouched=true;});});
   var REGION_MAP = { 'shandong':'山东', 'zhejiang':'浙江', 'henan':'河南', 'guangdong':'广东', 'jiangsu':'江苏', 'sichuan':'四川', 'fujian':'福建', 'hunan':'湖南', 'anhui':'安徽', 'shaanxi':'陕西', 'hubei':'湖北', 'jiangxi':'江西' };
   function applyProvince(value, save){
     var gp = document.getElementById('globalProvince');
@@ -1583,22 +1533,18 @@
     if (!ok) return;
     if (hp) hp.value = gp.value;
     if (save) { try { localStorage.setItem('cz_province_pref', JSON.stringify({ province: gp.value, year: document.getElementById('globalYear') ? document.getElementById('globalYear').value : '' })); } catch(e) {} }
-    if (window.loadScheduleGlobal) window.loadScheduleGlobal();
-    if (window.applyGlobalFilter) window.applyGlobalFilter();
+    gp.dispatchEvent(new Event('change'));
   }
-  var saved = null;
-  try { saved = JSON.parse(localStorage.getItem('cz_province_pref') || 'null'); } catch(e) {}
+  // Candidate settings are defaults only. Browsing never writes back to the account.
   var boundStudy = <%- JSON.stringify(student ? { province: student.province_code || '', year: student.exam_year || '' } : null).replace(/</g, '\\u003c') %>;
-  if (boundStudy && boundStudy.province && boundStudy.year) {
+  if (boundStudy && boundStudy.year) {
     var boundYear = document.getElementById('globalYear');
     if (boundYear) { if (!Array.from(boundYear.options).some(function(o){return o.value === boundStudy.year;})) boundYear.add(new Option(boundStudy.year, boundStudy.year)); boundYear.value = boundStudy.year; }
-    applyProvince(boundStudy.province, false); return;
   }
-  if (saved && saved.year) { var gy0 = document.getElementById('globalYear'); if (gy0) gy0.value = saved.year; }
-  if (saved && saved.province) { applyProvince(saved.province, false); return; }
+  if (boundStudy && boundStudy.province) { applyProvince(boundStudy.province, false); return; }
   try {
     fetch('https://ipapi.co/json/').then(function(r){ return r.json(); }).then(function(d){
-      applyProvince(d.region || d.country_name || '', true);
+      if(!studyChoiceTouched)applyProvince(d.region || d.country_name || '', true);
     }).catch(function(){});
   } catch(e) {}
 })();
@@ -1826,6 +1772,6 @@
   })();
 </script>
 <script defer src="/js/campaign-carousel.js?v=20261024-admin2"></script>
-<script defer src="/js/student-home-layout.js?v=20261026-summaryspace37"></script>
+<script defer src="/js/student-home-layout.js?v=20261027-scoresort1"></script>
 </body>
 </html>

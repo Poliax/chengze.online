@@ -9,19 +9,6 @@
       <label for="studentUID">UID</label><input id="studentUID" title="UID 注册后不可修改" value="<%= student.uid || '' %>" readonly>
       <label for="studentPhone">电话</label><div class="student-phone-field"><input id="studentPhone" value="<%= student.phone || '' %>" readonly><button type="button" id="studentPhoneChangeOpen">修改</button></div>
 
-      <h4 class="student-form-heading">收货信息</h4>
-      <div class="student-shipping-fields">
-      <label for="studentRecipientName">收件人</label><input id="studentRecipientName" name="recipient_name" maxlength="50" value="<%= student.recipient_name || '' %>" autocomplete="shipping name">
-      <label for="studentRecipientPhone">联系电话</label><input id="studentRecipientPhone" name="recipient_phone" type="tel" maxlength="30" value="<%= student.recipient_phone || '' %>" autocomplete="shipping tel">
-      <label for="recipientProvince">所在地</label>
-      <div class="student-shipping-region" id="studentShippingRegion" data-province="<%= student.recipient_province || '' %>" data-city="<%= student.recipient_city || '' %>" data-district="<%= student.recipient_district || '' %>">
-        <select id="recipientProvince" name="recipient_province" aria-label="收货省份"><option value="">请选择省份</option></select>
-        <select id="recipientCity" name="recipient_city" aria-label="收货城市" disabled><option value="">请选择城市</option></select>
-        <select id="recipientDistrict" name="recipient_district" aria-label="收货区县" disabled><option value="">请选择区县</option></select>
-      </div>
-      <label for="studentRecipientAddress">详细地址</label><textarea id="studentRecipientAddress" name="recipient_address_detail" maxlength="300" rows="2" placeholder="街道、小区、楼栋及门牌号" autocomplete="shipping street-address"><%= student.recipient_address_detail || student.recipient_address || '' %></textarea>
-      <% if (student.recipient_address && !student.recipient_province) { %><p class="student-address-legacy">原收货地址已保留，请选择所在地区并核对详细地址。</p><% } %>
-      </div>
     <h4 class="student-form-heading student-candidate-heading">考生信息</h4>
     <div id="studentStudyProfile" class="student-study-form">
       <label for="studentProvince">考试省份</label>
@@ -38,6 +25,19 @@
       <label for="studentJuniorCollege">专科院校</label><input id="studentJuniorCollege" name="junior_college" maxlength="100" value="<%= student.junior_college || '' %>" placeholder="请填写专科院校">
       <label for="studentJuniorMajor">专科专业</label><input id="studentJuniorMajor" name="junior_major" maxlength="100" value="<%= student.junior_major || '' %>" placeholder="请填写专科专业">
     </div>
+      <h4 class="student-form-heading">收货信息</h4>
+      <div class="student-shipping-fields">
+      <label for="studentRecipientName">收件人</label><input id="studentRecipientName" name="recipient_name" maxlength="50" value="<%= student.recipient_name || '' %>" autocomplete="shipping name">
+      <label for="studentRecipientPhone">联系电话</label><input id="studentRecipientPhone" name="recipient_phone" type="tel" maxlength="30" value="<%= student.recipient_phone || '' %>" autocomplete="shipping tel">
+      <label for="recipientProvince">所在地</label>
+      <div class="student-shipping-region" id="studentShippingRegion" data-province="<%= student.recipient_province || '' %>" data-city="<%= student.recipient_city || '' %>" data-district="<%= student.recipient_district || '' %>">
+        <select id="recipientProvince" name="recipient_province" aria-label="收货省份"><option value="">请选择省份</option></select>
+        <select id="recipientCity" name="recipient_city" aria-label="收货城市" disabled><option value="">请选择城市</option></select>
+        <select id="recipientDistrict" name="recipient_district" aria-label="收货区县" disabled><option value="">请选择区县</option></select>
+      </div>
+      <label for="studentRecipientAddress">详细地址</label><input type="text" id="studentRecipientAddress" name="recipient_address_detail" maxlength="300" placeholder="街道、小区、楼栋及门牌号" autocomplete="shipping street-address" value="<%= student.recipient_address_detail || student.recipient_address || '' %>">
+      <% if (student.recipient_address && !student.recipient_province) { %><p class="student-address-legacy">原收货地址已保留，请选择所在地区并核对详细地址。</p><% } %>
+      </div>
       <div class="student-profile-save"><p id="studentAccountStatus" role="status" aria-live="polite"></p><button type="submit">保存</button></div>
     </form>
     <div class="student-cancel-zone"><button type="button" id="studentCancelOpen">注销账号</button></div>
@@ -65,32 +65,5 @@
     </dialog>
   </div>
 </section>
-<section class="view" id="viewPurchased">
-  <div class="overview-panel">
-    <h3>已购课程</h3>
-    <% if (myList.length) { myList.forEach(function(c) { %>
-    <details class="overview-course purchased-course">
-      <summary>
-      <div class="ovc-info"><b><%= c.title %></b><span><%= c.province || '' %> · <%= c.year || '' %>年 · <%= c.teacher_name || '' %></span></div>
-      <div class="ovc-meta"><span>进度 <%= c.percent || 0 %>%</span><span><%= c.completed || 0 %> / <%= c.lesson_count || 0 %> 课时</span></div>
-      <div class="overview-progress"><i style="width:<%= c.percent || 0 %>%"></i></div>
-      <span class="purchased-course-action">查看课次 <span aria-hidden="true">⌄</span></span>
-      </summary>
-      <div class="purchased-lessons">
-        <% var detail = (courseDetails || {})[c.id]; var lessons = detail && detail.lessons || []; %>
-        <% if (lessons.length) { lessons.forEach(function(l) { %>
-        <div class="purchased-lesson">
-          <div><b><%= l.title %></b><span><%= String(l.schedule_time || '').replace('T', ' ').substring(0,16) || '时间待定' %></span></div>
-          <% if (l.is_live) { %>
-          <a href="/live/student/live-watch/<%= c.id %>" target="_blank" rel="noopener">进入直播</a>
-          <% } else if (l.has_replay || l.hasVideo) { %>
-          <a href="/live/student/replay-duo/<%= c.id %>?lesson=<%= l.id %>&amp;v=2" target="_blank" rel="noopener">观看回放</a>
-          <% } else { %><span class="purchased-pending">暂无回放</span><% } %>
-        </div>
-        <% }); } else { %><div class="empty">课次正在安排中</div><% } %>
-      </div>
-    </details>
-    <% }); } else { %><div class="empty">暂无已购课程</div><% } %>
-  </div>
-</section>
+
 <% } %>

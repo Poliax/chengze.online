@@ -1,0 +1,175 @@
+{
+  "year": 2026,
+  "label": "学校代码（国标）",
+  "note": "学校国标代码，不是各批次高考志愿代号；保留教育部10位标识码作为内部关联。",
+  "schools": {
+    "济宁学院": {
+      "code": "10454",
+      "source": "https://zs.jnxy.edu.cn/info/1137/3171.htm"
+    },
+    "山东农业工程学院": {
+      "code": "14439",
+      "source": "https://www.sdaeu.edu.cn/zsxx/info/1031/2964.htm"
+    },
+    "聊城大学东昌学院": {
+      "code": "13373",
+      "source": "https://zsb.lcudcc.edu.cn/info/1219/2835.htm"
+    },
+    "青岛城市学院": {
+      "code": "13378",
+      "source": "https://www.qdc.edu.cn/en/news/info/3826"
+    },
+    "菏泽学院": {
+      "code": "10455",
+      "source": "https://zsxxw.hezeu.edu.cn/info/1047/4593.htm"
+    },
+    "枣庄学院": {
+      "code": "10904",
+      "source": "https://zsb.uzz.edu.cn/index.php?sys=home&module=article&param=34&act=view&article_id=Qqwnj8WKYyZW"
+    },
+    "青岛恒星科技学院": {
+      "code": "13015",
+      "source": "https://zs.hx.cn/content/zszc/0cac41865dcc400aae3b831c7f6a2c25"
+    },
+    "山东工程职业技术大学": {
+      "code": "13356",
+      "source": "https://www.suet.edu.cn/admission/info/1022/1779.htm"
+    },
+    "山东华宇工学院": {
+      "code": "13857",
+      "source": "https://zhaosheng.huayu.edu.cn/info/1119/2116.htm"
+    },
+    "青岛滨海学院": {
+      "code": "10868",
+      "source": "https://zsb.qdbhu.edu.cn/info/1151/2791.htm"
+    },
+    "山东交通学院": {
+      "code": "11510",
+      "source": "https://zsw.sdjtu.edu.cn/info/1008/6324.htm"
+    },
+    "山东女子学院": {
+      "code": "12331",
+      "source": "https://zsxx.sdwu.edu.cn/info/1039/6051.htm"
+    },
+    "山东财经大学燕山学院": {
+      "code": "13383",
+      "source": "https://yszs.sdufe.edu.cn/info/1014/1361.htm"
+    },
+    "山东石油化工学院": {
+      "code": "13386",
+      "source": "https://zs.sdipct.edu.cn/info/1051/4713.htm"
+    },
+    "山东外事职业大学": {
+      "code": "13874",
+      "source": "https://zsb.sdws.edu.cn/2026/0213/c410a88826/page.htm"
+    },
+    "山东政法学院": {
+      "code": "14100",
+      "source": "https://zs.sdupsl.edu.cn/info/1005/9026.htm"
+    },
+    "青岛电影学院": {
+      "code": "14327",
+      "source": "https://www.qdfa.edu.cn/html/zsjy/11372.html"
+    },
+    "山东管理学院": {
+      "code": "14438",
+      "source": "https://zs.sdmu.edu.cn/info/1129/3365.htm"
+    },
+    "山东现代学院": {
+      "code": "13322",
+      "source": "https://zs.sdxd.edu.cn/detail/20260225170610dd4thr35ugpwulqdrc.html"
+    },
+    "泰山科技学院": {
+      "code": "13624",
+      "source": "https://www.tskjxy.edu.cn/info/1215/16321.htm"
+    },
+    "青岛工学院": {
+      "code": "13995",
+      "source": "https://zhaosheng.qit.edu.cn/info/1107/3482.htm"
+    },
+    "齐鲁理工学院": {
+      "code": "13998",
+      "source": "https://www.qlit.edu.cn/zsw/zsb/67509.html"
+    },
+    "德州学院": {
+      "code": "10448",
+      "source": "https://zs.dzu.edu.cn/__local/5/00/15/9432F2A2CC8F41BE666D7A0ABE7_F46DC81D_20C30.pdf"
+    },
+    "山东中医药大学": {
+      "code": "10441",
+      "source": "https://zhaosheng.sdutcm.edu.cn/info/1054/2696.htm"
+    },
+    "山东协和学院": {
+      "code": "13324",
+      "source": "https://www.sdxiehe.edu.cn/zs/view.php?id=145471"
+    },
+    "烟台科技学院": {
+      "code": "14002",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "山东财经大学东方学院": {
+      "code": "13999",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "山东英才学院": {
+      "code": "13006",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "烟台南山学院": {
+      "code": "12332",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "齐鲁师范学院": {
+      "code": "14276",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "泰山学院": {
+      "code": "10453",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "青岛农业大学海都学院": {
+      "code": "13997",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "烟台理工学院": {
+      "code": "13359",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "临沂大学": {
+      "code": "10452",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "潍坊科技学院": {
+      "code": "12843",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "青岛黄海学院": {
+      "code": "13320",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "潍坊学院": {
+      "code": "11067",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "山东青年政治学院": {
+      "code": "14277",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "齐鲁医药学院": {
+      "code": "10825",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "济宁医学院": {
+      "code": "10443",
+      "source": "https://www.sdzk.cn/Floadup/file/20250317/6387782010007663213616549.pdf"
+    },
+    "潍坊理工学院": {
+      "code": "13379",
+      "source": "https://pjb.uzz.edu.cn/__local/5/C2/E8/BA9DF4B1702C7C7A66C7862A90B_988956DF_16B1F6.pdf"
+    },
+    "山东外国语职业技术大学": {
+      "code": "13387",
+      "source": "https://jwc.lcu.edu.cn/docs/2023-02/20230216091541532674.pdf"
+    }
+  }
+}
