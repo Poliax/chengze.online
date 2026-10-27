@@ -1,8 +1,8 @@
 {
   "version": "production-v1.3",
-  "git_tag": "production-v1.3-20261027",
+  "git_tag": "production-v1.3.1-20261027",
   "captured_at": "2026-10-27T11:37:18.745939+08:00",
-  "scope": "已发布的首页、学习工作台、专业查询、用户开通课程及播放器调整；基于成功发布的文件固定，不含凭据、用户数据库或其他未上线开发。SSH过期，定版时未再次核对线上文件。",
+  "scope": "30个定版文件已与线上逐一SHA256核验；修正考生信息字段名称快照，不改线上。排除用户数据库、凭据及未上线开发。",
   "files": {
     "lib/prep-data.js": "55c7400509757a8cbc2a60649602abc8aa3e52752d56f693cbbd6ead58e0fa82",
     "lib/prep-admissions.js": "ad4fe0cfe6d3bca985d7a07403e0115713582a31552e413c195312149893777a",
@@ -13,7 +13,7 @@
     "views/student/home.ejs": "df11108ea9828f217769bf122dd261aacc3ad41a7bb45a3e48e212530d3aded4",
     "public/css/home-side-panels.css": "8b5e2fc29df089886654b2e7507755f1d24b1fe63b764e6a3950dba1f9436e5c",
     "lib/shandong-school-codes-2026.json": "2a8aa2aa2cc19c20d3cabeb1be1ec68630b54815bfc64144a9f0692022a6e96d",
-    "views/student/account-views.ejs": "bb6e90a15beac029894b4d74f591a8efc4004e8d09e66333b77a84ae985d0606",
+    "views/student/account-views.ejs": "261e6f2cedf4d27f6c1cc929c21e85bd767c83b71dd6f61ea0e163cc3a5457e8",
     "views/student/learning-workbench.ejs": "1099e291b8cccd42a854c33a8a7615b2e179a099555821d12fa161b66f2dc228",
     "views/student/learning-courses.ejs": "b50783b335882aa4659d8ca5dbc8bd6a8e9f8203a421b617d740be7d78d1342e",
     "public/css/student-workbench.css": "3ad7978ee5e12bcb590bba283aa71f10b146cd86daa3007a11f4b3073f71fc8a",
@@ -34,5 +34,6 @@
     "views/student/vod-replay.ejs": "ca290d5e3a9e08eb7357018f20e992a390fb54706b117ad618d52d91ff614b3f",
     "public/css/player-themes.css": "98eb7ab52281477980e4b7c6583c3980a1c3273b094299dc134ef51f391914b1",
     "js/player-theme.js": "c715fe7584e5a5663d7732b0c98410bb238e6057bb9abe15b06e7c0192915add"
-  }
+  },
+  "verified_at": "2026-10-27T11:40:23.666577+08:00"
 }

@@ -11,12 +11,12 @@
 
     <h4 class="student-form-heading student-candidate-heading">考生信息</h4>
     <div id="studentStudyProfile" class="student-study-form">
-      <label for="studentProvince">考试省份</label>
+      <label for="studentProvince">招考省份</label>
       <select id="studentProvince" name="province_code">
         <option value="">请选择省份</option>
         <% (typeof provinces !== 'undefined' ? provinces : []).forEach(function(p) { %><option value="<%= p.code %>" <%= student.province_code === p.code ? 'selected' : '' %>><%= p.name %></option><% }); %>
       </select>
-      <label for="studentExamYear">考试时间</label>
+      <label for="studentExamYear">考试年份</label>
       <% var studyYears = [String(new Date().getFullYear()), String(new Date().getFullYear()+1), String(new Date().getFullYear()+2), String(new Date().getFullYear()+3)]; if (student.exam_year && !studyYears.includes(String(student.exam_year))) studyYears.push(String(student.exam_year)); %>
       <select id="studentExamYear" name="exam_year">
         <option value="">请选择年份</option>
