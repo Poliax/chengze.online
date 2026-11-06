@@ -466,20 +466,20 @@ body { overflow-x: clip; }
 
 /* ── 后台选择器全局统一：下拉、输入、时间/日期选择器 ── */
 .teacher-body select,
-.teacher-body input[type="text"],
+.teacher-body input:is(:not([type]), [type="text"], [type="search"], [type="email"], [type="tel"], [type="url"]),
 .teacher-body input[type="number"],
 .teacher-body input[type="date"],
 .teacher-body input[type="datetime-local"],
 .teacher-body input[type="time"],
 .teacher-body input[type="password"],
 .teacher-body textarea {
-  height: 30px !important;
-  min-height: 30px !important;
+  height: 29px !important;
+  min-height: 29px !important;
   padding: 0 10px !important;
-  border: 1px solid #d1d5db !important;
-  border-radius: 6px !important;
-  font-size: 13px !important;
-  color: #334155 !important;
+  border: 1px solid #dedee3 !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  color: #52525b !important;
   background-color: #ffffff !important;
   font-family: inherit !important;
   outline: none !important;
@@ -489,20 +489,57 @@ body { overflow-x: clip; }
 
 .teacher-body textarea {
   height: auto !important;
-  min-height: 76px !important;
+  min-height: 78px !important;
   padding: 8px 10px !important;
 }
 
 .teacher-body select:focus,
-.teacher-body input[type="text"]:focus,
+.teacher-body input:is(:not([type]), [type="text"], [type="search"], [type="email"], [type="tel"], [type="url"]):focus,
 .teacher-body input[type="number"]:focus,
 .teacher-body input[type="date"]:focus,
 .teacher-body input[type="datetime-local"]:focus,
 .teacher-body input[type="time"]:focus,
 .teacher-body input[type="password"]:focus,
 .teacher-body textarea:focus {
-  border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(165,28,48,.12) !important;
+  border-color: #71717a !important;
+  box-shadow: none !important;
+}
+
+.teacher-body select:not([multiple]):not([size]) {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-inline-end: 26px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%2352525b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-size: 12px 12px !important;
+  background-repeat: no-repeat !important;
+  background-position: right 8px center !important;
+}
+
+.teacher-body input[type="file"] {
+  max-width: 100%;
+  font: inherit;
+  font-size: 12px;
+}
+
+.teacher-body input[type="file"]::file-selector-button,
+.teacher-body .subj-file button {
+  box-sizing: border-box;
+  height: 29px;
+  padding: 0 10px;
+  border: 1px solid #dedee3;
+  border-radius: 8px;
+  background: #fff;
+  color: #52525b;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.teacher-body input[type="file"]::file-selector-button:hover,
+.teacher-body .subj-file button:hover {
+  background: #f4f4f5;
+  border-color: #a1a1aa;
+  transform: none;
 }
 
 /* ── Course Cards (alternate view) ── */
@@ -1358,8 +1395,8 @@ table th { text-align: left; }
 /* Compact management sidebar and simple account entry. */
 .teacher-sidebar{width:180px;min-width:180px;flex-basis:180px}.teacher-sidebar .sidebar-logo{padding-left:16px;padding-right:12px}.teacher-sidebar .sidebar-footer{padding:10px 12px;border-top:0}.admin-account-menu summary{padding:7px 4px;gap:9px}.admin-account-avatar{width:27px;height:27px;font-size:11px}.admin-account-name{font-size:12px}.admin-account-menu summary:hover,.admin-account-menu[open] summary{background:rgba(255,255,255,.03)}
 
-.backend-segmented { display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px; padding:4px; border-radius:12px; background:#f4f4f5; }
-.backend-segmented > a { display:inline-flex; align-items:center; min-height:32px; padding:0 16px; border-radius:9px; color:#52525b; font-size:13px; font-weight:500; text-decoration:none; white-space:nowrap; }
+.backend-segmented { display:inline-flex; flex-wrap:wrap; align-items:center; gap:2px; padding:3px; border-radius:8px; background:#f4f4f5; }
+.backend-segmented > a { display:inline-flex; align-items:center; min-height:23px; padding:0 10px; border-radius:6px; color:#52525b; font-size:11px; font-weight:500; text-decoration:none; white-space:nowrap; }
 .backend-segmented > a:hover { background:#e4e4e7; color:#27272a; }
 .backend-segmented > a[aria-current="page"] { background:#fff; color:#27272a; font-weight:600; box-shadow:0 1px 4px rgba(24,24,27,.10); }
 
@@ -1411,7 +1448,8 @@ table th { text-align: left; }
 .btn.btn-compact-action,
 .btn-table,
 .detail-actions .btn,
-.form-actions .btn {
+.form-actions .btn,
+#liveModal .modal-actions button {
   letter-spacing: 0;
   box-sizing: border-box;
   justify-content: center;
@@ -1436,7 +1474,8 @@ table th { text-align: left; }
 .btn.btn-compact-action:hover,
 .btn-table:not(.btn-table-danger):hover,
 .detail-actions .btn:not(.btn-danger):hover,
-.form-actions .btn:not(.btn-danger):hover {
+.form-actions .btn:not(.btn-danger):hover,
+#liveModal .modal-actions button:enabled:hover {
   background: #f2f2f3;
   border-color: #c9cad1;
   color: #25262b;
@@ -1555,4 +1594,22 @@ body .course-detail-modal__close.cz-icon-action:hover:not(:disabled) {
 
 .teacher-body .teacher-content table:not(.permission-table) :is(th, td) {
   white-space: nowrap;
+}
+
+.teacher-body :is([data-ui-icon="back"], .row-move, .row-del, .add-btn).cz-icon-action {
+  --cz-icon-hit: 29px;
+  --cz-icon-size: 15px;
+  --cz-icon-radius: 8px;
+  --cz-action-line: #dedee3;
+}
+
+.teacher-body :is([data-ui-icon="back"], .row-move, .add-btn).cz-icon-action {
+  --cz-icon-ink: #52525b;
+  --cz-icon-hover: #f4f4f5;
+}
+
+.teacher-body .backend-segmented > a {
+  box-sizing: border-box;
+  height: 23px;
+  line-height: 17px;
 }
