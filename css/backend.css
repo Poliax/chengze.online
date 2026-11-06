@@ -1556,10 +1556,3 @@ body .course-detail-modal__close.cz-icon-action:hover:not(:disabled) {
 .teacher-body .teacher-content table:not(.permission-table) :is(th, td) {
   white-space: nowrap;
 }
-
-.teacher-body .teacher-content table :is(.code-wrap .code-box, .code-link) {
-  max-width: none;
-  overflow: visible;
-  text-overflow: clip;
-  flex: 0 0 auto;
-}
